@@ -118,6 +118,16 @@ const JobSeekerProfile = () => {
   return (
     <>
       <View style={styles.container}>
+        <View style={styles.topWhiteBackground}>
+          <View style={styles.headerRow}>
+            <Text style={styles.homeTitle}>Profile</Text>
+          </View>
+          {/* <View style={styles.filters}>
+            
+          </View> */}
+        </View>
+
+
         {/* Profile content */}
         <View style={styles.profileContent}>
           {error && (
@@ -213,13 +223,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter-Regular'
   },
+  topWhiteBackground: {
+    backgroundColor: '#BE4145', // changed
+    paddingTop: 16, // from 58 to 24
+    paddingBottom: 0,
+    paddingHorizontal: 16,
+    zIndex: 1000,
+    width: "100%",
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  headerRow: {
+    flexDirection: 'column', // changed from 'row' to 'column'
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 0,
+    width: '100%',
+  },
+  homeTitle: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 24, // 20 -> 18
+    color: '#ffffff',
+    marginBottom: 16,
+  },
   profileContent: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 48,
+    marginTop: 16,
     backgroundColor: '#f4f2ee',
     marginTop: -28,
-    paddingTop: 32,
+    paddingTop: 16,
     flex: 1,
   },
   profileSection: {

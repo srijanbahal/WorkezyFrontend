@@ -8,6 +8,7 @@ import { Button } from "react-native-paper";
 import { useAuth } from "../../utils/AuthContext";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { BackHandler } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const { width } = Dimensions.get('window');
 
@@ -161,7 +162,7 @@ const MyJobs = ({ navigation }) => {
             setLoading(false);
         }
     };
-    
+
 
 
 
@@ -215,24 +216,27 @@ const MyJobs = ({ navigation }) => {
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
-            {/* Right Section - Status Button */}
-            <View style={styles.rightSection}>
+            {/* Top Row: Job Title + Status */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <View style={{ flexShrink: 1 }}>
+                    <TouchableOpacity onPress={() => { setSelectedJob(item); setModalVisible(true); }}>
+                        <Text style={[styles.jobTitle, item.review_status?.toLowerCase() === 'closed' && { color: 'rgba(190,65,69,0.4)' }]}>
+                            {item.title}
+                        </Text>
+                    </TouchableOpacity>
+                    <Text style={styles.companyName}>{item.company}</Text>
+                </View>
+
                 <View
                     style={[
                         styles.statusButton,
-                        {
-                            // Use your helper function for the background color
-                            backgroundColor: getStatusColor(item.review_status || "pending"),
-                        },
+                        { backgroundColor: getStatusColor(item.review_status || "pending") }
                     ]}
                 >
                     <Text
                         style={[
                             styles.statusText,
-                            {
-                                // Use your helper function for the text color
-                                color: getStatusTextColor(item.review_status || "pending"),
-                            },
+                            { color: getStatusTextColor(item.review_status || "pending") }
                         ]}
                     >
                         {item.review_status || "Pending"}
@@ -240,72 +244,42 @@ const MyJobs = ({ navigation }) => {
                 </View>
             </View>
 
-            {/* Left Section - Job Details */}
-            <View style={styles.leftSection}>
-                <TouchableOpacity onPress={() => { setSelectedJob(item); setModalVisible(true); }}>
-                    <Text style={[styles.jobTitle, item.review_status?.toLowerCase() === 'closed' && { color: 'rgba(190,65,69,0.4)' }]}>{item.title}</Text>
-                </TouchableOpacity>
-                <Text style={styles.companyName}>{item.company}</Text>
-
-                {/* Job Attributes Row */}
-                <View style={styles.attributesContainer}>
-                    {/* Location Tag */}
-                    <View style={styles.attributeTag}>
-                        <Text style={styles.attributeText}>{item.city}, {item.country}</Text>
-                    </View>
-
-                    {/* Job Type Tag */}
-                    <View style={styles.attributeTag}>
-                        <Text style={styles.attributeText}>{item.job_type}</Text>
-                    </View>
-
-                    {/* Experience Tag */}
-                    <View style={styles.attributeTag}>
-                        <Text style={styles.attributeText}>{item.experience}</Text>
-                    </View>
-
-                    {/* Salary Tag */}
-                    <View style={styles.attributeTag}>
-                        <Text style={styles.attributeText}>₹{item.salary}/month</Text>
-                    </View>
-
-                    {/* Shift Tag if available
-                    {item.shift && (
-                        <View style={styles.attributeTag}>
-                            <Text style={styles.attributeText}>{item.shift}</Text>
-                        </View>
-                    )} */}
-
-                    {/* Location Type Tag if available
-                    {item.location_type && (
-                        <View style={styles.attributeTag}>
-                            <Text style={styles.attributeText}>{item.location_type}</Text>
-                        </View>
-                    )} */}
-
-                    {/* Posted Date Tag */}
-                    {item.created_at && (
-                        <View style={styles.attributeTag}>
-                            <Text style={styles.attributeText}>
-                                Posted: {new Date(item.created_at).toLocaleDateString()}
-                            </Text>
-                        </View>
-                    )}
+            {/* Attributes Row */}
+            <View style={styles.attributesContainer}>
+                <View style={styles.attributeTag}>
+                    <Ionicons name="location-outline" size={14} color="#555" />
+                    <Text style={styles.attributeText}>{item.city}, {item.country}</Text>
                 </View>
+
+                <View style={styles.attributeTag}>
+                    <Ionicons name="briefcase-outline" size={14} color="#555" />
+                    <Text style={styles.attributeText}>{item.job_type}</Text>
+                </View>
+
+                <View style={styles.attributeTag}>
+                    <Ionicons name="school-outline" size={14} color="#555" />
+                    <Text style={styles.attributeText}>{item.experience}</Text>
+                </View>
+                {/* <View style={styles.attributeTag}>
+                    <Ionicons name="school-outline" size={14} color="#555" />
+                    <Text style={styles.attributeText}>{item.experience}</Text>
+                </View> */}
             </View>
 
-            {/* Action Buttons Row - Bottom Right */}
+
+            {/* Action Buttons Row */}
             {(item.review_status !== "rejected" && item.review_status !== "expired") && (
-                <View style={styles.actionButtonsRow}>
-                    <TouchableOpacity
-                        style={styles.viewDetailsButtonPopup}
-                        // Disable the button if the job status is 'pending'
-                        disabled={item.review_status?.toLowerCase() === 'pending' || item.review_status?.toLowerCase() === 'active' || item.review_status?.toLowerCase() === 'expired' || item.review_status?.toLowerCase() === 'rejected'}
-                    >
-                        <View style={styles.buttonContent}>
-                            <Text style={styles.viewDetailsText1}>Candidates: {item.candidates}</Text>
-                        </View>
-                    </TouchableOpacity>
+                <View style={styles.actionButtonsContainer}>
+
+                    {/* Left Side: Salary */}
+                    <View style={styles.salaryContainer}>
+                        <Text style={styles.salaryText}>
+                            ₹{item.salary}
+                            <Text style={styles.salaryUnit}>/month</Text>
+                        </Text>
+                    </View>
+
+                    {/* Right Side: Action Button */}
                     <TouchableOpacity
                         style={styles.viewDetailsButton}
                         onPress={() => {
@@ -319,12 +293,22 @@ const MyJobs = ({ navigation }) => {
                         {item.review_status?.toLowerCase() === 'active' ? (
                             <View style={styles.buttonContent}>
                                 <Text style={styles.viewDetailsText}>View Candidates</Text>
-                                <MaterialIcons name="arrow-forward-ios" size={18} color="#45a6be" style={styles.arrowIcon} />
+                                <MaterialIcons
+                                    name="arrow-forward-ios"
+                                    size={16}
+                                    color="#45a6be"
+                                    style={styles.arrowIcon}
+                                />
                             </View>
                         ) : item.review_status?.toLowerCase() === 'pending' ? (
                             <View style={styles.buttonContent}>
                                 <Text style={styles.viewDetailsText}>Edit Job</Text>
-                                <MaterialIcons name="edit" size={18} color="#45a6be" style={styles.arrowIcon} />
+                                <MaterialIcons
+                                    name="edit"
+                                    size={16}
+                                    color="#45a6be"
+                                    style={styles.arrowIcon}
+                                />
                             </View>
                         ) : null}
                     </TouchableOpacity>
@@ -361,6 +345,15 @@ const MyJobs = ({ navigation }) => {
             </TouchableOpacity> */}
         </View>
     );
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#BE4145" />
+                <Text style={styles.loadingText}>Loading profile...</Text>
+            </View>
+        );
+    }
+
 
     return (
         <>
@@ -368,26 +361,46 @@ const MyJobs = ({ navigation }) => {
                 {/* Sticky header container */}
                 <View style={styles.topWhiteBackground}>
                     <View style={styles.headerRow}>
-                        <Text style={styles.postedJobsTitle}></Text>
-                        <View style={styles.filterDropdownWrapper}>
-                            <DropDownPicker
-                                open={statusOpen}
-                                value={statusValue}
-                                items={statusItems}
-                                setOpen={setStatusOpen}
-                                setValue={setStatusValue}
-                                setItems={setStatusItems}
-                                placeholder="All Jobs"
-                                style={styles.filterDropdown}
-                                dropDownContainerStyle={styles.filterDropdownContainer}
-                                textStyle={styles.filterDropdownText}
-                                placeholderStyle={styles.filterDropdownPlaceholder}
-                                ArrowDownIconComponent={({ style }) => <Ionicons name="chevron-down" size={18} color="#999" style={style} />}
-                                ArrowUpIconComponent={({ style }) => <Ionicons name="chevron-up" size={18} color="#999" style={style} />}
-                            />
-                        </View>
+                        <Text style={styles.postedJobsTitle}>My Jobs</Text>
                     </View>
                 </View>
+                <View style={styles.filterContainer}>
+                    <View style={styles.filterDropdownWrapper}>
+                        {/* Filter Icon inside input */}
+                        <Ionicons
+                            name="filter"
+                            size={20}
+                            color="#999"
+                            style={styles.filterIconInside}
+                        />
+
+                        <DropDownPicker
+                            open={statusOpen}
+                            value={statusValue}
+                            items={statusItems}
+                            setOpen={setStatusOpen}
+                            setValue={setStatusValue}
+                            setItems={setStatusItems}
+                            placeholder="All Jobs"
+                            style={styles.filterDropdown}
+                            dropDownContainerStyle={styles.filterDropdownContainer}
+                            textStyle={styles.filterDropdownText}
+                            placeholderStyle={styles.filterDropdownPlaceholder}
+                            listMode="SCROLLVIEW"
+                            ArrowDownIconComponent={({ style }) => (
+                                <Ionicons name="chevron-down" size={18} color="#999" style={style} />
+                            )}
+                            ArrowUpIconComponent={({ style }) => (
+                                <Ionicons name="chevron-up" size={18} color="#999" style={style} />
+                            )}
+                            tickIconStyle={{ tintColor: "#BE4145" }}
+                            zIndex={1000}
+                        />
+                    </View>
+
+                </View>
+
+
 
                 {/* Scrollable content */}
                 <ScrollView
@@ -396,7 +409,10 @@ const MyJobs = ({ navigation }) => {
                     contentContainerStyle={styles.scrollContentContainer}
                 >
                     {loading ? (
-                        <ActivityIndicator size="large" color="#BE4145" style={styles.loader} />
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color="#BE4145" />
+                            <Text style={styles.loadingText}>Loading profile...</Text>
+                        </View>
                     ) : error ? (
                         <Text style={styles.error}>{error}</Text>
                     ) : filteredJobs.length === 0 ? (
@@ -651,6 +667,19 @@ const styles = StyleSheet.create({
     scrollContentContainer: {
         paddingBottom: 78,
     },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fdf7f2',
+    },
+    loadingText: {
+        textAlign: 'center',
+        marginTop: 16,
+        fontSize: 16,
+        color: '#444444',
+        fontFamily: 'Inter-Regular',
+    },
     header: {
         fontSize: 24, // H1 heading 
         fontFamily: 'Montserrat-Bold',
@@ -697,61 +726,78 @@ const styles = StyleSheet.create({
     },
     leftSection: {
         flex: 1,
-        paddingRight: 60,
+        // backgroundColor: '#333',
+        // paddingRight: 60,
+        // minHeight: 50,
     },
     rightSection: {
-        position: 'absolute',
-        top: 16,
-        right: 16,
-    },
-    statusButton: {
-        minWidth: 64,
-        minHeight: 28,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 8,
-    },
-    statusText: {
-        fontSize: 13,
-        fontFamily: 'Inter-Regular',
-        textTransform: 'capitalize',
+        alignSelf: 'flex-start',  // ✅ keep in natural layout
+        marginLeft: 'auto',       // push it to right
     },
     jobTitle: {
         fontSize: 24,
         fontFamily: 'Montserrat-SemiBold',
-        color: '#333333', // primary color for clickables
-        marginBottom: 0,
+        color: '#333', // primary color for clickables
+        marginBottom: 2,
         textDecorationLine: 'underline', // signals clickability
     },
+
     companyName: {
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: 'Inter-Regular',
-        color: '#666666',
-        marginBottom: 24,
+        color: '#666',
+        marginBottom: 8, // space before attributes
     },
+
+    statusButton: {
+        minHeight: 28,
+        paddingHorizontal: 8,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f5f5f5',
+        marginLeft: 8,
+    },
+
+    statusText: {
+        fontSize: 12,
+        fontFamily: 'Inter-Regular',
+        textTransform: 'capitalize',
+    },
+
     attributesContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 0,
-        marginBottom: 8,
-        width: '80%',
+        flexDirection: "row",
+        // flexWrap: "wrap",
+        alignItems: "center",
+        gap: -8,
+        width: "100%",
+        marginTop: 4,
+        // marginBottom: 8, // 12 -> 8
+        marginLeft: -4, // aligns with job title
+        paddingBottom: 14,
     },
+
     attributeTag: {
-        backgroundColor: '#f9f9f9',
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        borderRadius: 100,
+        backgroundColor: "#f5f5f5",
         borderWidth: 1,
-        borderColor: '#e0e0e0',
-        marginRight: 6,
-        marginBottom: 6, // 8 -> 6 
+        borderColor: "#e0e0e0",
+        borderRadius: 20,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        flexDirection: "row",
+        alignItems: "center",
+        marginRight: 4,
+        marginBottom: 6,
+        minWidth: 36,
+        minHeight: 24,
     },
+
     attributeText: {
         fontSize: 12,
         color: '#666',
         fontFamily: 'Inter-Regular',
+        marginLeft: 4,
+        // textTransform: 'capitalize',
     },
     viewDetailsButton: {
         // Remove absolute positioning
@@ -768,8 +814,9 @@ const styles = StyleSheet.create({
         color: '#45a6be',
         fontSize: 14,
         fontFamily: 'Montserrat-SemiBold',
-        marginRight: 6,
+        // marginRight: 6,
         textDecorationLine: 'underline',
+        // marginTop: 2,
     },
     viewDetailsText1: {
         color: '#666666',
@@ -779,7 +826,9 @@ const styles = StyleSheet.create({
 
     },
     arrowIcon: {
-        marginLeft: 4,
+        // marginLeft: 4,
+        // fontSize: 16,
+        // size: 16,
     },
     hideButton: {
         display: 'none'
@@ -888,7 +937,7 @@ const styles = StyleSheet.create({
     topWhiteBackground: {
         backgroundColor: '#BE4145', // changed
         paddingTop: 16, // from 58 to 24
-        paddingBottom: 6,
+        paddingBottom: 0,
         paddingHorizontal: 16,
         zIndex: 1000,
         width: "100%",
@@ -896,55 +945,70 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e0e0e0',
     },
     headerRow: {
-        flexDirection: 'row',
+        flexDirection: 'column', // changed from 'row' to 'column'
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
     },
     postedJobsTitle: {
         fontFamily: 'Montserrat-SemiBold',
-        fontSize: 18, // 20 -> 18
-        color: '#222',
-        marginBottom: 20,
+        fontSize: 24, // 20 -> 18
+        color: '#ffffff',
+        marginBottom: 14,
     },
     filterDropdownWrapper: {
+        position: "relative",
         minWidth: '100%',
-        minWidth: 140,
         minHeight: 14,
-        alignItems: 'flex-end',
-        marginBottom: 14,
-        // marginLeft: -8,
+        alignItems: 'flex-start',
+        marginBottom: 6,
+        marginTop: 16,
+        zIndex: 1001,
     },
+
+    filterContainer:{
+        backgroundColor: '#f4f2ee',
+        // paddingHorizontal: "92
+        marginHorizontal: 20,
+        // paddingTop: 16,
+    },
+
     filterDropdown: {
         flexDirection: 'row',
-        // minWidth: '100%',
+        minWidth: '100%',
         alignItems: 'center',
+        paddingLeft: 44,
         backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#e0e0e0',
-        borderRadius: 8,
+        borderRadius: 12,
         height: 40,
-        paddingHorizontal: 16,
-        minWidth: 140,
-        justifyContent: 'center',
+        paddingHorizontal: 12,
+        justifyContent: 'space-between',
     },
+
     filterDropdownContainer: {
         borderColor: '#e0e0e0',
         borderRadius: 8,
         backgroundColor: '#fff',
-        zIndex: 1000,
+        zIndex: 1001,
     },
+
     filterDropdownText: {
         fontFamily: 'Inter-Regular',
         fontSize: 14,
         color: '#333',
+        marginLeft: 4,
         marginRight: 4,
     },
+
     filterDropdownPlaceholder: {
         color: '#999',
         fontFamily: 'Inter-Regular',
         fontSize: 14,
+        marginLeft: 4,
     },
+
     jobInfoCard: {
         backgroundColor: '#f9f9f9',
         borderRadius: 12,
@@ -956,6 +1020,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#333',
         marginBottom: 4,
+    },
+    filterIconInside: {
+        position: "absolute",
+        left: 14,
+        top: "63%",
+        transform: [{ translateY: -10 }], // centers vertically
+        zIndex: 1001,
     },
     jobInfoValue: {
         fontFamily: 'Inter-Regular',
@@ -969,6 +1040,32 @@ const styles = StyleSheet.create({
         color: '#333',
         marginBottom: 8,
     },
+    salaryCandidatesRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        // marginTop: 2,
+    },
+
+    salaryText: {
+        fontSize: 18,
+        fontFamily: 'Montserrat-SemiBold',
+        color: '#b44145',   // your primary color
+        // fontStyle: 'normal',
+    },
+
+    salaryUnit: {
+        fontSize: 12,
+        fontFamily: 'Inter-Regular',
+        color: '#666',      // subtle gray for "/month"
+    },
+
+    candidatesText: {
+        fontSize: 14,
+        fontFamily: 'Inter-Regular',
+        color: '#333',
+    },
+
     // headerRow: {
     //     flexDirection: 'row',
     //     alignItems: 'center',
@@ -1015,6 +1112,50 @@ const styles = StyleSheet.create({
     //     fontFamily: 'Inter-Regular',
     //     fontSize: 14,
     // },
+    actionButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: -4,
+        // paddingHorizontal: 4,
+        marginBottom: 12,
+        paddingBottom: 8,
+    },
+
+    salaryContainer: {
+        flex: 1,
+    },
+
+    salaryText: {
+        fontSize: 18,
+        fontFamily: 'Montserrat-SemiBold',
+        color: '#b44145',   // primary red
+    },
+
+    salaryUnit: {
+        fontSize: 12,
+        fontFamily: 'Inter-Regular',
+        color: '#666',
+    },
+
+    viewDetailsButton: {
+        paddingVertical: 6,
+        // paddingHorizontal: 10,
+        borderRadius: 8,
+        // marginLeft: 24,
+        // backgroundColor: '#333',
+    },
+
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    viewDetailsText: {
+        fontSize: 14,
+        color: '#45a6be',
+        marginRight: 4,
+    },
 });
 
 export default MyJobs;

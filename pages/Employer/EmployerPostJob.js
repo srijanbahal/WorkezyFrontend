@@ -362,7 +362,7 @@ const EmployerPostJob = ({ navigation }) => {
                 <Modal visible={modalVisible} animationType="slide" transparent>
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>Post a Job</Text>
+                            <Text style={styles.modalTitle}>Post a </Text>
 
                             <ScrollView keyboardShouldPersistTaps="handled">
                                 <TextInput

@@ -220,7 +220,7 @@ const EditProfile = ({ route }) => {
   // Handle phone number change and OTP request
   const handlePhoneChange = async () => {
     if (!newPhoneNumber || newPhoneNumber.length !== 10) {
-      showAlert('Error','Please enter a valid 10-digit phone number');
+      showAlert('Error', 'Please enter a valid 10-digit phone number');
       setTimeout(() => hideAlert(), 1000);
       return;
     }
@@ -233,7 +233,7 @@ const EditProfile = ({ route }) => {
         mobile: newPhoneNumber,
         userType: 'job_seeker'
       });
-      
+
       if (checkResponse.data.exists) {
         showAlert('', 'This mobile number is already used.', 'error');
         setIsLoading(false);
@@ -251,14 +251,14 @@ const EditProfile = ({ route }) => {
         setShowOtpInput(true);
         setTimer(30);
         setIsResendVisible(false);
-        showAlert('','OTP sent successfully', 'success');
+        showAlert('', 'OTP sent successfully', 'success');
         setTimeout(() => hideAlert(), 1000);
       } else {
         showAlert('Error', 'Failed to send OTP', 'error');
       }
     } catch (error) {
       console.log(error)
-      showAlert( error.response?.data?.message || 'Failed to send OTP');
+      showAlert(error.response?.data?.message || 'Failed to send OTP');
     } finally {
       setIsLoading(false);
     }
@@ -268,8 +268,8 @@ const EditProfile = ({ route }) => {
   const handleVerifyOTP = async () => {
     const enteredOTP = otp.join('');
     if (enteredOTP.length !== 4) {
-      showAlert( 'Please enter a valid 4-digit OTP');
-     
+      showAlert('Please enter a valid 4-digit OTP');
+
       return;
     }
 
@@ -293,11 +293,11 @@ const EditProfile = ({ route }) => {
         showAlert('Phone number verified successfully');
         setTimeout(() => hideAlert(), 1000);
       } else {
-        showAlert('','Invalid OTP. Please try again.');
+        showAlert('', 'Invalid OTP. Please try again.');
         setTimeout(() => hideAlert(), 1000);
       }
     } catch (error) {
-      showAlert( error.response?.data?.message || 'Failed to verify OTP');
+      showAlert(error.response?.data?.message || 'Failed to verify OTP');
       setTimeout(() => hideAlert(), 1000);
     } finally {
       setIsLoading(false);
@@ -348,8 +348,8 @@ const EditProfile = ({ route }) => {
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 50 }, (_, i) => ({
-    label: String(currentYear - i-18),
-    value: String(currentYear - i-18)
+    label: String(currentYear - i - 18),
+    value: String(currentYear - i - 18)
   }));
 
   const [errors, setErrors] = useState({
@@ -382,7 +382,7 @@ const EditProfile = ({ route }) => {
           day = String(date.getDate()).padStart(2, '0');
           month = String(date.getMonth() + 1).padStart(2, '0');
           year = String(date.getFullYear());
-          
+
           // Set the selected values for the dropdowns
           setSelectedDay(day);
           setSelectedMonth(month);
@@ -473,7 +473,7 @@ const EditProfile = ({ route }) => {
     }
 
     const newErrors = {};
-    
+
     // Validate required fields
     if (!formData.full_name) {
       newErrors.full_name = 'Please enter your full name';
@@ -514,7 +514,7 @@ const EditProfile = ({ route }) => {
 
     // If there are any errors, don't proceed with submission
     if (Object.keys(newErrors).length > 0) {
-      showAlert( "Please fill in all required fields");
+      showAlert("Please fill in all required fields");
       setTimeout(() => hideAlert(), 1000);
       return;
     }
@@ -580,7 +580,7 @@ const EditProfile = ({ route }) => {
     let newMonth = selectedMonth;
     let newYear = selectedYear;
 
-    switch(type) {
+    switch (type) {
       case 'day':
         newDay = value;
         setSelectedDay(value);
@@ -680,8 +680,8 @@ const EditProfile = ({ route }) => {
             {isEditingPhone && (
               <View style={styles.otpContainer}>
                 {!showOtpInput ? (
-                  <TouchableOpacity 
-                    style={[styles.verifyButton, { opacity: isLoading ? 0.7 : 1 }]} 
+                  <TouchableOpacity
+                    style={[styles.verifyButton, { opacity: isLoading ? 0.7 : 1 }]}
                     onPress={handlePhoneChange}
                     disabled={isLoading}
                   >
@@ -726,14 +726,14 @@ const EditProfile = ({ route }) => {
                         `Resend OTP in ${timer} seconds`
                       )}
                     </Text>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={[
                         styles.verifyButton,
-                        { 
+                        {
                           opacity: isLoading || otp.join('').length !== 4 ? 0.7 : 1,
                           marginTop: 16
                         }
-                      ]} 
+                      ]}
                       onPress={handleVerifyOTP}
                       disabled={isLoading || otp.join('').length !== 4}
                     >
@@ -752,6 +752,8 @@ const EditProfile = ({ route }) => {
             <View style={{ zIndex: 10000 }}>
               <DropDownPicker
                 open={activeDropdown === 'gender'}
+              tickIconStyle={{ tintColor: "#BE4145" }}
+
                 value={formData.gender}
                 items={genderItems}
                 setOpen={isOpen => {
@@ -782,6 +784,8 @@ const EditProfile = ({ route }) => {
               <View style={styles.datePickerColumnDay}>
                 <DropDownPicker
                   open={activeDropdown === 'day'}
+              tickIconStyle={{ tintColor: "#BE4145" }}
+
                   value={selectedDay}
                   items={days}
                   setOpen={isOpen => {
@@ -806,6 +810,8 @@ const EditProfile = ({ route }) => {
               <View style={styles.datePickerColumnMonth}>
                 <DropDownPicker
                   open={activeDropdown === 'month'}
+              tickIconStyle={{ tintColor: "#BE4145" }}
+
                   value={selectedMonth}
                   items={months}
                   setOpen={isOpen => {
@@ -830,6 +836,8 @@ const EditProfile = ({ route }) => {
               <View style={styles.datePickerColumnYear}>
                 <DropDownPicker
                   open={activeDropdown === 'year'}
+                  tickIconStyle={{ tintColor: "#BE4145" }}
+
                   value={selectedYear}
                   items={years}
                   setOpen={isOpen => {
@@ -865,6 +873,7 @@ const EditProfile = ({ route }) => {
             <Text style={styles.label}>State<Text style={styles.requiredStar}>*</Text></Text>
             <DropDownPicker
               open={activeDropdown === 'state'}
+              tickIconStyle={{ tintColor: "#BE4145" }}
               value={formData.state}
               items={stateItems}
               setOpen={isOpen => {
@@ -900,6 +909,7 @@ const EditProfile = ({ route }) => {
             <Text style={styles.label}>Highest Education<Text style={styles.requiredStar}>*</Text></Text>
             <DropDownPicker
               open={activeDropdown === 'education'}
+              tickIconStyle={{ tintColor: "#BE4145" }}
               value={formData.highestEducation}
               items={educationItems}
               setOpen={isOpen => {
@@ -946,6 +956,7 @@ const EditProfile = ({ route }) => {
               listMode="SCROLLVIEW"
               placeholderStyle={{ color: "#b4b4b4", fontSize: 14 }}
               textStyle={{ fontSize: 14, color: "#333333" }}
+              tickIconStyle={{ tintColor: "#BE4145" }}
             />
             {errors.experience ? <Text style={styles.errorText}>{errors.experience}</Text> : null}
             {/* Role */}
@@ -973,6 +984,7 @@ const EditProfile = ({ route }) => {
               listMode="SCROLLVIEW"
               placeholderStyle={{ color: "#b4b4b4", fontSize: 14 }}
               textStyle={{ fontSize: 14, color: "#333333" }}
+              tickIconStyle={{ tintColor: "#BE4145" }}
             />
             {errors.industry ? <Text style={styles.errorText}>{errors.industry}</Text> : null}
           </View>
@@ -995,11 +1007,11 @@ const EditProfile = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
+  container: {
+    flex: 1,
     backgroundColor: '#f4f2ee',
     padding: 16,
-    marginBottom:36,
+    marginBottom: 36,
   },
   contentContainer: {
     paddingBottom: 26,
@@ -1122,8 +1134,8 @@ const styles = StyleSheet.create({
 
   dateInputContainer: {
     marginBottom: 15,
-    borderWidth:1,
-    borderColor:"#e4e4e4",
+    borderWidth: 1,
+    borderColor: "#e4e4e4",
   },
   datePickerRow: {
     flexDirection: 'row',
@@ -1135,14 +1147,15 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 0,
   },
- 
+
   datePickerColumnDay: {
     flexBasis: '25%',
     maxWidth: '25%',
   },
-  dropdownContainer:{
-      borderWidth:1,
-      borderColor:"#e4e4e4",
+  dropdownContainer: {
+    borderWidth: 1,
+    borderColor: "#e4e4e4",
+    marginBottom: 16,
   },
   datePickerColumnMonth: {
     flexBasis: '40%',
@@ -1156,8 +1169,8 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     borderRadius: 8,
     backgroundColor: '#ffffff',
-    borderWidth:1,
-      borderColor:"#e4e4e4",
+    borderWidth: 1,
+    borderColor: "#e4e4e4",
   },
   saveButton: {
     backgroundColor: '#be4145',
@@ -1359,7 +1372,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: '#ffffff',
     padding: 16,
-    paddingBottom:24,
+    paddingBottom: 24,
     paddingHorizontal: 16,
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',

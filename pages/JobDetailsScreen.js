@@ -10,7 +10,7 @@ import BottomNav from '../component/BottomNav';
 const JobDetailsScreen = ({ route, navigation }) => {
   const { job } = route.params;
 
-  
+
   const [userId, setUserId] = useState(null);
   const [userEducation, setUserEducation] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
@@ -24,7 +24,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
     title: '',
     showCancel: false,
     onConfirm: null
-    
+
   });
 
   const showAlert = (message, type = 'info', title = '', showCancel = false, onConfirm = null) => {
@@ -34,7 +34,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
       type,
       title,
       showCancel,
-      
+
     });
   };
 
@@ -51,7 +51,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
           setUserId(parsedUser.id);
           setUserEducation(parsedUser.education);
           console.log("My Details", parsedUser);
-          
+
           // Fetch user profile for scoring
           try {
             const profileResponse = await getProfileDetails(parsedUser.id, 'job_seeker');
@@ -73,18 +73,18 @@ const JobDetailsScreen = ({ route, navigation }) => {
   // Calculate relevant candidate score
   const calculateRelevantScore = () => {
     if (!userProfile || !job) return { relevant_candidate: false, relevant_score: 0 };
-    
+
     let score = 0;
     let totalFactors = 0;
-    
+
     // Check category match first
     const jobCategory = job.category || job.job_category;
     const userCategory = userProfile.role || userProfile.role;
-    
+
     if (jobCategory && userCategory && jobCategory.toLowerCase() !== userCategory.toLowerCase()) {
       return { relevant_candidate: false, relevant_score: 0 };
     }
-    
+
     // Factor 1: Gender match (1 point)
     if (job.preferred_gender) {
       totalFactors++;
@@ -93,7 +93,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
         score++;
       }
     }
-    
+
     // Factor 2: Age requirement (1 point)
     if (job.min_age) {
       totalFactors++;
@@ -102,7 +102,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
         score++;
       }
     }
-    
+
     // Factor 3: Education requirement (1 point)
     if (job.min_education) {
       totalFactors++;
@@ -111,21 +111,21 @@ const JobDetailsScreen = ({ route, navigation }) => {
         score++;
       }
     }
-    
+
     // Factor 4-6: Question answers (0-3 points)
     if (jobQuestions.length > 0) {
       const questionScore = calculateQuestionScore();
       score += questionScore;
       totalFactors += jobQuestions.length;
     }
-    
+
     // Determine if candidate is relevant
     // If we have n factors, candidate should score n or n-1 to be preferred
     const relevant_candidate = totalFactors > 0 && (score >= totalFactors - 1);
-    
+
     return { relevant_candidate, relevant_score: score };
   };
-  
+
   // Calculate age from date of birth
   const calculateAgeFromDOB = (dob) => {
     if (!dob) return null;
@@ -138,7 +138,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
     }
     return age;
   };
-  
+
   // Check if user education meets job requirement
   const meetsEducationRequirement = (userEducation, jobEducation) => {
     const educationLevels = {
@@ -148,23 +148,23 @@ const JobDetailsScreen = ({ route, navigation }) => {
       'PG': 4,
       'PhD': 5
     };
-    
+
     const userLevel = educationLevels[userEducation] || 0;
     const jobLevel = educationLevels[jobEducation] || 0;
-    
+
     return userLevel >= jobLevel;
   };
-  
+
   // Calculate score based on question answers
   const calculateQuestionScore = () => {
     let score = 0;
     jobQuestions.forEach(question => {
       const candidateAnswer = questionAnswers[question.id];
       const idealAnswer = question.ideal_answer;
-      
+
       // Compare candidate answer with ideal answer
-      if (candidateAnswer && idealAnswer && 
-          candidateAnswer.toLowerCase() === idealAnswer.toLowerCase()) {
+      if (candidateAnswer && idealAnswer &&
+        candidateAnswer.toLowerCase() === idealAnswer.toLowerCase()) {
         score++;
       }
     });
@@ -191,7 +191,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
     try {
       // Calculate relevant score
       const { relevant_candidate, relevant_score } = calculateRelevantScore();
-      
+
       // First submit the job application with new parameters
       const applicationResponse = await applyJob({
         jobId: job.id,
@@ -205,7 +205,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
         // If there are questions and answers, submit them
         if (jobQuestions.length > 0 && Object.keys(questionAnswers).length > 0) {
           const applicationId = applicationResponse.data.applicationId;
-          
+
           // Format responses according to the backend schema
           const responses = jobQuestions.map(question => ({
             questionId: parseInt(question.id),
@@ -227,7 +227,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
             // Log submission stats if available
             if (questionResponse.data.stats) {
               console.log('Question response stats:', questionResponse.data.stats);
-              
+
               // If there are any failed submissions, show a warning
               if (questionResponse.data.stats.failed > 0) {
                 showAlert(
@@ -244,7 +244,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
             return;
           }
         }
-        
+
         showAlert('Application submitted successfully!', 'success');
 
         setTimeout(() => {
@@ -336,14 +336,14 @@ const JobDetailsScreen = ({ route, navigation }) => {
         <View style={styles.card}>
           <View style={styles.headerContainer}>
             {job.company_logo ? (
-              <Image 
-                source={{ uri: job.company_logo }} 
-                style={styles.companyLogo} 
+              <Image
+                source={{ uri: job.company_logo }}
+                style={styles.companyLogo}
                 resizeMode="contain"
               />
             ) : (
               <View style={styles.placeholderLogo}>
-                <Text style={styles.logoText}>Logo</Text>
+                <Text style={styles.logoText}>{item.company?.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'QT'}</Text>
               </View>
             )}
             <View style={styles.headerText}>
@@ -390,9 +390,9 @@ const JobDetailsScreen = ({ route, navigation }) => {
           <Text style={styles.companySectionTitle}>Company Information</Text>
           <View style={styles.companyHeaderRow}>
             {job.company_logo ? (
-              <Image 
-                source={{ uri: job.company_logo }} 
-                style={styles.companyInitialLogo} 
+              <Image
+                source={{ uri: job.company_logo }}
+                style={styles.companyInitialLogo}
                 resizeMode="contain"
               />
             ) : (
@@ -424,7 +424,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
               <Text style={styles.companyMetaLabel2}>City</Text>
               <Text style={styles.companyMetaValue2}>{job.city || 'N/A'}</Text>
             </View>
-          
+
           </View>
           <Text style={styles.companyDescription2}>{job.company_description || 'No company description available.'}</Text>
         </View>
@@ -475,7 +475,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
               </ScrollView>
 
               <View style={styles.modalButtons}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.cancelButton}
                   onPress={() => {
                     setShowQuestionsModal(false);
@@ -484,7 +484,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
                 >
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[
                     styles.submitButton,
                     Object.keys(questionAnswers).length !== jobQuestions.length && styles.submitButtonDisabled
@@ -519,20 +519,20 @@ const JobDetailsScreen = ({ route, navigation }) => {
             style={[
               styles.applyButton,
               job.status === 'Interested' ? styles.statusInterested :
-              job.status === 'Applied' || job.status=='applied' ? styles.statusApplied :
-              job.status === 'Rejected' ? styles.statusRejected :
-              job.status === 'Expired' ? styles.statusExpired :
-              styles.statusDefault
+                job.status === 'Applied' || job.status == 'applied' ? styles.statusApplied :
+                  job.status === 'Rejected' ? styles.statusRejected :
+                    job.status === 'Expired' ? styles.statusExpired :
+                      styles.statusDefault
             ]}
             disabled={job.status === 'Applied' || job.status === 'Interested' || job.status === 'Rejected' || job.status === 'Expired'}
           >
             <Text style={[
               styles.statusText,
               job.status === 'Interested' ? styles.statusTextInterested :
-              job.status === 'Applied' || job.status=="applied" ? styles.statusTextApplied :
-              job.status === 'Rejected' ? styles.statusTextRejected :
-              job.status === 'Expired' ? styles.statusTextExpired :
-              styles.statusTextDefault
+                job.status === 'Applied' || job.status == "applied" ? styles.statusTextApplied :
+                  job.status === 'Rejected' ? styles.statusTextRejected :
+                    job.status === 'Expired' ? styles.statusTextExpired :
+                      styles.statusTextDefault
             ]}>{job.status || "Applied"}</Text>
           </Button>
         ) : (
@@ -541,7 +541,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       </View>
-     
+
     </View>
   );
 };
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     color: '#333333',
     marginBottom: 4,
-    
+
   },
   companyName: {
     fontSize: 14,
@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     shadowColor: 'transparent',
   },
-  companySectionTitle:{
+  companySectionTitle: {
     fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: '#333333',
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
-    paddingVertical:12,
+    paddingVertical: 12,
   },
   companyInitialLogo: {
     width: 40,
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 0,
-    marginRight:12,
+    marginRight: 12,
   },
   companyInitialText: {
     fontSize: 16,
@@ -734,7 +734,7 @@ const styles = StyleSheet.create({
   companyMetaCol2: {
     flex: 1,
     minWidth: 80,
-    marginBottom:16,
+    marginBottom: 16,
   },
   companyMetaLabel2: {
     fontSize: 12,
@@ -772,7 +772,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(245, 124, 0, 1)',
     borderWidth: 1,
     opacity: 0.85,
-    color:'rgba(245, 124, 0, 1)',
+    color: 'rgba(245, 124, 0, 1)',
   },
   statusRejected: {
     backgroundColor: 'rgba(255, 235, 238, 1)',
@@ -789,10 +789,10 @@ const styles = StyleSheet.create({
   statusDefault: {
     backgroundColor: '#9E9E9E',
   },
-  statusText: { 
-    fontSize: 16, 
-    fontFamily: 'Montserrat-SemiBold', 
-    textAlign: 'center' 
+  statusText: {
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
+    textAlign: 'center'
   },
   statusTextInterested: {
     color: 'rgba(46, 125, 50, 1)',
@@ -918,12 +918,12 @@ const styles = StyleSheet.create({
   },
   stickyButtonContainer: {
     position: 'absolute',
-    bottom:0,
+    bottom: 0,
     left: 0,
     right: 0,
     backgroundColor: '#ffffff',
     padding: 0,
-    paddingHorizontal:16,
+    paddingHorizontal: 16,
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
     shadowColor: '#000',

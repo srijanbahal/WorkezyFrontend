@@ -104,6 +104,8 @@ const AppliedJobsScreen = ({ navigation }) => {
 
   const renderJobItem = ({ item }) => (
     <View style={styles.jobCard}>
+
+      {/* Top Section  */}
       <View style={{ flexDirection: 'row', width: '100%' }}>
         {/* Logo Section (left) */}
         <View style={styles.logoSection}>
@@ -111,7 +113,11 @@ const AppliedJobsScreen = ({ navigation }) => {
             <Image source={{ uri: item.company_logo }} style={styles.companyLogo} />
           ) : (
             <View style={styles.placeholderLogo}>
-              <Text style={styles.logoText}>{item.company?.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'QT'}</Text>
+              <Text style={styles.logoText}>
+                {(item.company?.split(' ').map(w => w[0]).join('') || 'QT')
+                  .slice(0, 2)
+                  .toUpperCase()}
+              </Text>
             </View>
           )}
         </View>
@@ -119,13 +125,6 @@ const AppliedJobsScreen = ({ navigation }) => {
         <View style={[styles.detailsSection, { flex: 1 }]}>
           <Text style={styles.jobTitle}>{item.title}</Text>
           <Text style={styles.company}>{item.company}</Text>
-          <View style={styles.keywordsRow}>
-            <View style={styles.keywordPill}><Text style={styles.keywordText}>{item.salary ? `₹${item.salary}/month` : '-'}</Text></View>
-            <View style={styles.keywordPill}><Text style={styles.keywordText}>{item.city}</Text></View>
-            <View style={styles.keywordPill}><Text style={styles.keywordText}>{item.experience || '-'}</Text></View>
-            <View style={styles.keywordPill}><Text style={styles.keywordText}>{item.job_type}</Text></View>
-
-          </View>
         </View>
         {/* Status Pill (top-right) */}
         <View style={styles.statusSection}>
@@ -148,6 +147,29 @@ const AppliedJobsScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
+      {/* Attributes Row */}
+      <View style={styles.keywordsRow}>
+        <View style={styles.keywordPill}>
+          <Ionicons name="cash-outline" size={14} style={{ marginRight: 4 }} />
+          <Text style={styles.keywordText}>{item.salary ? `₹${item.salary}/month` : '-'}</Text>
+        </View>
+
+        <View style={styles.keywordPill}>
+          <Ionicons name="location-outline" size={14} style={{ marginRight: 4 }} />
+          <Text style={styles.keywordText}>{item.city}</Text>
+        </View>
+
+        <View style={styles.keywordPill}>
+          <Ionicons name="briefcase-outline" size={14} style={{ marginRight: 4 }} />
+          <Text style={styles.keywordText}>{item.experience || '-'}</Text>
+        </View>
+
+        <View style={styles.keywordPill}>
+          <Ionicons name="time-outline" size={14} style={{ marginRight: 4 }} />
+          <Text style={styles.keywordText}>{item.job_type}</Text>
+        </View>
+      </View>
+
       {/* Bottom Row with Applied Date and View Details Button - full width */}
       <View style={styles.bottomRow}>
         <Text style={styles.appliedDate}>
@@ -167,7 +189,7 @@ const AppliedJobsScreen = ({ navigation }) => {
     <>
       <View style={styles.container}>
         {/* Sticky filters container */}
-        <View style={styles.topWhiteBackground}>
+        {/* <View style={styles.topWhiteBackground}>
           <View style={styles.filters}>
             <View style={styles.filterDropdownWrapper}>
               <DropDownPicker
@@ -189,6 +211,46 @@ const AppliedJobsScreen = ({ navigation }) => {
             <TouchableOpacity style={styles.filterButton} onPress={() => filterJobs(selectedFilter)}>
               <Text style={styles.filterButtonText}>Filter</Text>
             </TouchableOpacity>
+          </View>
+        </View> */}
+        <View style={styles.topWhiteBackground}>
+          <View style={styles.headerRow}>
+            <Text style={styles.homeTitle}>Applied Jobs</Text>
+          </View>
+
+
+        </View>
+
+        <View style={styles.filters}>
+          {/* Filter Icon inside input */}
+          <Ionicons
+            name="filter"
+            size={20}
+            color="#999"
+            style={styles.filterIconInside}
+          />
+          <View style={styles.filterDropdownWrapper}>
+            <DropDownPicker
+              open={openFilter}
+              value={selectedFilter}
+              items={filterOptions}
+              setOpen={setOpenFilter}
+              setValue={callback => {
+                const value = callback(selectedFilter);
+                setSelectedFilter(value);
+                filterJobs(value); // automatically filter on select
+              }}
+              placeholder="Select Status"
+              style={styles.filterDropdown}
+              listMode="SCROLLVIEW"
+              dropDownContainerStyle={styles.filterDropdownContainer}
+              textStyle={styles.filterDropdownText}
+              placeholderStyle={styles.filterDropdownPlaceholder}
+              // labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16, color: '#333' }}
+              selectedItemLabelStyle={{ color: '#be4145', fontFamily: 'Montserrat-SemiBold' }}
+              tickIconStyle={{ tintColor: "#BE4145" }}
+              zIndex={2000}
+            />
           </View>
         </View>
 
@@ -309,52 +371,116 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f4f2ee',
     paddingHorizontal: 8,
+    marginTop: 8,
   },
   scrollContentContainer: {
     paddingBottom: 78,
   },
   topWhiteBackground: {
-    backgroundColor: '#fff',
-    paddingTop: 16,
-    paddingBottom: 8,
-    paddingHorizontal: 8,
+    backgroundColor: '#BE4145', // changed
+    paddingTop: 16, // from 58 to 24
+    paddingBottom: 0,
+    paddingHorizontal: 16,
     zIndex: 1000,
     width: "100%",
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
-  filters: {
-    flexDirection: 'row',
+  headerRow: {
+    flexDirection: 'column', // changed from 'row' to 'column'
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 8,
-    paddingVertical: 12,
+    justifyContent: 'space-between',
+    gap: 0,
     width: '100%',
   },
-  filterDropdownWrapper: {
-    flex: 1,
-    marginRight: 8,
-  },
-  filterButton: {
-    backgroundColor: '#be4145',
-    borderRadius: 8,
-    minHeight: 44,
-    minWidth: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    shadowColor: '#b4b4b4',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  filterButtonText: {
-    color: '#fff',
-    fontSize: 18,
+  homeTitle: {
     fontFamily: 'Montserrat-SemiBold',
+    fontSize: 24, // 20 -> 18
+    color: '#ffffff',
+    marginBottom: 16,
   },
+  filters: {
+
+    backgroundColor: 'transparent',
+    paddingHorizontal: 16,
+    // minHeight: 75
+    paddingBottom: 8,
+    // marginRight: 2,
+    // paddingTop: 16,
+  },
+  filterDropdownWrapper: {
+    // flex: 1,
+    // marginRight: 8,
+    position: "relative",
+    minWidth: '100%',
+    // minHeight: 24,
+    alignItems: 'flex-start',
+    paddingBottom: 8,
+    marginTop: 16,
+    zIndex: 3000,
+  },
+  filterDropdown: {
+    flexDirection: 'row',
+    minWidth: '100%',
+    alignItems: 'center',
+    paddingLeft: 44,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 12,
+    height: 40,
+    paddingHorizontal: 12,
+    justifyContent: 'space-between',
+  },
+
+  filterDropdownContainer: {
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    zIndex: 1001,
+  },
+
+  filterDropdownText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    color: '#333',
+    marginLeft: 4,
+    marginRight: 4,
+  },
+
+  filterDropdownPlaceholder: {
+    color: '#999',
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    marginLeft: 4,
+  },
+
+  filterIconInside: {
+    position: "absolute",
+    left: '9%',
+    top: "66%",
+    transform: [{ translateY: -10 }], // centers vertically
+    zIndex: 3000,
+  },
+  // filterButton: {
+  //   backgroundColor: '#be4145',
+  //   borderRadius: 8,
+  //   minHeight: 44,
+  //   minWidth: 100,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   paddingHorizontal: 24,
+  //   shadowColor: '#b4b4b4',
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacity: 0.08,
+  //   shadowRadius: 4,
+  //   elevation: 2,
+  // },
+  // filterButtonText: {
+  //   color: '#fff',
+  //   fontSize: 18,
+  //   fontFamily: 'Montserrat-SemiBold',
+  // },
   dropdownMenu: {
     position: 'absolute',
     top: 60,
@@ -372,27 +498,27 @@ const styles = StyleSheet.create({
     zIndex: 2000,
     paddingVertical: 8,
   },
-  dropdownItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    backgroundColor: 'transparent',
-  },
-  selectedDropdownItem: {
-    backgroundColor: '#fff5f3',
-    borderRadius: 8,
-  },
-  dropdownItemText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#333',
-  },
-  selectedDropdownItemText: {
-    color: '#be4145',
-    fontFamily: 'Montserrat-SemiBold',
-  },
-jobCard: {
+  // dropdownItem: {
+  //   paddingVertical: 12,
+  //   paddingHorizontal: 20,
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: '#f0f0f0',
+  //   backgroundColor: 'transparent',
+  // },
+  // selectedDropdownItem: {
+  //   backgroundColor: '#fff5f3',
+  //   borderRadius: 8,
+  // },
+  // dropdownItemText: {
+  //   fontSize: 16,
+  //   fontFamily: 'Inter-Regular',
+  //   color: '#333',
+  // },
+  // selectedDropdownItemText: {
+  //   color: '#be4145',
+  //   fontFamily: 'Montserrat-SemiBold',
+  // },
+  jobCard: {
     flexDirection: 'column',
     backgroundColor: '#fff',
     padding: 16,
@@ -470,6 +596,9 @@ jobCard: {
     marginBottom: 8,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    flexDirection: 'row',
+    alignItems: 'center',
+
   },
   keywordText: {
     fontSize: 12,
@@ -652,7 +781,7 @@ jobCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 8,
     position: 'relative',
   },
   buttonContent: {

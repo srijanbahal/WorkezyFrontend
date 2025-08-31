@@ -563,7 +563,7 @@ const EmployerRegistration = ({ route }) => {
     if (!legalDocs || legalDocs.length === 0) {
       newErrors.legalDocs = 'Please upload PAN Card';
     }
-    if (personalDoc) {
+    if (!personalDoc) {
       newErrors.personalDoc = 'Invalid GST Certificate file';
     }
 
@@ -1535,6 +1535,7 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     borderRadius: 8,
     backgroundColor: '#ffffff',
+    marginBottom: 6,
   },
   button: {
     backgroundColor: 'transparent',

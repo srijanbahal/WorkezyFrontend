@@ -1036,7 +1036,7 @@ const EditEmployerProfile = ({ route }) => {
                   ) : (
                     <Text style={styles.placeholderText}>No document uploaded</Text>
                   )}
-                  <Ionicons name="lock-closed" size={20} color="#999" />
+                  <Ionicons name="lock-closed" size={20} color="#999" style={styles.lock} />
                 </View>
               </View>
             </View>
@@ -1051,11 +1051,12 @@ const EditEmployerProfile = ({ route }) => {
                   {formData.personalDoc ? (
                     <Text style={styles.fileName}>
                       {String(formData.personalDoc).split('/').pop()}
+
                     </Text>
                   ) : (
                     <Text style={styles.placeholderText}>No document uploaded</Text>
                   )}
-                  <Ionicons name="lock-closed" size={20} color="#999" />
+                  <Ionicons name="lock-closed" size={20} color="#999" style={styles.lock} />
                 </View>
               </View>
             </View>
@@ -1074,7 +1075,7 @@ const EditEmployerProfile = ({ route }) => {
                   ) : (
                     <Text style={styles.placeholderText}>No logo uploaded</Text>
                   )}
-                  <Ionicons name="lock-closed" size={20} color="#999" />
+                  <Ionicons name="lock-closed" size={20} color="#999" style={styles.lock} />
                 </View>
               </View>
             </View>
@@ -1195,7 +1196,11 @@ const styles = StyleSheet.create({
   dropdownContainer: {
     borderColor: '#e0e0e0',
     borderRadius: 8,
-    backgroundColor: '#ffffff',
+    // backgroundColor: '#333',
+    // marginTop: -8,
+    // marginTop: 4,.
+    marginBottom: 14,
+    zIndex: 10000, // Ensure dropdown appears above other elements
   },
   button: {
     backgroundColor: '#ffffff',
@@ -1233,6 +1238,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
     marginBottom: 12,
+    flex: 1,
+    // flexWrap: 'wrap',
   },
   dropdownListContainer: {
     position: 'relative',
@@ -1320,16 +1327,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  lockText: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 14,
-    color: '#666666',
-    marginLeft: 8,
-  },
+  // lockText: {
+  //   fontFamily: 'Inter-Regular',
+  //   fontSize: 14,
+  //   color: '#666666',
+  //   marginLeft: 8,
+  // },
   documentPreview: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
+    // overflow: 'scroll',
+    flex: 'column', // allow container to shrink properly
   },
   placeholderText: {
     fontFamily: 'Inter-Regular',
@@ -1457,6 +1466,11 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  lock: {
+    marginLeft: 8,
+    marginBottom: 12,
+    flex: 1,
+  }
 });
 
 export default EditEmployerProfile;

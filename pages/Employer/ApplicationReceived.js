@@ -110,9 +110,9 @@ const ApplicationReceived = ({ route, navigation }) => {
     if (item.experience_years) attributeTags.push(item.experience_years);
     if (item.highest_education) attributeTags.push(item.highest_education);
     if (item.role) attributeTags.push(item.role);
-    if (item.expected_salary) attributeTags.push(`$${item.expected_salary}`);
-    // if (item.role) attributeTags.push(item.role);
-    else attributeTags.push('Salary not specified');
+    // if (item.expected_salary) attributeTags.push(`$${item.expected_salary}`);
+    // // if (item.role) attributeTags.push(item.role);
+    // else attributeTags.push('Salary not specified');
 
     return (
       <View style={styles.jobCardRedesigned}>
@@ -184,7 +184,7 @@ const ApplicationReceived = ({ route, navigation }) => {
 
   const FilterSection = () => (
     <View style={styles.filterRowRedesigned}>
-      <Text style={styles.headerRedesigned}>Candidates</Text>
+      {/* <Text style={styles.headerRedesigned}>Candidates</Text> */}
       <View style={styles.filterDropdownWrapperRedesigned}>
         <DropDownPicker
           open={filterOpen}
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
   jobCardRedesigned: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 20,
+    padding: 16,
     marginVertical: 10,
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -544,27 +544,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginBottom: 12,
+    textTransform: 'capitalize',
   },
   attributesContainerRedesigned: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 0,
-    marginBottom: 16,
-  },
-  attributeTagRedesigned: {
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderColor: '#e0e0e0',
-    borderRadius: 100,
-    borderWidth: 0,
-    marginRight: 8,
-    marginBottom: 8,
-  },
+        flexDirection: "row",
+        // flexWrap: "wrap",
+        alignItems: "center",
+        gap: 4,
+        width: "100%",
+        marginTop: 4,
+        marginBottom: 8, // 12 -> 8
+        marginLeft: -4, // aligns with job title
+
+    },
+
+    attributeTagRedesigned: {
+        backgroundColor: "#f5f5f5",
+        borderWidth: 1,
+        borderColor: "#e0e0e0",
+        borderRadius: 20,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        flexDirection: "row",
+        alignItems: "center",
+        marginRight: 4,
+        marginBottom: 6,
+    },
+
   attributeTextRedesigned: {
     fontSize: 12,
     color: '#444',
     fontFamily: 'Inter-Regular',
+    textTransform: 'capitalize',
   },
   viewDetailsButtonRedesigned: {
     alignSelf: 'flex-end',
@@ -600,7 +611,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   filterDropdownWrapperRedesigned: {
-    minWidth: 140,
+    // minWidth: 140,
+    minWidth: '100%',
+    marginTop: -8,
     alignItems: 'flex-end',
   },
   filterDropdownRedesigned: {

@@ -54,8 +54,55 @@ const JobListScreen = ({ navigation }) => {
     { city: "London", country: "UK" },
   ];
 
-  // Sample Job Titles
-  const industryItems = [
+  // // Sample Job Titles
+  // const industryItems = [
+  //   { label: 'All', value: 'all' },
+  //   { label: 'Admin', value: 'admin' },
+  //   { label: 'Babysitter', value: 'babysitter' },
+  //   { label: 'Back Office', value: 'back_office' },
+  //   { label: 'Bartender', value: 'bartender' },
+  //   { label: 'Beautician', value: 'beautician' },
+  //   { label: 'Business Development', value: 'business_development' },
+  //   { label: 'Carpenter', value: 'carpenter' },
+  //   { label: 'Compounder', value: 'compounder' },
+  //   { label: 'Content Writer', value: 'content_writer' },
+  //   { label: 'Customer Support', value: 'customer_support' },
+  //   { label: 'Data Entry', value: 'data_entry' },
+  //   { label: 'Digital Marketing', value: 'digital_marketing' },
+  //   { label: 'Education', value: 'education' },
+  //   { label: 'Electrician', value: 'electrician' },
+  //   { label: 'Field Sales', value: 'field_sales' },
+  //   { label: 'Finance', value: 'finance' },
+  //   { label: 'Graphics Designer', value: 'graphics_designer' },
+  //   { label: 'Healthcare', value: 'healthcare' },
+  //   { label: 'Hotel Manager', value: 'hotel_manager' },
+  //   { label: 'House Cleaner', value: 'house_cleaner' },
+  //   { label: 'Housekeeping', value: 'housekeeping' },
+  //   { label: 'IT', value: 'it' },
+  //   { label: 'Key Account Manager (KAM)', value: 'kam' },
+  //   { label: 'Lab Technician', value: 'lab_technician' },
+  //   { label: 'Machine Operator', value: 'machine_operator' },
+  //   { label: 'Maid / Caretaker', value: 'maid_caretaker' },
+  //   { label: 'Mechanic', value: 'mechanic' },
+  //   { label: 'Nanny', value: 'nanny' },
+  //   { label: 'Nurse', value: 'nurse' },
+  //   { label: 'Office Boy', value: 'office_boy' },
+  //   { label: 'Operations', value: 'operations' },
+  //   { label: 'Other', value: 'other' },
+  //   { label: 'Painter', value: 'painter' },
+  //   { label: 'Pest Control', value: 'pest_control' },
+  //   { label: 'Plumber', value: 'plumber' },
+  //   { label: 'Procurement/Purchase', value: 'procurement_purchase' },
+  //   { label: 'Receptionist', value: 'receptionist' },
+  //   { label: 'Supply Chain', value: 'supply_chain' },
+  //   { label: 'Tailor', value: 'tailor' },
+  //   { label: 'Technician (AC, Refrigerator, etc.)', value: 'technician' },
+  //   { label: 'Warehouse Worker', value: 'warehouse_worker' },
+  //   { label: 'Web Developer', value: 'web_developer' },
+  //   { label: 'Welder', value: 'welder' }
+  // ];
+
+  const [industryItems, setIndustryItems] = useState([
     { label: 'All', value: 'all' },
     { label: 'Admin', value: 'admin' },
     { label: 'Babysitter', value: 'babysitter' },
@@ -100,7 +147,8 @@ const JobListScreen = ({ navigation }) => {
     { label: 'Warehouse Worker', value: 'warehouse_worker' },
     { label: 'Web Developer', value: 'web_developer' },
     { label: 'Welder', value: 'welder' }
-  ];
+  ]);
+
 
   useEffect(() => {
     fetchAppliedJobs();
@@ -262,38 +310,50 @@ const JobListScreen = ({ navigation }) => {
   const renderJobItem = ({ item }) => (
     <View style={styles.jobCard}>
       {/* Right Section - Company Logo */}
-      <View style={styles.rightSection}>
-        {item.company_logo ? (
-          <Image source={{
-            uri: item.company_logo,
-          }}
-            style={styles.companyLogo}
-          />
-        ) : (
-          <View style={styles.placeholderLogo}>
-            <Text style={styles.logoText}>{item.company?.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'QT'}</Text>
-          </View>
-        )}
+      <View style={styles.topSection}>
+        {/* Left Side - Job Title + Company Name */}
+        <View style={styles.leftSection}>
+          <Text style={styles.jobTitle}>{item.title}</Text>
+          <Text style={styles.company}>{item.company}</Text>
+        </View>
+
+        {/* Right Side - Company Logo */}
+        <View style={styles.rightSection}>
+          {item.company_logo ? (
+            <Image
+              source={{ uri: item.company_logo }}
+              style={styles.companyLogo}
+            />
+          ) : (
+            <View style={styles.placeholderLogo}>
+              <Text style={styles.logoText}>
+                {item.company?.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'QT'}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
 
-      {/* Left Section - Job Details */}
-      <View style={styles.leftSection}>
-        <Text style={styles.jobTitle}>{item.title}</Text>
-        <Text style={styles.company}>{item.company}</Text>
-      </View>
 
       {/* Job Attributes Row - moved out of leftSection */}
       <View style={styles.attributesContainer}>
         <View style={styles.attributeTag}>
+          <Ionicons name="cash-outline" size={16} style={{ marginRight: 6 }} />
           <Text style={styles.attributeText}>₹{item.salary}/month</Text>
         </View>
+
         <View style={styles.attributeTag}>
+          <Ionicons name="location-outline" size={16} style={{ marginRight: 6 }} />
           <Text style={styles.attributeText}>{item.city}, {item.country}</Text>
         </View>
+
         <View style={styles.attributeTag}>
+          <Ionicons name="briefcase-outline" size={16} style={{ marginRight: 6 }} />
           <Text style={styles.attributeText}>{item.experience}</Text>
         </View>
+
         <View style={styles.attributeTag}>
+          <Ionicons name="time-outline" size={16} style={{ marginRight: 6 }} />
           <Text style={styles.attributeText}>{item.job_type}</Text>
         </View>
       </View>
@@ -416,7 +476,7 @@ const JobListScreen = ({ navigation }) => {
     <>
       <View style={styles.container}>
         {/* Sticky filters container */}
-        <View style={styles.topWhiteBackground}>
+        {/* <View style={styles.topWhiteBackground}>
           <View style={styles.filters}>
             <View style={styles.filterDropdownWrapper}>
               <DropDownPicker
@@ -436,14 +496,69 @@ const JobListScreen = ({ navigation }) => {
               <Text style={styles.filterButtonText}>Search</Text>
             </TouchableOpacity>
           </View>
+        </View> */}
+        <View style={styles.topWhiteBackground}>
+          <View style={styles.headerRow}>
+            <Text style={styles.homeTitle}>Home</Text>
+          </View>
+          {/* <View style={styles.filters}>
+            
+          </View> */}
+        </View>
+        <View style={styles.filters}>
+
+          {/* Filter Icon inside input */}
+          <Ionicons
+            name="filter"
+            size={20}
+            color="#999"
+            style={styles.filterIconInside}
+          />
+
+
+          <View style={styles.filterDropdownWrapper}>
+            <DropDownPicker
+              open={openIndustry}
+              value={selectedIndustry}
+              items={industryItems}
+              setOpen={setOpenIndustry}
+              setValue={setSelectedIndustry}
+              setItems={setIndustryItems}
+              placeholder="Select Job Category"
+              style={styles.filterDropdown}
+              listMode="SCROLLVIEW"
+              dropDownContainerStyle={{
+                ...styles.filterDropdownContainer,
+                maxHeight: 180,       // limit height so it scrolls
+                elevation: 1000,      // Android layering
+                zIndex: 3002,         // ensure on top
+              }}
+              scrollViewProps={{ persistentScrollbar: true, nestedScrollEnabled: true }}
+              onChangeValue={(value) => {
+                if (value === "all") {
+                  setFilteredJobs(searchJobs);
+                } else {
+                  const filtered = searchJobs.filter((job) =>
+                    job.category?.toLowerCase().includes(value.toLowerCase())
+                  );
+                  setFilteredJobs(filtered);
+                }
+                setOpenIndustry(false); // close dropdown after selection
+              }}
+            />
+          </View>
         </View>
 
+
+
+
         {/* Scrollable content */}
-        <TouchableWithoutFeedback onPress={handleOutsidePress}>
+        {/* <TouchableWithoutFeedback onPress={handleOutsidePress}>
           <ScrollView
             style={styles.scrollContainer}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={styles.scrollContentContainer}
+          // scrollEnabled={!openIndustry}
           >
             {loading ? (
               <SkeletonLoader />
@@ -460,7 +575,40 @@ const JobListScreen = ({ navigation }) => {
               />
             )}
           </ScrollView>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback> */}
+
+
+        {/* <FlatList
+          data={filteredJobs}
+          renderItem={renderJobItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={
+            <Text style={styles.noJobsText}>No jobs available</Text>
+          }
+        /> */}
+
+        <ScrollView
+          style={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollContentContainer}
+        >
+          {loading ? (
+            <SkeletonLoader />
+          ) : filteredJobs.length === 0 ? (
+            <NoJobsIllustration />
+          ) : (
+            <FlatList
+              data={filteredJobs}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderJobItem}
+              scrollEnabled={false}
+              nestedScrollEnabled={true}
+              contentContainerStyle={{ paddingBottom: 24, paddingHorizontal: 8 }}
+            />
+          )}
+        </ScrollView>
+
       </View>
       <BottomNav activeuser="jobseeker" />
     </>
@@ -475,7 +623,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
     backgroundColor: '#f4f2ee',
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     padding: 8,
   },
   scrollContentContainer: {
@@ -492,30 +640,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     // color: '#222222',
   },
-  searchInput: {
-    height: 48,
-    borderColor: '#e0e0e0',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    backgroundColor: '#ffffff',
-    marginBottom: 16,
-    fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    color: '#444444',
-  },
-  input: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    padding: 16,
-    fontSize: 16,
-    marginBottom: 1,
-    color: "#444444",
-    fontFamily: 'Inter-Regular',
-    marginTop: 1
-  },
+  // searchInput: {
+  //   height: 48,
+  //   borderColor: '#e0e0e0',
+  //   borderWidth: 1,
+  //   borderRadius: 8,
+  //   paddingHorizontal: 16,
+  //   backgroundColor: '#ffffff',
+  //   marginBottom: 16,
+  //   fontFamily: 'Inter-Regular',
+  //   fontSize: 16,
+  //   color: '#444444',
+  // },
+  // input: {
+  //   backgroundColor: '#ffffff',
+  //   borderRadius: 8,
+  //   borderWidth: 1,
+  //   borderColor: '#e0e0e0',
+  //   padding: 16,
+  //   fontSize: 16,
+  //   marginBottom: 1,
+  //   color: "#444444",
+  //   fontFamily: 'Inter-Regular',
+  //   marginTop: 1
+  // },
   logoContainer: {
     alignItems: "flex-start",
     marginBottom: 16,
@@ -525,27 +673,27 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 40
   },
-  filters: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 8,
-    paddingVertical: 12,
-    width: '100%',
-  },
-  filterDropdownWrapper: {
-    flex: 1,
-    marginRight: 8,
-  },
-  picker: {
-    height: 48,
-    borderRadius: 8,
-    marginBottom: 16,
-    backgroundColor: '#ffffff',
-    borderWidth: 2,
-    borderColor: '#e0e0e0',
-  },
+  // filters: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   backgroundColor: '#fff',
+  //   borderRadius: 8,
+  //   padding: 8,
+  //   paddingVertical: 12,
+  //   width: '100%',
+  // },
+  // filterDropdownWrapper: {
+  //   flex: 1,
+  //   marginRight: 8,
+  // },
+  // picker: {
+  //   height: 48,
+  //   borderRadius: 8,
+  //   marginBottom: 16,
+  //   backgroundColor: '#ffffff',
+  //   borderWidth: 2,
+  //   borderColor: '#e0e0e0',
+  // },
   jobCard: {
     flexDirection: 'column',
     backgroundColor: '#fff',
@@ -563,20 +711,30 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+  topSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+
   leftSection: {
     flex: 1,
-    paddingRight: 60,
+    paddingRight: 12, // reduced since logo is now inline, not absolute
   },
+
   rightSection: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
+    position: 'relative', // removed absolute positioning
+    top: 0,
+    right: 0,
   },
+
   companyLogo: {
     width: 48,
     height: 48,
     borderRadius: 8,
     backgroundColor: '#fff5f3',
+
   },
   placeholderLogo: {
     width: 44,
@@ -591,31 +749,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#be4145',
     fontFamily: 'Montserrat-SemiBold',
+
   },
   jobTitle: {
     fontSize: 24,
     fontFamily: 'Montserrat-SemiBold',
     color: '#333333',
-    marginBottom: 0
+    marginBottom: 0,
+    marginTop: 8,
   },
   company: {
     fontSize: 14,
     fontFamily: 'Inter-Regular',
     color: '#666666',
-    marginBottom: 24
+    marginBottom: 8,
   },
   detailText: {
     fontSize: 14,
     color: '#666666',
     fontFamily: 'Inter-Regular',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   attributesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 0,
     marginBottom: 8,
-    width: '80%',
+    marginTop: 8,
+    width: '100%',
   },
   attributeTag: {
     backgroundColor: '#f9f9f9',
@@ -624,13 +785,18 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderWidth: 1,
     borderColor: '#e0e0e0',
-    marginRight: 8,
+    // marginRight: 8,
     marginBottom: 8,
+    minWidth: 100,
+    minHeight: 24,
+    flexDirection: "row",
+    alignItems: "center",
   },
   attributeText: {
     fontSize: 12,
     color: '#666',
     fontFamily: 'Inter-Regular',
+    textTransform: 'capitalize',
   },
   bottomRow: {
     flexDirection: 'row',
@@ -663,22 +829,22 @@ const styles = StyleSheet.create({
   arrowIcon: {
     marginLeft: 2,
   },
-  dropdown1: {
-    position: "absolute",
-    top: 48,
-    width: "100%",
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 5,
-    zIndex: 2000,
-    maxHeight: 200,
-  },
+  // dropdown1: {
+  //   position: "absolute",
+  //   top: 48,
+  //   width: "100%",
+  //   backgroundColor: "#ffffff",
+  //   borderRadius: 8,
+  //   borderWidth: 1,
+  //   borderColor: "#e0e0e0",
+  //   // shadowColor: "#000",
+  //   // shadowOffset: { width: 0, height: 2 },
+  //   // shadowOpacity: 0.1,
+  //   // shadowRadius: 4,
+  //   // elevation: 5,
+  //   zIndex: 2000,
+  //   maxHeight: 200,
+  // },
   dropdownItem: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -903,15 +1069,90 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   topWhiteBackground: {
-    backgroundColor: '#fff', // changed
+    backgroundColor: '#BE4145', // changed
     paddingTop: 16, // from 58 to 24
-    paddingBottom: 12,
+    paddingBottom: 0,
     paddingHorizontal: 16,
     zIndex: 1000,
     width: "100%",
     borderBottomWidth: 1,
-    // marginTop:120,
     borderBottomColor: '#e0e0e0',
+  },
+  headerRow: {
+    flexDirection: 'column', // changed from 'row' to 'column'
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 0,
+    width: '100%',
+  },
+  homeTitle: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 24, // 20 -> 18
+    color: '#ffffff',
+    marginBottom: 16,
+  },
+  filters: {
+
+    backgroundColor: '#f4f2ee',
+    paddingHorizontal: 16,
+    // marginRight: 2,
+    // paddingTop: 16,
+  },
+  filterDropdownWrapper: {
+    position: "relative",
+    minWidth: '100%',
+    minHeight: 28,
+    alignItems: 'flex-start',
+    marginBottom: 8,
+    marginTop: 16,
+    // paddingHorizontal: 6,
+    // marginHorizontal: 8,
+    zIndex: 3001,
+  },
+  filterDropdown: {
+    flexDirection: 'row',
+    minWidth: '100%',
+    alignItems: 'center',
+    paddingLeft: 44,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 12,
+    height: 40,
+    paddingHorizontal: 12,
+    justifyContent: 'space-between',
+  },
+
+  filterDropdownContainer: {
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    zIndex: 3001,
+    height: 'auto',
+    minHieght: 40,
+  },
+
+  filterDropdownText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    color: '#333',
+    marginLeft: 4,
+    marginRight: 4,
+  },
+
+  filterDropdownPlaceholder: {
+    color: '#999',
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    marginLeft: 4,
+  },
+
+  filterIconInside: {
+    position: "absolute",
+    left: '9%',
+    top: "64%",
+    transform: [{ translateY: -10 }], // centers vertically
+    zIndex: 4000,
   },
 });
 

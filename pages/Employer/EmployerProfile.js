@@ -64,7 +64,7 @@ const EmployerProfile = () => {
     return () => backHandler.remove();
   }, [navigation]);
 
-  
+
   // Log the current route for debugging
   useEffect(() => {
     // Add debug logging
@@ -254,6 +254,13 @@ const EmployerProfile = () => {
   return (
     <>
       <View style={styles.container}>
+        <View style={styles.topWhiteBackground}>
+          <View style={styles.headerRow}>
+            <Text style={styles.postedJobsTitle}>Employer Profile</Text>
+          </View>
+        </View>
+
+
         {/* Profile content */}
         <View style={styles.profileContent}>
           {error && (
@@ -276,7 +283,7 @@ const EmployerProfile = () => {
                 {userDetails?.full_name?.split(' ')[0]}
               </Text>
               <Text style={styles.roleText}>
-                {formatRoleText(userDetails?.role) || 'Employer'}
+                {formatRoleText(userDetails?.company_industry) || 'Employer'}
               </Text>
             </View>
           </View>
@@ -337,13 +344,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter-Regular'
   },
+  topWhiteBackground: {
+    backgroundColor: '#BE4145', // changed
+    paddingTop: 20, // from 58 to 24
+    paddingBottom: 8,
+    paddingHorizontal: 16,
+    zIndex: 1000,
+    width: "100%",
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  headerRow: {
+    flexDirection: 'column', // changed from 'row' to 'column'
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  postedJobsTitle: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18, // 20 -> 18
+    color: '#ffffff',
+    marginTop: 4,
+    marginBottom: 8,
+  },
+
   profileContent: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 48,
+    // marginTop: 2,
     backgroundColor: '#f',
-    marginTop: -28,
-    paddingTop: 32,
+    marginTop: -8,
+    // paddingTop: -12,
     flex: 1,
   },
   profileSection: {

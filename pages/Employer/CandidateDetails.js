@@ -899,6 +899,7 @@ const redesignedStyles = {
   },
   profileKVItem: {
     marginBottom: 8,
+    
   },
   profileKVLabel: {
     fontFamily: 'Inter-Regular',
@@ -910,6 +911,7 @@ const redesignedStyles = {
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 14,
     color: '#333',
+    textTransform: 'capitalize',
   },
   sectionCardRedesigned: {
     backgroundColor: '#fff',
@@ -1073,6 +1075,7 @@ const contactDetailsRedesignedStyles = {
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 14,
     color: '#333',
+    textTransform: 'capitalize',
   },
   contactButtonsRow: {
     // flexDirection: 'row',

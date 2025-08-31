@@ -1346,6 +1346,7 @@ const styles = StyleSheet.create({
         borderColor: '#e0e0e0',
         borderRadius: 8,
         marginBottom: 0, // Remove bottom margin here as we'll handle it in the container
+        // marginTop: 0,
         borderWidth: 1,
         height: 48,
 
@@ -1358,14 +1359,18 @@ const styles = StyleSheet.create({
     dropdownContainer: {
         marginBottom: 8, // Reduced from 16 to make room for error text
         borderWidth: 1,
-        borderColor: '#e4e4e4'
+        borderColor: '#e4e4e4', 
+        // marginTop: 4,.
+        marginBottom: -2,
+        zIndex: 10000, // Ensure dropdown appears above other elements
     },
     dropdownList: {
         borderColor: '#e0e0e0',
         borderRadius: 8,
         backgroundColor: '#ffffff',
 
-        // marginTop: 4,
+        // marginTop: 4,.
+        marginBottom: -2,
         zIndex: 10000, // Ensure dropdown appears above other elements
     },
     dropdownPlaceholder: {
