@@ -131,6 +131,7 @@ const EmployerRegistration = ({ route }) => {
     { label: 'Data Entry', value: 'data_entry' },
     { label: 'Back Office', value: 'back_office' },
     { label: 'Other', value: 'other' },
+    
   ]);
 
   const [openState, setOpenState] = useState(false);

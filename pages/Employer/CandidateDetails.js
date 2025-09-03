@@ -197,7 +197,7 @@ const UserDetails = ({ route }) => {
 
     return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   };
-
+  
 
 
   // Handle scroll events to update active index
@@ -301,10 +301,10 @@ const UserDetails = ({ route }) => {
 
   // Modern Experience Section (no logo)
   const renderExperienceSection = () => (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Experience</Text>
+    <View style={redesignedStyles.sectionCardRedesigned}>
+      <Text style={redesignedStyles.sectionTitleRedesigned}>Experience</Text>
       {experienceItems.map((item, idx) => (
-        <View key={idx} style={styles.expCard}>
+        <View key={idx} style={redesignedStyles.expCardRedesigned}>
           <View style={styles.expContent}>
             <Text style={styles.expTitle}>{item.jobTitle}</Text>
             <Text style={styles.expCompany}>{item.company}{item.employmentType ? ` · ${item.employmentType}` : ''}</Text>
@@ -438,10 +438,10 @@ const UserDetails = ({ route }) => {
       <View style={styles.sectionCardRedesigned}>
         <Text style={styles.sectionTitleRedesigned}>Education</Text>
         {educationItems.map((item, idx) => (
-          <View key={idx} style={styles.eduCardRedesigned}>
-            <View style={styles.eduCardHeader}>
-              <Text style={styles.eduCardTitle}>{item.type} Education</Text>
-              <Text style={styles.eduCardDate}>
+          <View key={idx} style={redesignedStyles.eduCardRedesigned}>
+            <View style={redesignedStyles.eduCardHeader}>
+              <Text style={redesignedStyles.eduCardTitle}>{item.type} Education</Text>
+              <Text style={redesignedStyles.eduCardDate}>
                 {item.startDate && item.endDate ? `${item.startDate} - ${item.endDate}`
                   : item.year ? `Jan ${item.year}` : ''}
               </Text>
@@ -455,21 +455,23 @@ const UserDetails = ({ route }) => {
       </View>
 
       {/* Work Experience Section */}
-      <View style={styles.sectionCardRedesigned}>
-        <Text style={styles.sectionTitleRedesigned}>Work Experience</Text>
+      <View style={redesignedStyles.sectionCardRedesigned}>
+        <Text style={redesignedStyles.sectionTitleRedesigned}>Work Experience</Text>
         {experienceItems.map((item, idx) => (
-          <View key={idx} style={styles.expCardRedesigned}>
-            <View style={styles.expCardHeader}>
-              <Text style={styles.expCardTitle}>{item.jobTitle}</Text>
-              <Text style={styles.expCardDate}>
-                {item.startDate} - {item.endDate}
+          <View key={idx} style={redesignedStyles.expCardRedesigned}>
+            <View style={redesignedStyles.expCardHeader}>
+              <Text style={redesignedStyles.expCardTitle}>{item.jobTitle}</Text>
+              <Text style={redesignedStyles.expCardDate}>
+                {/* {console.log(item.startDate)} */}
+                {formatDate(item.startDate)} - {item.endDate === 'Present' ? 'Present' : formatDate(item.endDate)}{item.duration ? ` · ${item.duration}` : ''}
               </Text>
             </View>
-            <Text style={styles.expCardMeta}>{item.company}</Text>
-            <Text style={styles.expCardMeta}>{item.location}</Text>
+            <Text style={redesignedStyles.expCardMeta}>{item.company}</Text>
+            <Text style={redesignedStyles.expCardMeta}>{item.location}</Text>
           </View>
         ))}
-      </View>
+      </View>  
+      {/* {renderExperienceSection()} */}
 
 
       {/* Q&A Section */}
@@ -482,8 +484,8 @@ const UserDetails = ({ route }) => {
         ) : (
           questionResponses.map((qr, idx) => (
             <View key={idx} style={styles.qaCardRedesigned}>
-              <Text style={styles.qaQuestion}>{qr.question_text}</Text>
-              <Text style={styles.qaAnswer}>{qr.user_answer}</Text>
+              <Text style={styles.qaQuestion}>Q{idx + 1}. {qr.question_text}</Text>
+              <Text style={styles.qaAnswer}>A{idx + 1}. {qr.user_answer}</Text>
             </View>
           ))
         )}
@@ -960,44 +962,6 @@ const redesignedStyles = {
   disabledButtonText: {
     color: '#b4b4b4',
   },
-  eduCardRedesigned: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
-  },
-  eduCardTitle: {
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 2,
-  },
-  eduCardMeta: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 12,
-    color: '#666',
-  },
-  expCardRedesigned: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
-  },
-  expCardTitle: {
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 2,
-  },
-  expCardMeta: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 12,
-    color: '#666',
-  },
   qaCardRedesigned: {
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -1017,6 +981,26 @@ const redesignedStyles = {
     fontSize: 12,
     color: '#666',
   },
+ 
+  eduCardRedesigned: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  eduCardTitle: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 2,
+  },
+  eduCardMeta: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    color: '#666',
+  },
   eduCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1028,18 +1012,46 @@ const redesignedStyles = {
     fontSize: 12,
     color: '#999',
   },
+  expCardRedesigned: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  
   expCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2,
+    alignItems: 'flex-start',
+    marginBottom: 6,
   },
+  
+  expCardTitle: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 15,
+    color: '#222',
+    flex: 1,             // ensures title doesn’t overlap date
+    marginRight: 10,
+  },
+  
   expCardDate: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: '#999',
+    color: '#888',
+    textAlign: 'right',
+    flexShrink: 0,
   },
-
+  
+  expCardMeta: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
+    color: '#555',
+    marginTop: 2,
+    lineHeight: 18,
+  },
+  
 };
 
 Object.assign(styles, redesignedStyles);

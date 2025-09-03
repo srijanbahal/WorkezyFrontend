@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
   companyInitialLogo: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 8,
     backgroundColor: '#f0f0f0',
     marginRight: 12,
   },

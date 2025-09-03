@@ -203,8 +203,8 @@ const JobSeekerRegistration = ({ route }) => {
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 50 }, (_, i) => ({
-    label: String(currentYear - i-18),
-    value: String(currentYear - i-18)
+    label: String(currentYear - i - 18),
+    value: String(currentYear - i - 18)
   }));
 
   // Helper to get days in a month
@@ -291,7 +291,7 @@ const JobSeekerRegistration = ({ route }) => {
   // Handle Form Submission
   const handleSubmit = async () => {
     const newErrors = {};
-    
+
     // Validate required fields
     if (!formData.full_name) {
       newErrors.full_name = 'Please enter your full name';
@@ -438,7 +438,7 @@ const JobSeekerRegistration = ({ route }) => {
         </View>
         <View style={styles.inputContainer}>
           {/* Full Name */}
-          <Text style={styles.label}>Full Name<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Full Name<Text style={{ color: '#be4145' }}>*</Text></Text>
           <TextInput
             value={formData.full_name}
             onChangeText={(text) => handleChange('full_name', text)}
@@ -470,7 +470,7 @@ const JobSeekerRegistration = ({ route }) => {
           {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null} */}
 
           {/* Phone Number */}
-          <Text style={styles.label}>Phone Number<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Phone Number<Text style={{ color: '#be4145' }}>*</Text></Text>
           <TextInput
             value={mobile}
             mode="outlined"
@@ -483,27 +483,28 @@ const JobSeekerRegistration = ({ route }) => {
           />
 
           {/* Gender */}
-          <Text style={styles.label}>Gender<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Gender<Text style={{ color: '#be4145' }}>*</Text></Text>
           <DropDownPicker
             open={activeDropdown === 'gender'}
             value={formData.gender}
             items={genderItems}
-            setOpen={(isOpen)=>{ setOpenGender(isOpen); setActiveDropdown(isOpen ? 'gender' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
+            setOpen={(isOpen) => { setOpenGender(isOpen); setActiveDropdown(isOpen ? 'gender' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
             setValue={(callback) => handleChange('gender', callback(formData.gender))}
             setItems={setGenderItems}
             placeholder="Select Gender"
             style={[styles.dropdown, errors.gender ? styles.inputError : null]}
             dropDownContainerStyle={styles.dropdownContainer}
-            zIndex={2000}
+            zIndex={1000}
             listMode="SCROLLVIEW"
             scrollViewProps={{ nestedScrollEnabled: true }}
             placeholderStyle={{ color: "#999999", fontSize: 14 }}
             textStyle={{ fontSize: 14, color: "#333333" }}
+            tickIconStyle={{ tintColor: "#BE4145" }}
           />
           {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
 
           {/* Date of Birth */}
-          <Text style={styles.label}>Date of Birth<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Date of Birth<Text style={{ color: '#be4145' }}>*</Text></Text>
           <View style={styles.datePickerRow}>
             <View style={styles.datePickerColumnDay}>
               <DropDownPicker
@@ -519,6 +520,8 @@ const JobSeekerRegistration = ({ route }) => {
                 zIndex={1010}
                 zIndexInverse={1000}
                 placeholderStyle={{ color: "#999999", fontSize: 14 }}
+              tickIconStyle={{ tintColor: "#BE4145" }}
+
               />
             </View>
             <View style={styles.datePickerColumnMonth}>
@@ -533,7 +536,9 @@ const JobSeekerRegistration = ({ route }) => {
                 dropDownContainerStyle={styles.dateDropdownContainer}
                 listMode="SCROLLVIEW"
                 zIndex={1010}
-                z
+                
+              tickIconStyle={{ tintColor: "#BE4145" }}
+
                 placeholderStyle={{ color: "#999999", fontSize: 14 }}
               />
             </View>
@@ -545,6 +550,8 @@ const JobSeekerRegistration = ({ route }) => {
                 setOpen={handleOpenYear}
                 setValue={setSelectedYear}
                 placeholder="Year"
+              tickIconStyle={{ tintColor: "#BE4145" }}
+
                 style={styles.dateDropdown}
                 dropDownContainerStyle={styles.dateDropdownContainer}
                 listMode="SCROLLVIEW"
@@ -556,7 +563,7 @@ const JobSeekerRegistration = ({ route }) => {
           {errors.dateOfBirth ? <Text style={styles.errorText}>{errors.dateOfBirth}</Text> : null}
 
           {/* City */}
-          <Text style={styles.label}>City<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>City<Text style={{ color: '#be4145' }}>*</Text></Text>
           <TextInput
             value={formData.city}
             onChangeText={(text) => handleChange('city', text)}
@@ -571,20 +578,21 @@ const JobSeekerRegistration = ({ route }) => {
           {errors.city ? <Text style={styles.errorText}>{errors.city}</Text> : null}
 
           {/* State */}
-          <Text style={styles.label}>State<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>State<Text style={{ color: '#be4145' }}>*</Text></Text>
           <DropDownPicker
             open={activeDropdown === 'state'}
             value={formData.state}
             items={stateItems}
-            setOpen={(isOpen)=>{ setOpenState(isOpen); setActiveDropdown(isOpen ? 'state' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
+            setOpen={(isOpen) => { setOpenState(isOpen); setActiveDropdown(isOpen ? 'state' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
             setValue={(callback) => setFormData(prev => ({ ...prev, state: callback(prev.state) }))}
             setItems={setStateItems}
             placeholder="Select State"
             style={[styles.dropdown, errors.state ? styles.inputError : null]}
-            dropDownContainerStyle={styles.dropdownContainer}
+            dropDownContainerStyle={{ ...styles.dropdownContainer, marginBottom: 16 }}
             zIndex={1008}
             zIndexInverse={1020}
-            
+            tickIconStyle={{ tintColor: "#BE4145" }}
+
             listMode="SCROLLVIEW"
             scrollViewProps={{ nestedScrollEnabled: true }}
             placeholderStyle={{ color: "#999999", fontSize: 14 }}
@@ -593,14 +601,14 @@ const JobSeekerRegistration = ({ route }) => {
           {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null}
 
           {/* Country */}
-          <Text style={styles.label}>Country<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Country<Text style={{ color: '#be4145' }}>*</Text></Text>
           <TextInput
             value={formData.country}
             onChangeText={(text) => handleChange('country', text)}
             mode="outlined"
             style={[styles.input, { backgroundColor: '#f5f5f5' }, errors.country ? styles.inputError : null]}
             outlineColor="#e0e0e0"
-            
+
             activeOutlineColor="#BE4145"
             theme={{ roundness: 8, colors: { primary: '#A9A9A9', onSurfaceVariant: '#777777' } }}
             placeholder="Enter country"
@@ -611,56 +619,64 @@ const JobSeekerRegistration = ({ route }) => {
           {errors.country ? <Text style={styles.errorText}>{errors.country}</Text> : null}
 
           {/* Highest Education */}
-          <Text style={styles.label}>Highest Education<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Highest Education<Text style={{ color: '#be4145' }}>*</Text></Text>
           <DropDownPicker
             open={activeDropdown === 'education'}
             value={formData.highestEducation}
             items={educationItems}
-            setOpen={(isOpen)=>{ setOpenEducation(isOpen); setActiveDropdown(isOpen ? 'education' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
+            setOpen={(isOpen) => { setOpenEducation(isOpen); setActiveDropdown(isOpen ? 'education' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
             setValue={(callback) => handleChange('highestEducation', callback(formData.highestEducation))}
             setItems={setEducationItems}
             placeholder="Select Highest education"
             style={[styles.dropdown, errors.highestEducation ? styles.inputError : null]}
-            dropDownContainerStyle={styles.dropdownContainer}
+            dropDownContainerStyle={{...styles.dropdownContainer, marginBottom: 16}}
             listMode="SCROLLVIEW"
-            
+            zIndex={1010}
             placeholderStyle={{ color: "#999999", fontSize: 14 }}
             textStyle={{ fontSize: 14, color: "#333333" }}
+            tickIconStyle={{ tintColor: "#BE4145" }}
+
           />
           {errors.highestEducation ? <Text style={styles.errorText}>{errors.highestEducation}</Text> : null}
 
           {/* Experience */}
-          <Text style={styles.label}>Experience<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Experience<Text style={{ color: '#be4145' }}>*</Text></Text>
           <DropDownPicker
             open={activeDropdown === 'experience'}
             value={formData.experience}
             items={ExperienceItems}
-            setOpen={(isOpen)=>{ setExperienceOpen(isOpen); setActiveDropdown(isOpen ? 'experience' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
+            setOpen={(isOpen) => { setExperienceOpen(isOpen); setActiveDropdown(isOpen ? 'experience' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
             setValue={(callback) => setFormData(prev => ({ ...prev, experience: callback(prev.experience) }))}
             placeholder="Select your experience"
             style={[styles.dropdown, errors.experience ? styles.inputError : null]}
-            dropDownContainerStyle={styles.dropdownContainer}
+            dropDownContainerStyle={{...styles.dropdownContainer, marginBottom: 16}}
+            tickIconStyle={{ tintColor: "#BE4145" }}
+
             listMode="SCROLLVIEW"
             // scrollViewProps={{ nestedScrollEnabled: true }}
+            zIndex={1010}
             placeholderStyle={{ color: "#999999", fontSize: 14 }}
             textStyle={{ fontSize: 14, color: "#333333" }}
           />
           {errors.experience ? <Text style={styles.errorText}>{errors.experience}</Text> : null}
 
           {/* Job Category */}
-          <Text style={styles.label}>Job Category<Text style={{color:'#be4145'}}>*</Text></Text>
+          <Text style={styles.label}>Job Category<Text style={{ color: '#be4145' }}>*</Text></Text>
           <DropDownPicker
             open={activeDropdown === 'industry'}
             value={formData.industry}
             items={industryItems}
-            setOpen={(isOpen)=>{ setIndustryOpen(isOpen); setActiveDropdown(isOpen ? 'industry' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
+            setOpen={(isOpen) => { setIndustryOpen(isOpen); setActiveDropdown(isOpen ? 'industry' : null); if (isOpen) { setOpenDay(false); setOpenMonth(false); setOpenYear(false); } }}
             setValue={(callback) => handleChange('industry', callback(formData.industry))}
             setItems={setIndustryItems}
             placeholder="Select Role"
             style={[styles.dropdown, errors.industry ? styles.inputError : null]}
-            dropDownContainerStyle={styles.dropdownContainer}
+            dropDownContainerStyle={{ ...styles.dropdownContainer, marginBottom: 16 }}
+            tickIconStyle={{ tintColor: "#BE4145" }}
+
             listMode="SCROLLVIEW"
             // scrollViewProps={{ nestedScrollEnabled: true }}
+            zIndex={1010}
             placeholderStyle={{ color: "#999999", fontSize: 14 }}
             textStyle={{ fontSize: 14, color: "#333333" }}
           />
@@ -684,14 +700,14 @@ const JobSeekerRegistration = ({ route }) => {
           type={alertConfig.type}
           onClose={hideAlert}
         />
-      <Modal transparent visible={isReloading} animationType="fade">
-          <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.25)'}}>
+        <Modal transparent visible={isReloading} animationType="fade">
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.25)' }}>
             <ActivityIndicator size="large" color="#BE4145" />
           </View>
         </Modal>
         {/* previously overlay replaced by modal */}
         {/* Keep ScrollView closing tag below */}
-        
+
       </View>
     </ScrollView>
   );
@@ -732,30 +748,30 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 16,
     paddingHorizontal: 0,
-},
-profileImage: {
-  width: 100,
-  height: 100,
-  borderRadius: 50,
-  borderWidth: 2,
-  borderColor: '#e0e0e0',
-  backgroundColor: '#f4f4f4',
-},
-editImageIcon: {
-  position: 'absolute',
-  bottom: 18,
-  right: '36%',
-  backgroundColor: '#be4145',
-  width: 32,
-  height: 32,
-  borderRadius: 16,
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderWidth: 2,
-  borderColor: '#fff',
-  zIndex: 2,
-},
-inputContainer: {
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    backgroundColor: '#f4f4f4',
+  },
+  editImageIcon: {
+    position: 'absolute',
+    bottom: 18,
+    right: '36%',
+    backgroundColor: '#be4145',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+    zIndex: 2,
+  },
+  inputContainer: {
     width: '100%',
     marginBottom: 0,
     borderColor: 'transparent',
@@ -797,7 +813,7 @@ inputContainer: {
     borderColor: '#e0e0e0',
     borderRadius: 8,
     backgroundColor: '#fff',
-    zIndex: 6000,
+    zIndex: 2000,
   },
   saveButton: {
     backgroundColor: '#be4145',

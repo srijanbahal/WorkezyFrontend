@@ -55,18 +55,25 @@ const EditProfile = ({ route }) => {
   ]);
 
   const [stateItems, setStateItems] = useState([
+    { label: 'Andaman and Nicobar Islands', value: 'Andaman and Nicobar Islands' },
     { label: 'Andhra Pradesh', value: 'Andhra Pradesh' },
     { label: 'Arunachal Pradesh', value: 'Arunachal Pradesh' },
     { label: 'Assam', value: 'Assam' },
     { label: 'Bihar', value: 'Bihar' },
+    { label: 'Chandigarh', value: 'Chandigarh' },
     { label: 'Chhattisgarh', value: 'Chhattisgarh' },
+    { label: 'Daman and Diu', value: 'Dadra and Nagar Haveli and Daman and Diu' },
+    { label: 'Delhi', value: 'Delhi' },
     { label: 'Goa', value: 'Goa' },
     { label: 'Gujarat', value: 'Gujarat' },
     { label: 'Haryana', value: 'Haryana' },
     { label: 'Himachal Pradesh', value: 'Himachal Pradesh' },
+    { label: 'Jammu and Kashmir', value: 'Jammu and Kashmir' },
     { label: 'Jharkhand', value: 'Jharkhand' },
     { label: 'Karnataka', value: 'Karnataka' },
     { label: 'Kerala', value: 'Kerala' },
+    { label: 'Ladakh', value: 'Ladakh' },
+    { label: 'Lakshadweep', value: 'Lakshadweep' },
     { label: 'Madhya Pradesh', value: 'Madhya Pradesh' },
     { label: 'Maharashtra', value: 'Maharashtra' },
     { label: 'Manipur', value: 'Manipur' },
@@ -74,6 +81,7 @@ const EditProfile = ({ route }) => {
     { label: 'Mizoram', value: 'Mizoram' },
     { label: 'Nagaland', value: 'Nagaland' },
     { label: 'Odisha', value: 'Odisha' },
+    { label: 'Puducherry', value: 'Puducherry' },
     { label: 'Punjab', value: 'Punjab' },
     { label: 'Rajasthan', value: 'Rajasthan' },
     { label: 'Sikkim', value: 'Sikkim' },
@@ -82,15 +90,7 @@ const EditProfile = ({ route }) => {
     { label: 'Tripura', value: 'Tripura' },
     { label: 'Uttar Pradesh', value: 'Uttar Pradesh' },
     { label: 'Uttarakhand', value: 'Uttarakhand' },
-    { label: 'West Bengal', value: 'West Bengal' },
-    { label: 'Andaman and Nicobar Islands', value: 'Andaman and Nicobar Islands' },
-    { label: 'Chandigarh', value: 'Chandigarh' },
-    { label: 'Daman and Diu', value: 'Dadra and Nagar Haveli and Daman and Diu' },
-    { label: 'Lakshadweep', value: 'Lakshadweep' },
-    { label: 'Delhi', value: 'Delhi' },
-    { label: 'Puducherry', value: 'Puducherry' },
-    { label: 'Ladakh', value: 'Ladakh' },
-    { label: 'Jammu and Kashmir', value: 'Jammu and Kashmir' }
+    { label: 'West Bengal', value: 'West Bengal' }
   ]);
 
   const [industryItems, setIndustryItems] = useState([
@@ -662,7 +662,7 @@ const EditProfile = ({ route }) => {
             <View style={styles.phoneContainer}>
               <TextInput
                 style={[
-                  styles.input,
+                  {...styles.input, backgroundColor: "#fff", color: "#999999" },
                   { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40 },
                   errors.phone ? styles.inputError : null
                 ]}
@@ -900,7 +900,7 @@ const EditProfile = ({ route }) => {
             {/* Country */}
             <Text style={styles.label}>Country<Text style={styles.requiredStar}>*</Text></Text>
             <TextInput
-              style={[styles.input, errors.country ? styles.inputError : null]}
+              style={[{...styles.input, backgroundColor: "#fff", color: "#999999" }, errors.country ? styles.inputError : null]}
               value={formData.country}
               editable={false}
               onChangeText={(text) => handleChange('country', text)}

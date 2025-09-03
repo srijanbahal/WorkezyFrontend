@@ -7,6 +7,8 @@ import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons, Feather 
 import CustomAlert from '../components/CustomAlert';
 import LoadingIndicator from '../components/LoadingIndicator';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { BackHandler } from 'react-native';
+
 
 const NoJobsIllustration = () => (
   <View style={styles.noJobsContainer}>
@@ -48,6 +50,8 @@ const AppliedJobsScreen = ({ navigation }) => {
       type
     });
   };
+
+
 
   const hideAlert = () => {
     setAlertConfig(prev => ({ ...prev, visible: false }));
@@ -102,6 +106,26 @@ const AppliedJobsScreen = ({ navigation }) => {
     }
   };
 
+  const getPostedTime = (postedDate) => {
+    const today = new Date();
+    const postDate = new Date(postedDate);
+    const diffTime = Math.abs(today - postDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      return 'Today';
+    } else if (diffDays === 1) {
+      return 'Yesterday';
+    } else if (diffDays <= 7) {
+      return '1 week ago';
+    } else if (diffDays <= 14) {
+      return '2 weeks ago';
+    } else if (diffDays <= 30) {
+      return '1 month ago';
+    } else {
+      return `1 month ago`;
+    }
+  };
   const renderJobItem = ({ item }) => (
     <View style={styles.jobCard}>
 
@@ -114,12 +138,31 @@ const AppliedJobsScreen = ({ navigation }) => {
           ) : (
             <View style={styles.placeholderLogo}>
               <Text style={styles.logoText}>
-                {(item.company?.split(' ').map(w => w[0]).join('') || 'QT')
-                  .slice(0, 2)
-                  .toUpperCase()}
+                {item.company
+                  ? item.company
+                    .split(' ')
+                    .map(w => w[0]) // take first letter of each word
+                    .join('')
+                    .slice(0, 2) // max 2 letters
+                    .toUpperCase()
+                  : 'QT'}
               </Text>
             </View>
           )}
+
+          {/* <View style={styles.placeholderLogo}>
+            <Text style={styles.logoText}>
+              {item.company
+                ? item.company
+                  .split(' ')
+                  .map(w => w[0]) // take first letter of each word
+                  .join('')
+                  .slice(0, 2) // max 2 letters
+                  .toUpperCase()
+                : 'QT'}
+            </Text>
+          </View> */}
+
         </View>
         {/* Details Section (center) */}
         <View style={[styles.detailsSection, { flex: 1 }]}>
@@ -149,38 +192,67 @@ const AppliedJobsScreen = ({ navigation }) => {
       </View>
       {/* Attributes Row */}
       <View style={styles.keywordsRow}>
+        {/* <View style={{ ...styles.keywordPill, backgroundColor: '#f0fdf4' }}>
+          <Ionicons name="cash-outline" size={14} style={{ marginRight: 4 }} color="#333"/>
+          <Text style={{ ...styles.keywordText, color: '#4CAF50' }}>{item.salary ? `₹${item.salary}/month` : '-'}</Text>
+        </View> */}
+
         <View style={styles.keywordPill}>
-          <Ionicons name="cash-outline" size={14} style={{ marginRight: 4 }} />
-          <Text style={styles.keywordText}>{item.salary ? `₹${item.salary}/month` : '-'}</Text>
+          <Ionicons name="location-outline" size={14} style={{ marginRight: 4 }} color="#333" />
+          <Text style={styles.keywordText}>{item.city}, {item.country}</Text>
         </View>
 
         <View style={styles.keywordPill}>
-          <Ionicons name="location-outline" size={14} style={{ marginRight: 4 }} />
-          <Text style={styles.keywordText}>{item.city}</Text>
-        </View>
-
-        <View style={styles.keywordPill}>
-          <Ionicons name="briefcase-outline" size={14} style={{ marginRight: 4 }} />
+          <Ionicons name="briefcase-outline" size={14} style={{ marginRight: 4 }} color="#333" />
           <Text style={styles.keywordText}>{item.experience || '-'}</Text>
         </View>
 
         <View style={styles.keywordPill}>
-          <Ionicons name="time-outline" size={14} style={{ marginRight: 4 }} />
+          <Ionicons name="time-outline" size={14} style={{ marginRight: 4 }} color="#333" />
           <Text style={styles.keywordText}>{item.job_type}</Text>
         </View>
       </View>
 
-      {/* Bottom Row with Applied Date and View Details Button - full width */}
+      {/* Bottom Row with Posted Date and View Details Button */}
+      {/* Posted Date */}
+      <View style={styles.salaryContContainer}>
+        <View style={styles.salaryContainer}>
+          <Text style={styles.salaryText}>
+            ₹{item.salary}
+            <Text style={styles.salaryUnit}>/month</Text>
+          </Text>
+        </View>
+      </View>
       <View style={styles.bottomRow}>
-        <Text style={styles.appliedDate}>
-          Applied on {item.applied_at ? new Date(item.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-'}
+        {/* <Text style={styles.postedDateText}>
+                Posted {getPostedTime(item.posted_at)}
+              </Text> */}
+
+        {/* Left Side: Salary */}
+        {/* <View style={styles.salaryContainer}>
+                <Text style={styles.salaryText}>
+                  ₹{item.salary}
+                  <Text style={styles.salaryUnit}>/month</Text>
+                </Text>
+              </View> */}
+        <Text style={styles.postedDateText}>
+          Posted {getPostedTime(item.posted_at)}
         </Text>
-        <TouchableOpacity style={styles.viewDetailsButton} onPress={() => navigation.navigate('JobDetails', { job: item })}>
+        {/* <View style={styles.postedDateContainer}> */}
+        <TouchableOpacity
+          style={styles.viewDetailsButton}
+          onPress={() => navigation.navigate('JobDetails', { job: item, id: item.id })}
+        >
           <View style={styles.buttonContent}>
             <Text style={styles.viewDetailsText}>View Details</Text>
             <MaterialIcons name="arrow-forward-ios" size={16} color="#45A6BE" style={styles.arrowIcon} />
           </View>
         </TouchableOpacity>
+
+
+        {/* <Text style={styles.postedDateText}>
+                Posted {getPostedTime(item.posted_at)}
+              </Text> */}
       </View>
     </View>
   );
@@ -223,12 +295,12 @@ const AppliedJobsScreen = ({ navigation }) => {
 
         <View style={styles.filters}>
           {/* Filter Icon inside input */}
-          <Ionicons
+          {/* <Ionicons
             name="filter"
             size={20}
             color="#999"
             style={styles.filterIconInside}
-          />
+          /> */}
           <View style={styles.filterDropdownWrapper}>
             <DropDownPicker
               open={openFilter}
@@ -250,6 +322,7 @@ const AppliedJobsScreen = ({ navigation }) => {
               selectedItemLabelStyle={{ color: '#be4145', fontFamily: 'Montserrat-SemiBold' }}
               tickIconStyle={{ tintColor: "#BE4145" }}
               zIndex={2000}
+            // zIndex={1000}
             />
           </View>
         </View>
@@ -372,6 +445,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f2ee',
     paddingHorizontal: 8,
     marginTop: 8,
+    zIndex: 0,
   },
   scrollContentContainer: {
     paddingBottom: 78,
@@ -395,9 +469,9 @@ const styles = StyleSheet.create({
   },
   homeTitle: {
     fontFamily: 'Montserrat-SemiBold',
-    fontSize: 24, // 20 -> 18
+    fontSize: 18, // 20 -> 18
     color: '#ffffff',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   filters: {
 
@@ -415,7 +489,8 @@ const styles = StyleSheet.create({
     minWidth: '100%',
     // minHeight: 24,
     alignItems: 'flex-start',
-    paddingBottom: 8,
+    // paddingBottom: 4,
+    marginBottom: 6,
     marginTop: 16,
     zIndex: 3000,
   },
@@ -423,7 +498,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     minWidth: '100%',
     alignItems: 'center',
-    paddingLeft: 44,
+    paddingLeft: 32,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -444,8 +519,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: '#333',
-    marginLeft: 4,
-    marginRight: 4,
+    // marginLeft: 4,
+    // marginRight: 4,
   },
 
   filterDropdownPlaceholder: {
@@ -550,19 +625,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff5f3',
   },
   placeholderLogo: {
-    width: 44,
-    height: 44,
-    borderRadius: 8,
-    backgroundColor: '#fff5f3',
+    width: 50,
+    height: 50,
+    borderRadius: 25,  // circular logo
+    backgroundColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0,
   },
   logoText: {
-    fontSize: 16,
-    color: '#be4145',
-    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#555',
   },
+
   detailsSection: {
     flex: 1,
     justifyContent: 'center',
@@ -582,28 +657,68 @@ const styles = StyleSheet.create({
   },
   keywordsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    // gap: 8, // Remove this, not supported in React Native
+    // flexWrap: 'wrap',
+    gap: 6,
     marginBottom: 8,
-    // No width restriction, let it fill available space
+    marginTop: 8,
+    width: '100%',
+    marginLeft: -4,
+    paddingRight: 8,
   },
   keywordPill: {
-    backgroundColor: '#f9f9f9', // match JobListScreen
+    backgroundColor: '#f9f9f9',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
     borderRadius: 100,
-    paddingVertical: 6, // match JobListScreen
-    paddingHorizontal: 12, // match JobListScreen
-    marginRight: 8,
-    marginBottom: 8,
     borderWidth: 1,
     borderColor: '#e0e0e0',
-    flexDirection: 'row',
-    alignItems: 'center',
+    // marginRight: 8,
+    marginBottom: 8,
+    minWidth: 80,
+    minHeight: 24,
+    flexDirection: "row",
+    alignItems: "center",
 
   },
   keywordText: {
     fontSize: 12,
     color: '#666', // match JobListScreen
     fontFamily: 'Inter-Regular',
+    // textTransform: 'capitalize',
+  },
+    salaryContainer: {
+    flex: 1,
+    marginLeft: 2,
+  },
+
+  salaryText: {
+    fontSize: 20,
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#b44145',   // primary red
+    fontWeight: 'bold',
+  },
+
+  salaryUnit: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: '#666',
+  },
+
+  postedDateText: {
+    fontSize: 12,
+    color: '#666666',
+    fontFamily: 'Inter-Regular',
+    marginTop: 4,
+
+  },
+  salaryContContainer: {
+    flex: 1,
+    // marginLeft: 2,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    // marginTop: 4,
+    // marginBottom: 4,
+
   },
   dateStatusRow: {
     flexDirection: 'row',

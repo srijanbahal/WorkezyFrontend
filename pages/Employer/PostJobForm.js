@@ -128,10 +128,10 @@ const PostJobForm = ({ navigation }) => {
     };
 
     const jobTypeItems = [
-        { label: 'Full-time', value: 'full-time' },
-        { label: 'Part-time', value: 'part-time' },
-        { label: 'Contract', value: 'contract' },
-        { label: 'Internship', value: 'internship' },
+        { label: 'Full Time', value: 'Full Time' },
+        { label: 'Part Time', value: 'Part Time' },
+        { label: 'Contract', value: 'Contract' },
+        { label: 'Internship', value: 'Internship' },
     ];
     const [industryItems, setIndustryItems] = useState([
 
@@ -184,19 +184,19 @@ const PostJobForm = ({ navigation }) => {
 
 
     const shiftItems = [
-        { label: 'Day shift', value: 'day' },
-        { label: 'Night shift', value: 'night' },
-        { label: 'Rotational shift', value: 'rotational' },
+        { label: 'Day Shift', value: 'day' },
+        { label: 'Night Shift', value: 'night' },
+        { label: 'Rotational Shift', value: 'rotational' },
     ];
 
     const ExperienceItems = [
         { label: 'Fresher', value: 'fresher' },
-        { label: '1-2 year', value: '1-2years' },
-        { label: '3-5 year', value: '3-5years' },
-        { label: '6-8 year', value: '6-8years' },
-        { label: '9-12 year', value: '9-12years' },
-        { label: '13-15 year', value: '13-15years' },
-        { label: '15+ year', value: '15+years' },
+        { label: '1-2 Year', value: '1-2years' },
+        { label: '3-5 Year', value: '3-5years' },
+        { label: '6-8 Year', value: '6-8years' },
+        { label: '9-12 Year', value: '9-12years' },
+        { label: '13-15 Year', value: '13-15years' },
+        { label: '15+ Years', value: '15+years' },
 
     ];
     const locationItems = [
@@ -306,7 +306,7 @@ const PostJobForm = ({ navigation }) => {
                     <Ionicons name="arrow-back" size={24} color="#ffffff" />
                 </TouchableOpacity>
             ),
-            title: jobId ? 'Update Job' : 'Post Job',
+            title: jobId ? 'Update Job' : 'Post a Job',
             headerTitleStyle: {
                 fontFamily: 'Montserrat-SemiBold',
                 fontSize: 18,
@@ -668,7 +668,7 @@ const PostJobForm = ({ navigation }) => {
 
                                 <View style={styles.fieldWrapper}>
                                     <Text style={styles.label}>
-                                        Job Type<Text style={styles.requiredStar}>*</Text>
+                                        Job Category<Text style={styles.requiredStar}>*</Text>
                                     </Text>
                                     <DropDownPicker
                                         open={jobCategoryOpen}
@@ -679,7 +679,7 @@ const PostJobForm = ({ navigation }) => {
                                             setJobCategoryOpen(open);
                                         }}
                                         setValue={setJobCategory}
-                                        placeholder="Job Category"
+                                        placeholder="Select Job Category"
                                         style={[
                                             styles.dropdown,
                                             formErrors.jobCategory ? styles.dropdownError : null
@@ -1015,7 +1015,7 @@ const PostJobForm = ({ navigation }) => {
 
                                 <View style={styles.fieldWrapper}>
                                     <Text style={styles.label}>
-                                        No. of Employees<Text style={styles.requiredStar}>*</Text>
+                                        Number of Employees<Text style={styles.requiredStar}>*</Text>
                                     </Text>
                                     <TextInput
                                         ref={(ref) => inputRefs.current.numEmployees = ref}
@@ -1068,7 +1068,7 @@ const PostJobForm = ({ navigation }) => {
                                         <View style={styles.fullInputContainer}>
                                             <TextInput
                                                 ref={(ref) => inputRefs.current.minAge = ref}
-                                                label="Min Age"
+                                                label="Minimum Age"
                                                 value={minAge}
                                                 onChangeText={setMinAge}
                                                 style={styles.input}
@@ -1096,6 +1096,9 @@ const PostJobForm = ({ navigation }) => {
                                 </View>
 
                                 {/* Minimum Education */}
+                                <Text style={{ ...styles.label, marginBottom: -4 }}>
+                                    Minimum Education
+                                </Text>
                                 <View style={styles.fieldWrapper}>
                                     <DropDownPicker
                                         open={minEducationOpen}
@@ -1120,6 +1123,9 @@ const PostJobForm = ({ navigation }) => {
                                 </View>
 
                                 {/* Preferred Gender */}
+                                <Text style={{ ...styles.label, marginBottom: -4 }}>
+                                    Preferred Gender (Optional)
+                                </Text>
                                 <View style={styles.fieldWrapper}>
                                     <DropDownPicker
                                         open={prefGenderOpen}
@@ -1184,7 +1190,7 @@ const PostJobForm = ({ navigation }) => {
                                         />
 
                                         <View style={styles.answerContainer}>
-                                            <Text style={styles.answerLabel}>Expected Answer:</Text>
+                                            <Text style={styles.answerLabel}>Expected Answer</Text>
                                             <View style={styles.answerButtons}>
                                                 <TouchableOpacity
                                                     style={[
@@ -1359,7 +1365,7 @@ const styles = StyleSheet.create({
     dropdownContainer: {
         marginBottom: 8, // Reduced from 16 to make room for error text
         borderWidth: 1,
-        borderColor: '#e4e4e4', 
+        borderColor: '#e4e4e4',
         // marginTop: 4,.
         marginBottom: -2,
         zIndex: 10000, // Ensure dropdown appears above other elements
@@ -1592,7 +1598,8 @@ const styles = StyleSheet.create({
     },
     // Add a wrapper for each input/dropdown to enforce consistent spacing
     fieldWrapper: {
-        marginBottom: 16,
+        marginBottom: 8,
+        marginTop: 0,
         // padding: ,
         // zIndex: 1, // Ensure dropdowns appear above other elements
     },

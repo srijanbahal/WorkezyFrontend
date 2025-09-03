@@ -213,6 +213,26 @@ const MyJobs = ({ navigation }) => {
                 return '#666666'; // Default Dark Gray text
         }
     };
+    const getPostedTime = (postedDate) => {
+        const today = new Date();
+        const postDate = new Date(postedDate);
+        const diffTime = Math.abs(today - postDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) {
+            return 'Today';
+        } else if (diffDays === 1) {
+            return 'Yesterday';
+        } else if (diffDays <= 7) {
+            return '1 week ago';
+        } else if (diffDays <= 14) {
+            return '2 weeks ago';
+        } else if (diffDays <= 30) {
+            return '1 month ago';
+        } else {
+            return `1 month ago`;
+        }
+    };
 
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
@@ -246,6 +266,10 @@ const MyJobs = ({ navigation }) => {
 
             {/* Attributes Row */}
             <View style={styles.attributesContainer}>
+                {/* <View style={{ ...styles.attributeTag, backgroundColor: '#f0fdf4' }}>
+                    <Ionicons name="cash-outline" size={14} color="#555" />
+                    <Text style={{ ...styles.attributeText, color: '#4CAF50' }}>₹{item.salary}/month</Text>
+                </View> */}
                 <View style={styles.attributeTag}>
                     <Ionicons name="location-outline" size={14} color="#555" />
                     <Text style={styles.attributeText}>{item.city}, {item.country}</Text>
@@ -260,24 +284,26 @@ const MyJobs = ({ navigation }) => {
                     <Ionicons name="school-outline" size={14} color="#555" />
                     <Text style={styles.attributeText}>{item.experience}</Text>
                 </View>
-                {/* <View style={styles.attributeTag}>
-                    <Ionicons name="school-outline" size={14} color="#555" />
-                    <Text style={styles.attributeText}>{item.experience}</Text>
-                </View> */}
+
             </View>
 
+
+            <View style={styles.salaryContentContainer}>
+                <View style={styles.salaryContainer}>
+                    <Text style={styles.salaryText}>
+                        ₹{item.salary}
+                        <Text style={styles.salaryUnit}>/month</Text>
+                    </Text>
+                </View>
+            </View>
 
             {/* Action Buttons Row */}
             {(item.review_status !== "rejected" && item.review_status !== "expired") && (
                 <View style={styles.actionButtonsContainer}>
-
-                    {/* Left Side: Salary */}
-                    <View style={styles.salaryContainer}>
-                        <Text style={styles.salaryText}>
-                            ₹{item.salary}
-                            <Text style={styles.salaryUnit}>/month</Text>
-                        </Text>
-                    </View>
+                    {/* Left side : Date Posted */}
+                    <Text style={styles.postedDateText}>
+                        Posted {getPostedTime(item.posted_at)}
+                    </Text>
 
                     {/* Right Side: Action Button */}
                     <TouchableOpacity
@@ -361,50 +387,72 @@ const MyJobs = ({ navigation }) => {
                 {/* Sticky header container */}
                 <View style={styles.topWhiteBackground}>
                     <View style={styles.headerRow}>
-                        <Text style={styles.postedJobsTitle}>My Jobs</Text>
+                        <Text style={styles.headerTitle}>My Jobs</Text>
                     </View>
                 </View>
+                {/* 
                 <View style={styles.filterContainer}>
                     <View style={styles.filterDropdownWrapper}>
-                        {/* Filter Icon inside input */}
-                        <Ionicons
-                            name="filter"
-                            size={20}
-                            color="#999"
-                            style={styles.filterIconInside}
-                        />
+                    
 
-                        <DropDownPicker
-                            open={statusOpen}
-                            value={statusValue}
-                            items={statusItems}
-                            setOpen={setStatusOpen}
-                            setValue={setStatusValue}
-                            setItems={setStatusItems}
-                            placeholder="All Jobs"
-                            style={styles.filterDropdown}
-                            dropDownContainerStyle={styles.filterDropdownContainer}
-                            textStyle={styles.filterDropdownText}
-                            placeholderStyle={styles.filterDropdownPlaceholder}
-                            listMode="SCROLLVIEW"
-                            ArrowDownIconComponent={({ style }) => (
-                                <Ionicons name="chevron-down" size={18} color="#999" style={style} />
-                            )}
-                            ArrowUpIconComponent={({ style }) => (
-                                <Ionicons name="chevron-up" size={18} color="#999" style={style} />
-                            )}
-                            tickIconStyle={{ tintColor: "#BE4145" }}
-                            zIndex={1000}
-                        />
+                {/* <DropDownPicker
+                                open={statusOpen}
+                                value={statusValue}
+                                items={statusItems}
+                                setOpen={setStatusOpen}
+                                setValue={setStatusValue}
+                                setItems={setStatusItems}
+                                placeholder="All Jobs"
+                                style={styles.filterDropdown}
+                                dropDownContainerStyle={styles.filterDropdownContainer}
+                                textStyle={styles.filterDropdownText}
+                                placeholderStyle={styles.filterDropdownPlaceholder}
+                                listMode="SCROLLVIEW"
+                                ArrowDownIconComponent={({ style }) => (
+                                    <Ionicons name="chevron-down" size={18} color="#999" style={style} />
+                                )}
+                                ArrowUpIconComponent={({ style }) => (
+                                    <Ionicons name="chevron-up" size={18} color="#999" style={style} />
+                                )}
+                                tickIconStyle={{ tintColor: "#BE4145" }}
+                                zIndex={1000}
+                            />
+                        </View>
+                </View> */}
+{/* 
+                <View style={styles.topWhiteBackground}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.postedJobsTitle}>My Jobs</Text>
+
                     </View>
-
+                </View> */}
+                <View style={styles.filterDropdownWrapper}>
+                    <DropDownPicker
+                        open={statusOpen}
+                        value={statusValue}
+                        items={statusItems}
+                        setOpen={setStatusOpen}
+                        setValue={setStatusValue}
+                        setItems={setStatusItems}
+                        placeholder="All Jobs"
+                        style={styles.filterDropdown}
+                        dropDownContainerStyle={styles.filterDropdownContainer}
+                        textStyle={styles.filterDropdownText}
+                        placeholderStyle={styles.filterDropdownPlaceholder}
+                        listMode="SCROLLVIEW"
+                        ArrowDownIconComponent={({ style }) => (
+                            <Ionicons name="chevron-down" size={18} color="#999" style={style} />
+                        )}
+                        ArrowUpIconComponent={({ style }) => (
+                            <Ionicons name="chevron-up" size={18} color="#999" style={style} />
+                        )}
+                        tickIconStyle={{ tintColor: "#BE4145" }}
+                        zIndex={1000}
+                    />
                 </View>
 
-
-
-                {/* Scrollable content */}
                 <ScrollView
-                    style={styles.scrollContainer}
+                    style={[styles.scrollContainer, { zIndex: 0, elevation: 0 }]} // 👈 keep low
                     keyboardShouldPersistTaps="handled"
                     contentContainerStyle={styles.scrollContentContainer}
                 >
@@ -428,7 +476,7 @@ const MyJobs = ({ navigation }) => {
                         />
                     )}
                 </ScrollView>
-            </View>
+            </View >
             <BottomNav activeuser={"employer"} />
 
             {/* Modal for Job Details */}
@@ -663,6 +711,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f4f2ee',
         paddingHorizontal: 14,
         padding: 16,
+        paddingTop: 0,
     },
     scrollContentContainer: {
         paddingBottom: 78,
@@ -723,17 +772,9 @@ const styles = StyleSheet.create({
         position: 'relative',
         width: '100%',
         alignSelf: 'center',
+        zIndex: 0,
     },
-    leftSection: {
-        flex: 1,
-        // backgroundColor: '#333',
-        // paddingRight: 60,
-        // minHeight: 50,
-    },
-    rightSection: {
-        alignSelf: 'flex-start',  // ✅ keep in natural layout
-        marginLeft: 'auto',       // push it to right
-    },
+
     jobTitle: {
         fontSize: 24,
         fontFamily: 'Montserrat-SemiBold',
@@ -766,30 +807,30 @@ const styles = StyleSheet.create({
     },
 
     attributesContainer: {
-        flexDirection: "row",
-        // flexWrap: "wrap",
-        alignItems: "center",
-        gap: -8,
-        width: "100%",
-        marginTop: 4,
-        // marginBottom: 8, // 12 -> 8
-        marginLeft: -4, // aligns with job title
-        paddingBottom: 14,
+        flexDirection: 'row',
+        // flexWrap: 'wrap',
+        gap: 6,
+        marginBottom: 8,
+        marginTop: 8,
+        width: '100%',
+        marginLeft: -8,
+        paddingRight: 8,
     },
 
     attributeTag: {
-        backgroundColor: "#f5f5f5",
+        backgroundColor: '#f9f9f9',
+        paddingVertical: 6,
+        paddingHorizontal: 6,
+        borderRadius: 100,
         borderWidth: 1,
-        borderColor: "#e0e0e0",
-        borderRadius: 20,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
+        borderColor: '#e0e0e0',
+        // marginRight: 8,
+        marginBottom: 8,
+        marginTop: 4,
+        minWidth: 80,
+        minHeight: 24,
         flexDirection: "row",
         alignItems: "center",
-        marginRight: 4,
-        marginBottom: 6,
-        minWidth: 36,
-        minHeight: 24,
     },
 
     attributeText: {
@@ -797,18 +838,44 @@ const styles = StyleSheet.create({
         color: '#666',
         fontFamily: 'Inter-Regular',
         marginLeft: 4,
-        // textTransform: 'capitalize',
+        textTransform: 'capitalize',
+    },
+
+    salaryContentContainer: {
+        flex: 1,
+        marginLeft: 2,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        // marginTop: 8,
+        marginBottom: 16,
+    },
+    salaryContainer: {
+        flex: 1,
+        marginLeft: 2,
+    },
+
+    salaryText: {
+        fontSize: 20,
+        fontFamily: 'Montserrat-SemiBold',
+        color: '#b44145',   // primary red
+        fontWeight: 'bold',
+    },
+
+    salaryUnit: {
+        fontSize: 14,
+        fontFamily: 'Inter-Regular',
+        color: '#666',
     },
     viewDetailsButton: {
         // Remove absolute positioning
         backgroundColor: 'transparent',
         marginRight: 8,
-        minHeight: 44, // added 
+        // minHeight: 44, // added 
     },
     buttonContent: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        // justifyContent: 'center',
     },
     viewDetailsText: {
         color: '#45a6be',
@@ -818,27 +885,22 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         // marginTop: 2,
     },
-    viewDetailsText1: {
-        color: '#666666',
-        fontSize: 14,
-        fontFamily: 'Montserrat-SemiBold',
-        marginRight: 6,
+    // viewDetailsText1: {
+    //     color: '#666666',
+    //     fontSize: 14,
+    //     fontFamily: 'Montserrat-SemiBold',
+    //     marginRight: 6,
 
-    },
-    arrowIcon: {
-        // marginLeft: 4,
-        // fontSize: 16,
-        // size: 16,
-    },
-    hideButton: {
-        display: 'none'
-    },
-    viewDetailsButtonPopup: {
-        // Remove absolute positioning
-        backgroundColor: 'transparent',
-        marginRight: 8,
-        minHeight: 44, // added
-    },
+    // },
+    // hideButton: {
+    //     display: 'none'
+    // },
+    // viewDetailsButtonPopup: {
+    //     // Remove absolute positioning
+    //     backgroundColor: 'transparent',
+    //     marginRight: 8,
+    //     // minHeight: 44, // added
+    // },
     actionButtonsRow: {
         flexDirection: 'row',
         position: 'relative',
@@ -950,29 +1012,28 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
     },
-    postedJobsTitle: {
+    headerTitle: {
         fontFamily: 'Montserrat-SemiBold',
-        fontSize: 24, // 20 -> 18
+        fontSize: 18, // 20 -> 18
         color: '#ffffff',
-        marginBottom: 14,
+        marginBottom: 12,
     },
     filterDropdownWrapper: {
         position: "relative",
         minWidth: '100%',
-        minHeight: 14,
+        // minHeight: 14,
         alignItems: 'flex-start',
-        marginBottom: 6,
+        // marginBottom: 6,
         marginTop: 16,
         zIndex: 1001,
-    },
-
-    filterContainer:{
+        paddingBottom: 16,
         backgroundColor: '#f4f2ee',
         // paddingHorizontal: "92
-        marginHorizontal: 20,
-        // paddingTop: 16,
-    },
+        // marginHorizontal: 20,
+        minWidth: '92%',
+        paddingHorizontal: 20,
 
+    },
     filterDropdown: {
         flexDirection: 'row',
         minWidth: '100%',
@@ -1023,11 +1084,12 @@ const styles = StyleSheet.create({
     },
     filterIconInside: {
         position: "absolute",
-        left: 14,
-        top: "63%",
-        transform: [{ translateY: -10 }], // centers vertically
-        zIndex: 1001,
+        left: 12,        // distance from left edge of dropdown
+        top: "50%",      // center vertically
+        transform: [{ translateY: -10 }], // adjust for icon size
+        zIndex: 10,      // keep above dropdown box
     },
+
     jobInfoValue: {
         fontFamily: 'Inter-Regular',
         fontSize: 14,
@@ -1047,18 +1109,18 @@ const styles = StyleSheet.create({
         // marginTop: 2,
     },
 
-    salaryText: {
-        fontSize: 18,
-        fontFamily: 'Montserrat-SemiBold',
-        color: '#b44145',   // your primary color
-        // fontStyle: 'normal',
-    },
+    // salaryText: {
+    //     fontSize: 18,
+    //     fontFamily: 'Montserrat-SemiBold',
+    //     color: '#b44145',   // your primary color
+    //     // fontStyle: 'normal',
+    // },
 
-    salaryUnit: {
-        fontSize: 12,
-        fontFamily: 'Inter-Regular',
-        color: '#666',      // subtle gray for "/month"
-    },
+    // salaryUnit: {
+    //     fontSize: 12,
+    //     fontFamily: 'Inter-Regular',
+    //     color: '#666',      // subtle gray for "/month"
+    // },
 
     candidatesText: {
         fontSize: 14,
@@ -1066,96 +1128,56 @@ const styles = StyleSheet.create({
         color: '#333',
     },
 
-    // headerRow: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     justifyContent: 'space-between',
-    //     width: '100%',
-    // },
-    // postedJobsTitle: {
-    //     fontFamily: 'Montserrat-SemiBold',
-    //     fontSize: 18, // 20 -> 18
-    //     color: '#222',
-    //     marginBottom: 0,
-    // },
-    // filterDropdownWrapper: {
-    //     minWidth: 120,
-    //     alignItems: 'flex-end',
-    //     marginBottom: 14,
-    // },
-    // filterDropdown: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     backgroundColor: '#fff',
-    //     borderWidth: 1,
-    //     borderColor: '#e0e0e0',
-    //     borderRadius: 8,
-    //     height: 40,
-    //     paddingHorizontal: 16,
-    //     minWidth: 140,
-    //     justifyContent: 'center',
-    // },
-    // filterDropdownContainer: {
-    //     borderColor: '#e0e0e0',
-    //     borderRadius: 8,
-    //     backgroundColor: '#fff',
-    //     zIndex: 1000,
-    // },
-    // filterDropdownText: {
-    //     fontFamily: 'Inter-Regular',
-    //     fontSize: 14,
-    //     color: '#333',
-    //     marginRight: 4,
-    // },
-    // filterDropdownPlaceholder: {
-    //     color: '#999',
-    //     fontFamily: 'Inter-Regular',
-    //     fontSize: 14,
-    // },
     actionButtonsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: -4,
+        marginTop: 8,
         // paddingHorizontal: 4,
-        marginBottom: 12,
+        marginBottom: 14,
         paddingBottom: 8,
+    },
+    postedDateText: {
+        fontSize: 12,
+        color: '#666666',
+        fontFamily: 'Inter-Regular',
+
     },
 
     salaryContainer: {
         flex: 1,
     },
 
-    salaryText: {
-        fontSize: 18,
-        fontFamily: 'Montserrat-SemiBold',
-        color: '#b44145',   // primary red
-    },
+    // salaryText: {
+    //     fontSize: 18,
+    //     fontFamily: 'Montserrat-SemiBold',
+    //     color: '#b44145',   // primary red
+    // },
 
-    salaryUnit: {
-        fontSize: 12,
-        fontFamily: 'Inter-Regular',
-        color: '#666',
-    },
+    // salaryUnit: {
+    //     fontSize: 12,
+    //     fontFamily: 'Inter-Regular',
+    //     color: '#666',
+    // },
 
-    viewDetailsButton: {
-        paddingVertical: 6,
-        // paddingHorizontal: 10,
-        borderRadius: 8,
-        // marginLeft: 24,
-        // backgroundColor: '#333',
-    },
+    // viewDetailsButton: {
+    //     paddingVertical: 6,
+    //     // paddingHorizontal: 10,
+    //     borderRadius: 8,
+    //     // marginLeft: 24,
+    //     // backgroundColor: '#333',
+    // },
 
-    buttonContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
+    // buttonContent: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    // },
 
-    viewDetailsText: {
-        fontSize: 14,
-        color: '#45a6be',
-        marginRight: 4,
-    },
+    // viewDetailsText: {
+    //     fontSize: 14,
+    //     color: '#45a6be',
+    //     marginRight: 4,
+    // },
 });
 
 export default MyJobs;

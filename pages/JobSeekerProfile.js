@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProfileDetails } from '../utils/api';
 import BottomNav from '../component/BottomNav';
 import { useAuth } from '../utils/AuthContext';
+import { BackHandler } from 'react-native';
 
 const ButtonComponent = ({ name, icon, onPress }) => {
   return (
@@ -18,6 +19,7 @@ const ButtonComponent = ({ name, icon, onPress }) => {
     </TouchableOpacity>
   );
 };
+
 
 // Helper function to format role text
 const formatRoleText = (role) => {
@@ -37,6 +39,23 @@ const JobSeekerProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { logout, user } = useAuth();
+  
+  // // Handle Android back button to always go to MyJobs
+  // useEffect(() => {
+  //   const backHandler = BackHandler.addEventListener(
+  //     "hardwareBackPress",
+  //     () => {
+  //       navigation.reset({
+  //         index: 0,
+  //         routes: [{ name: "JobListScreen" }],
+  //       });
+  //       return true; // prevent default pop
+  //     }
+  //   );
+
+  //   return () => backHandler.remove();
+  // }, [navigation]);
+
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -136,12 +155,19 @@ const JobSeekerProfile = () => {
 
           {/* Profile Section */}
           <View style={styles.profileSection}>
-            <Image
-              source={{
-                uri: userDetails?.profile_image || 'https://via.placeholder.com/150',
-              }}
-              style={styles.profileImage}
-            />
+            {userDetails?.profile_image ? (
+              <Image
+                source={{ uri: userDetails.profile_image }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={styles.placeholderLogo}>
+                <Text style={styles.logoText}>
+                  {userDetails?.full_name?.split(' ')[0]?.[0]?.toUpperCase() || 'U'}
+                </Text>
+              </View>
+            )}
+
             {/* Use the dedicated container style */}
             <View style={styles.profileTextContainer}>
               <Text
@@ -242,9 +268,9 @@ const styles = StyleSheet.create({
   },
   homeTitle: {
     fontFamily: 'Montserrat-SemiBold',
-    fontSize: 24, // 20 -> 18
+    fontSize: 18, // 20 -> 18
     color: '#ffffff',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   profileContent: {
     width: '100%',
@@ -290,6 +316,26 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
+  placeholderLogo: {
+    width: 96,
+    height: 96,
+    borderRadius: 45, // makes it circular
+    backgroundColor: '#ddd', // fallback bg color
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0,
+    shadowColor: '#b4b4b4',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  logoText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#555',
+  },
+
 
   profileTextContainer: {
     flex: 1,

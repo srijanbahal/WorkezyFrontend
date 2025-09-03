@@ -84,11 +84,7 @@ const EditEmployerProfile = ({ route }) => {
     { label: 'CEO', value: 'ceo' },
     { label: 'Manager', value: 'manager' },
     { label: 'HR', value: 'hr' },
-    { label: 'Recruiter', value: 'recruiter' },
-    { label: 'Hiring Manager', value: 'hiring_manager' },
-    { label: 'Team Lead', value: 'team_lead' },
-    { label: 'Executive', value: 'executive' },
-    { label: 'Administrator', value: 'administrator' },
+    { label: 'Others', value: 'other' },
   ]);
 
   const [openCompanySize, setOpenCompanySize] = useState(false);
@@ -886,7 +882,7 @@ const EditEmployerProfile = ({ route }) => {
 
             {/* Rest of company details */}
             <View style={styles.labelContainer}>
-              <Text style={styles.label}>Founded In (year)</Text>
+              <Text style={styles.label}>Founded In (Year)</Text>
               <Text style={styles.requiredStar}>*</Text>
             </View>
             <TextInput
@@ -1004,7 +1000,7 @@ const EditEmployerProfile = ({ route }) => {
             {pincodeError ? <Text style={styles.errorText}>{pincodeError}</Text> : null}
             {/* Add error text if needed */}
 
-            <Text style={styles.label}>Company Social Media Link</Text>
+            <Text style={styles.label}>Company Social Media Link (Optional)</Text>
             <TextInput
               style={[
                 styles.input,
@@ -1020,7 +1016,7 @@ const EditEmployerProfile = ({ route }) => {
           {/* Document Upload Section */}
           <View style={[styles.sectionContainer, { marginTop: 2 }]}>
             <Text style={styles.sectionTitle}>Upload Documents</Text>
-            <Text style={styles.sectionText}>you cannot update your documents here. Please contact support.</Text>
+            <Text style={styles.sectionText}>Contact support to update your profile</Text>
             {/* PAN Card */}
             <View style={styles.uploadRow}>
               <View style={{ width: '100%' }}>
