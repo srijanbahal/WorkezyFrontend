@@ -86,7 +86,6 @@ const EmployerRegistration = ({ route }) => {
     { label: '501+', value: '501+' },
   ]);
 
-
   const [industryItems, setIndustryItems] = useState([
     { label: 'IT', value: 'it' },
     { label: 'Finance', value: 'finance' },
@@ -131,7 +130,6 @@ const EmployerRegistration = ({ route }) => {
     { label: 'Data Entry', value: 'data_entry' },
     { label: 'Back Office', value: 'back_office' },
     { label: 'Other', value: 'other' },
-    
   ]);
 
   const [openState, setOpenState] = useState(false);

@@ -67,6 +67,7 @@ export const updateJob = (jobId, data) => api.put(`/employers/update-job/${jobId
 export const ResumeData=(data)=>api.put("users/update-resume",data);
 
 export const getJobQuestions = (jobId) => api.get(`users/job-questions/${jobId}`);
+export const getJobExtradetails = (jobId) => api.get(`users/`)
 
 // Fixed API endpoint to match backend structure with fallback options
 export const 

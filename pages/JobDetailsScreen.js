@@ -26,6 +26,11 @@ const JobDetailsScreen = ({ route, navigation }) => {
     onConfirm: null
 
   });
+  // const [showQuestionsModal, setShowQuestionsModal] = useState(false);
+  const [showTimeSlotModal, setShowTimeSlotModal] = useState(false);
+  // const [questionAnswers, setQuestionAnswers] = useState({});
+  const [preferredSlot, setPreferredSlot] = useState(null);
+
 
   const showAlert = (message, type = 'info', title = '', showCancel = false, onConfirm = null) => {
     setAlertConfig({
@@ -198,7 +203,8 @@ const JobDetailsScreen = ({ route, navigation }) => {
         jobSeekerId: userId,
         status: 'applied',
         relevant_candidate: relevant_candidate ? 'yes' : 'no',
-        relevant_score
+        relevant_score,
+        preferred_slot: preferredSlot
       });
 
       if (applicationResponse?.data?.success) {
@@ -246,8 +252,9 @@ const JobDetailsScreen = ({ route, navigation }) => {
         }
 
         showAlert('Application submitted successfully!', 'success');
-
+        setPreferredSlot(null);  // 👈 clear after submit
         setTimeout(() => {
+
           navigation.navigate('JobList');
         }, 1000);
       } else {
@@ -274,7 +281,8 @@ const JobDetailsScreen = ({ route, navigation }) => {
           setShowQuestionsModal(true);
         } else {
           // If no questions, proceed with application
-          submitJobApplication();
+          setShowQuestionsModal(true)
+          // submitJobApplication();
         }
       } else {
         // Redirect to JobSeekerDetails if education is not filled, pass fromJobApply param
@@ -297,10 +305,22 @@ const JobDetailsScreen = ({ route, navigation }) => {
       return;
     }
 
+    // setShowTimeSlotModal(true);
     setShowQuestionsModal(false);
     submitJobApplication();
   };
 
+  // const handleSlotSubmit = () => {
+  //   if (!preferredSlot) {
+  //     showAlert('Error', 'Please select a preferred time slot before submitting');
+  //     return;
+  //   }
+
+  //   setShowTimeSlotModal(false);
+
+  //   // ✅ Trigger final application submission
+  //   submitJobApplication();
+  // };
   const handleAnswerSelect = (questionId, answer) => {
     setQuestionAnswers(prev => ({
       ...prev,
@@ -429,7 +449,6 @@ const JobDetailsScreen = ({ route, navigation }) => {
           <Text style={styles.companyDescription2}>{job.company_description || 'No company description available.'}</Text>
         </View>
 
-        {/* Questions Modal */}
         <Modal
           visible={showQuestionsModal}
           transparent={true}
@@ -437,49 +456,97 @@ const JobDetailsScreen = ({ route, navigation }) => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Screening Questions</Text>
-              <Text style={styles.modalSubtitle}>Please answer the following questions:</Text>
-
               <ScrollView style={styles.questionsContainer}>
-                {jobQuestions.map((q, index) => (
-                  <View key={q.id} style={styles.questionContainer}>
-                    <Text style={styles.questionText}>{q.question_text}</Text>
-                    <View style={styles.answerContainer}>
-                      <TouchableOpacity
+
+                {/* ✅ Screening Questions Section (only if present) */}
+                {jobQuestions?.length > 0 && (
+                  <>
+                    <Text style={styles.modalTitle}>Screening Questions</Text>
+                    <Text style={styles.modalSubtitle}>
+                      Please answer the following questions:
+                    </Text>
+
+                    {jobQuestions.map((q, index) => (
+                      <View key={q.id} style={styles.questionContainer}>
+                        <Text style={styles.questionText}>{q.question_text}</Text>
+                        <View style={styles.answerContainer}>
+                          <TouchableOpacity
+                            style={[
+                              styles.answerButton,
+                              questionAnswers[q.id] === "yes" && styles.selectedAnswer,
+                            ]}
+                            onPress={() => handleAnswerSelect(q.id, "yes")}
+                          >
+                            <Text
+                              style={[
+                                styles.answerText,
+                                questionAnswers[q.id] === "yes" && styles.selectedAnswerText,
+                              ]}
+                            >
+                              Yes
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={[
+                              styles.answerButton,
+                              questionAnswers[q.id] === "no" && styles.selectedAnswer,
+                            ]}
+                            onPress={() => handleAnswerSelect(q.id, "no")}
+                          >
+                            <Text
+                              style={[
+                                styles.answerText,
+                                questionAnswers[q.id] === "no" && styles.selectedAnswerText,
+                              ]}
+                            >
+                              No
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    ))}
+                  </>
+                )}
+
+                {/* ✅ Preferred Time Slot Section (always shown) */}
+                <Text style={[styles.modalTitle, { marginTop: 20 }]}>
+                  Preferred Time Slots
+                </Text>
+                <Text style={styles.modalSubtitle}>
+                  Please select your available time slot:
+                </Text>
+
+                <View style={styles.slotAnswerContainer}>
+                  {["10am - 12pm", "6pm - 8pm"].map((slot, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.slotAnswerButton,
+                        preferredSlot === slot && styles.slotSelectedAnswer,
+                      ]}
+                      onPress={() => setPreferredSlot(slot)}
+                    >
+                      <Text
                         style={[
-                          styles.answerButton,
-                          questionAnswers[q.id] === 'yes' && styles.selectedAnswer
+                          styles.slotAnswerText,
+                          preferredSlot === slot && styles.slotSelectedAnswerText,
                         ]}
-                        onPress={() => handleAnswerSelect(q.id, 'yes')}
                       >
-                        <Text style={[
-                          styles.answerText,
-                          questionAnswers[q.id] === 'yes' && styles.selectedAnswerText
-                        ]}>Yes</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.answerButton,
-                          questionAnswers[q.id] === 'no' && styles.selectedAnswer
-                        ]}
-                        onPress={() => handleAnswerSelect(q.id, 'no')}
-                      >
-                        <Text style={[
-                          styles.answerText,
-                          questionAnswers[q.id] === 'no' && styles.selectedAnswerText
-                        ]}>No</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                ))}
+                        {slot}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </ScrollView>
 
+              {/* Buttons */}
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   style={styles.cancelButton}
                   onPress={() => {
                     setShowQuestionsModal(false);
                     setQuestionAnswers({});
+                    setPreferredSlot(null);
                   }}
                 >
                   <Text style={styles.cancelButtonText}>Cancel</Text>
@@ -487,10 +554,17 @@ const JobDetailsScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   style={[
                     styles.submitButton,
-                    Object.keys(questionAnswers).length !== jobQuestions.length && styles.submitButtonDisabled
+                    ((jobQuestions?.length > 0 &&
+                      Object.keys(questionAnswers).length !== jobQuestions.length) ||
+                      !preferredSlot) &&
+                    styles.submitButtonDisabled,
                   ]}
                   onPress={handleQuestionSubmit}
-                  disabled={Object.keys(questionAnswers).length !== jobQuestions.length}
+                  disabled={
+                    (jobQuestions?.length > 0 &&
+                      Object.keys(questionAnswers).length !== jobQuestions.length) ||
+                    !preferredSlot
+                  }
                 >
                   <Text style={styles.submitButtonText}>Submit</Text>
                 </TouchableOpacity>
@@ -498,6 +572,10 @@ const JobDetailsScreen = ({ route, navigation }) => {
             </View>
           </View>
         </Modal>
+
+
+
+
 
         <CustomAlert
           visible={alertConfig.visible}
@@ -861,6 +939,33 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
     alignItems: 'center',
+  },
+  slotAnswerContainer: {
+    flex: 1,
+    gap: 12
+  },
+
+  slotAnswerButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+    margin: 8,
+  },
+  slotSelectedAnswer: {
+    backgroundColor: '#FCF0F0',
+    borderColor: '#BE4145',
+  },
+  slotAnswerText: {
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: '#444444',
+  },
+  slotSelectedAnswerText: {
+    color: '#BE4145',
   },
   selectedAnswer: {
     backgroundColor: '#FCF0F0',

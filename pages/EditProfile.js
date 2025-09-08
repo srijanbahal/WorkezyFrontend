@@ -94,59 +94,136 @@ const EditProfile = ({ route }) => {
   ]);
 
   const [industryItems, setIndustryItems] = useState([
-    { label: 'IT', value: 'it' },
-    { label: 'Finance', value: 'finance' },
-    { label: 'Healthcare', value: 'healthcare' },
-    { label: 'Education', value: 'education' },
-    { label: 'Electrician', value: 'electrician' },
-    { label: 'Plumber', value: 'plumber' },
-    { label: 'Carpenter', value: 'carpenter' },
-    { label: 'Painter', value: 'painter' },
-    { label: 'Welder', value: 'welder' },
-    { label: 'Mechanic', value: 'mechanic' },
-    { label: 'Technician (AC, Refrigerator, etc.)', value: 'technician' },
-    { label: 'Machine Operator', value: 'machine_operator' },
-    { label: 'Hotel Manager', value: 'hotel_manager' },
-    { label: 'Office Boy', value: 'office_boy' },
-    { label: 'Admin', value: 'admin' },
-    { label: 'Receptionist', value: 'receptionist' },
-    { label: 'Bartender', value: 'bartender' },
-    { label: 'Housekeeping', value: 'housekeeping' },
-    { label: 'Beautician', value: 'beautician' },
-    { label: 'Warehouse Worker', value: 'warehouse_worker' },
-    { label: 'Procurement/Purchase', value: 'procurement_purchase' },
-    { label: 'Supply Chain', value: 'supply_chain' },
-    { label: 'Operations', value: 'operations' },
-    { label: 'Field Sales', value: 'field_sales' },
-    { label: 'Business Development', value: 'business_development' },
-    { label: 'Key Account Manager (KAM)', value: 'kam' },
-    { label: 'Customer Support', value: 'customer_support' },
-    { label: 'Lab Technician', value: 'lab_technician' },
-    { label: 'Nurse', value: 'nurse' },
-    { label: 'Compounder', value: 'compounder' },
-    { label: 'Content Writer', value: 'content_writer' },
-    { label: 'Graphics Designer', value: 'graphics_designer' },
-    { label: 'Digital Marketing', value: 'digital_marketing' },
-    { label: 'Web Developer', value: 'web_developer' },
-    { label: 'Tailor', value: 'tailor' },
-    { label: 'Maid / Caretaker', value: 'maid_caretaker' },
-    { label: 'Babysitter', value: 'babysitter' },
-    { label: 'Nanny', value: 'nanny' },
-    { label: 'House Cleaner', value: 'house_cleaner' },
-    { label: 'Pest Control', value: 'pest_control' },
-    { label: 'Data Entry', value: 'data_entry' },
-    { label: 'Back Office', value: 'back_office' },
-    { label: 'Other', value: 'other' },
+    // { label: 'IT', value: 'it' },
+    // { label: 'Finance', value: 'finance' },
+    // { label: 'Healthcare', value: 'healthcare' },
+    // { label: 'Education', value: 'education' },
+    // { label: 'Electrician', value: 'electrician' },
+    // { label: 'Plumber', value: 'plumber' },
+    // { label: 'Carpenter', value: 'carpenter' },
+    // { label: 'Painter', value: 'painter' },
+    // { label: 'Welder', value: 'welder' },
+    // { label: 'Mechanic', value: 'mechanic' },
+    // { label: 'Technician (AC, Refrigerator, etc.)', value: 'technician' },
+    // { label: 'Machine Operator', value: 'machine_operator' },
+    // { label: 'Hotel Manager', value: 'hotel_manager' },
+    // { label: 'Office Boy', value: 'office_boy' },
+    // { label: 'Admin', value: 'admin' },
+    // { label: 'Receptionist', value: 'receptionist' },
+    // { label: 'Bartender', value: 'bartender' },
+    // { label: 'Housekeeping', value: 'housekeeping' },
+    // { label: 'Beautician', value: 'beautician' },
+    // { label: 'Warehouse Worker', value: 'warehouse_worker' },
+    // { label: 'Procurement/Purchase', value: 'procurement_purchase' },
+    // { label: 'Supply Chain', value: 'supply_chain' },
+    // { label: 'Operations', value: 'operations' },
+    // { label: 'Field Sales', value: 'field_sales' },
+    // { label: 'Business Development', value: 'business_development' },
+    // { label: 'Key Account Manager (KAM)', value: 'kam' },
+    // { label: 'Customer Support', value: 'customer_support' },
+    // { label: 'Lab Technician', value: 'lab_technician' },
+    // { label: 'Nurse', value: 'nurse' },
+    // { label: 'Compounder', value: 'compounder' },
+    // { label: 'Content Writer', value: 'content_writer' },
+    // { label: 'Graphics Designer', value: 'graphics_designer' },
+    // { label: 'Digital Marketing', value: 'digital_marketing' },
+    // { label: 'Web Developer', value: 'web_developer' },
+    // { label: 'Tailor', value: 'tailor' },
+    // { label: 'Maid / Caretaker', value: 'maid_caretaker' },
+    // { label: 'Babysitter', value: 'babysitter' },
+    // { label: 'Nanny', value: 'nanny' },
+    // { label: 'House Cleaner', value: 'house_cleaner' },
+    // { label: 'Pest Control', value: 'pest_control' },
+    // { label: 'Data Entry', value: 'data_entry' },
+    // { label: 'Back Office', value: 'back_office' },
+    // { label: 'Other', value: 'other' },
+    // { label: "All", value: "all" },
+    { label: "Accountant", value: "accountant" },
+    { label: "Admin", value: "admin" },
+    { label: "Airport Ground Staff", value: "airport_ground_staff" },
+    { label: "Airport Operations", value: "airport_operations" },
+    { label: "Barista", value: "barista" },
+    { label: "Bartender", value: "bartender" },
+    { label: "Beautician", value: "beautician" },
+    { label: "Business Development", value: "business_development" },
+    { label: "Cabin Crew", value: "cabin_crew" },
+    { label: "Compounder", value: "compounder" },
+    { label: "Cook / Chef", value: "cook_chef" },
+    { label: "Driver", value: "driver" },
+    { label: "Factory Manager", value: "factory_manager" },
+    { label: "Factory Supervisor", value: "factory_supervisor" },
+    { label: "Field Sales", value: "field_sales" },
+    { label: "Graphic Designer", value: "graphic_designer" },
+    { label: "Gym Trainer", value: "gym_trainer" },
+    { label: "Hair Stylist", value: "hair_stylist" },
+    { label: "Hotel Executive", value: "hotel_executive" },
+    { label: "Hotel Manager", value: "hotel_manager" },
+    { label: "Lab Technician", value: "lab_technician" },
+    { label: "Nurse", value: "nurse" },
+    { label: "Procurement / Purchase", value: "procurement_purchase" },
+    { label: "Receptionist", value: "receptionist" },
+    { label: "Sales Counsellor", value: "sales_counsellor" },
+    { label: "Seaman", value: "seaman" },
+    { label: "Security Bouncer", value: "security_bouncer" },
+    { label: "Security Officer", value: "security_officer" },
+    { label: "Store Manager", value: "store_manager" },
+    { label: "Supply Chain", value: "supply_chain" },
+    { label: "Tailor", value: "tailor" },
+    { label: "Teacher", value: "teacher" },
+    { label: "Technician", value: "technician" },
+    { label: "Web Developer", value: "web_developer" },
+    { label: "Warehouse", value: "warehouse" },
+    { label: "Yoga / Zumba Instructor", value: "yoga_zumba_instructor" },
   ]);
+
+  const [roleItems, setRoleItems] = useState([
+    { label: "All", value: "all" },
+    { label: "Accountant", value: "accountant" },
+    { label: "Admin", value: "admin" },
+    { label: "Airport Ground Staff", value: "airport_ground_staff" },
+    { label: "Airport Operations", value: "airport_operations" },
+    { label: "Barista", value: "barista" },
+    { label: "Bartender", value: "bartender" },
+    { label: "Beautician", value: "beautician" },
+    { label: "Business Development", value: "business_development" },
+    { label: "Cabin Crew", value: "cabin_crew" },
+    { label: "Compounder", value: "compounder" },
+    { label: "Cook / Chef", value: "cook_chef" },
+    { label: "Driver", value: "driver" },
+    { label: "Factory Manager", value: "factory_manager" },
+    { label: "Factory Supervisor", value: "factory_supervisor" },
+    { label: "Field Sales", value: "field_sales" },
+    { label: "Graphic Designer", value: "graphic_designer" },
+    { label: "Gym Trainer", value: "gym_trainer" },
+    { label: "Hair Stylist", value: "hair_stylist" },
+    { label: "Hotel Executive", value: "hotel_executive" },
+    { label: "Hotel Manager", value: "hotel_manager" },
+    { label: "Lab Technician", value: "lab_technician" },
+    { label: "Nurse", value: "nurse" },
+    { label: "Procurement / Purchase", value: "procurement_purchase" },
+    { label: "Receptionist", value: "receptionist" },
+    { label: "Sales Counsellor", value: "sales_counsellor" },
+    { label: "Seaman", value: "seaman" },
+    { label: "Security Bouncer", value: "security_bouncer" },
+    { label: "Security Officer", value: "security_officer" },
+    { label: "Store Manager", value: "store_manager" },
+    { label: "Supply Chain", value: "supply_chain" },
+    { label: "Tailor", value: "tailor" },
+    { label: "Teacher", value: "teacher" },
+    { label: "Technician", value: "technician" },
+    { label: "Web Developer", value: "web_developer" },
+    { label: "Warehouse", value: "warehouse" },
+    { label: "Yoga / Zumba Instructor", value: "yoga_zumba_instructor" },
+  ])
 
   const ExperienceItems = [
     { label: 'Fresher', value: 'fresher' },
-    { label: '1-2 Years', value: '1-2years' },
-    { label: '3-5 Years', value: '3-5years' },
-    { label: '6-8 Years', value: '6-8years' },
-    { label: '9-12 Years', value: '9-12years' },
-    { label: '13-15 Years', value: '13-15years' },
-    { label: '15+ Years', value: '15+years' },
+    { label: '1-2 Years', value: '1-2 Years' },
+    { label: '3-5 Years', value: '3-5 Years' },
+    { label: '6-8 Years', value: '6-8  Years' },
+    { label: '9-12 Years', value: '9-12 Years' },
+    { label: '13-15 Years', value: '13-15 Years' },
+    { label: '15+ Years', value: '15+ Years' },
   ];
 
   // Phone verification states
@@ -662,7 +739,7 @@ const EditProfile = ({ route }) => {
             <View style={styles.phoneContainer}>
               <TextInput
                 style={[
-                  {...styles.input, backgroundColor: "#fff", color: "#999999" },
+                  { ...styles.input, backgroundColor: "#fff", color: "#999999" },
                   { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40 },
                   errors.phone ? styles.inputError : null
                 ]}
@@ -752,7 +829,7 @@ const EditProfile = ({ route }) => {
             <View style={{ zIndex: 10000 }}>
               <DropDownPicker
                 open={activeDropdown === 'gender'}
-              tickIconStyle={{ tintColor: "#BE4145" }}
+                tickIconStyle={{ tintColor: "#BE4145" }}
 
                 value={formData.gender}
                 items={genderItems}
@@ -784,7 +861,7 @@ const EditProfile = ({ route }) => {
               <View style={styles.datePickerColumnDay}>
                 <DropDownPicker
                   open={activeDropdown === 'day'}
-              tickIconStyle={{ tintColor: "#BE4145" }}
+                  tickIconStyle={{ tintColor: "#BE4145" }}
 
                   value={selectedDay}
                   items={days}
@@ -810,7 +887,7 @@ const EditProfile = ({ route }) => {
               <View style={styles.datePickerColumnMonth}>
                 <DropDownPicker
                   open={activeDropdown === 'month'}
-              tickIconStyle={{ tintColor: "#BE4145" }}
+                  tickIconStyle={{ tintColor: "#BE4145" }}
 
                   value={selectedMonth}
                   items={months}
@@ -900,7 +977,7 @@ const EditProfile = ({ route }) => {
             {/* Country */}
             <Text style={styles.label}>Country<Text style={styles.requiredStar}>*</Text></Text>
             <TextInput
-              style={[{...styles.input, backgroundColor: "#fff", color: "#999999" }, errors.country ? styles.inputError : null]}
+              style={[{ ...styles.input, backgroundColor: "#f5f5f5", color: "#999999" }, errors.country ? styles.inputError : null]}
               value={formData.country}
               editable={false}
               onChangeText={(text) => handleChange('country', text)}
@@ -959,6 +1036,8 @@ const EditProfile = ({ route }) => {
               tickIconStyle={{ tintColor: "#BE4145" }}
             />
             {errors.experience ? <Text style={styles.errorText}>{errors.experience}</Text> : null}
+
+            
             {/* Role */}
             <Text style={styles.label}>Job Category<Text style={styles.requiredStar}>*</Text></Text>
             <DropDownPicker

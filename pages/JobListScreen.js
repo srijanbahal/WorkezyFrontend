@@ -554,7 +554,7 @@ const JobListScreen = ({ navigation }) => {
         {/* Sticky filters container */}
         <View style={styles.topWhiteBackground}>
           <View style={styles.headerRow}>
-            <Text style={styles.homeTitle}>Home</Text>
+            <Text style={styles.homeTitle}></Text>
           </View>
         </View>
 
@@ -597,10 +597,11 @@ const JobListScreen = ({ navigation }) => {
                 setFilteredJobs(filtered);
               }
             }}
+            tickIconStyle={{ tintColor: "#BE4145" }}
           />
           {/* <TouchableWithoutFeedback onPress={handleOutsidePress} style={{ zIndex: 0 }}> */}
           <ScrollView
-            style={[styles.scrollContainer, { zIndex: 0, elevation: 0, flex: 1}]} // keep this low
+            style={[styles.scrollContainer, { zIndex: 0, elevation: 0, flex: 1 }]} // keep this low
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={[styles.scrollContentContainer, { zIndex: 0, elevation: 0 }]}
           >

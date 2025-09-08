@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
-const CustomAlert = ({ visible, title, message, onClose, onConfirm, type = 'info', showButton = true }) => {
+const CustomAlert = ({ visible, title, message, onClose, onConfirm, type = 'info', showButton = false }) => {
   // Determine icon based on alert type
   const renderIcon = () => {
     switch(type) {

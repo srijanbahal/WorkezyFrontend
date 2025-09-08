@@ -134,50 +134,42 @@ const PostJobForm = ({ navigation }) => {
         { label: 'Internship', value: 'Internship' },
     ];
     const [industryItems, setIndustryItems] = useState([
-
-        { label: 'Admin', value: 'admin' },
-        { label: 'Babysitter', value: 'babysitter' },
-        { label: 'Back Office', value: 'back_office' },
-        { label: 'Bartender', value: 'bartender' },
-        { label: 'Beautician', value: 'beautician' },
-        { label: 'Business Development', value: 'business_development' },
-        { label: 'Carpenter', value: 'carpenter' },
-        { label: 'Compounder', value: 'compounder' },
-        { label: 'Content Writer', value: 'content_writer' },
-        { label: 'Customer Support', value: 'customer_support' },
-        { label: 'Data Entry', value: 'data_entry' },
-        { label: 'Digital Marketing', value: 'digital_marketing' },
-        { label: 'Education', value: 'education' },
-        { label: 'Electrician', value: 'electrician' },
-        { label: 'Field Sales', value: 'field_sales' },
-        { label: 'Finance', value: 'finance' },
-        { label: 'Graphics Designer', value: 'graphics_designer' },
-        { label: 'Healthcare', value: 'healthcare' },
-        { label: 'Hotel Manager', value: 'hotel_manager' },
-        { label: 'House Cleaner', value: 'house_cleaner' },
-        { label: 'Housekeeping', value: 'housekeeping' },
-        { label: 'IT', value: 'it' },
-        { label: 'Key Account Manager (KAM)', value: 'kam' },
-        { label: 'Lab Technician', value: 'lab_technician' },
-        { label: 'Machine Operator', value: 'machine_operator' },
-        { label: 'Maid / Caretaker', value: 'maid_caretaker' },
-        { label: 'Mechanic', value: 'mechanic' },
-        { label: 'Nanny', value: 'nanny' },
-        { label: 'Nurse', value: 'nurse' },
-        { label: 'Office Boy', value: 'office_boy' },
-        { label: 'Operations', value: 'operations' },
-        { label: 'Other', value: 'other' },
-        { label: 'Painter', value: 'painter' },
-        { label: 'Pest Control', value: 'pest_control' },
-        { label: 'Plumber', value: 'plumber' },
-        { label: 'Procurement/Purchase', value: 'procurement_purchase' },
-        { label: 'Receptionist', value: 'receptionist' },
-        { label: 'Supply Chain', value: 'supply_chain' },
-        { label: 'Tailor', value: 'tailor' },
-        { label: 'Technician (AC, Refrigerator, etc.)', value: 'technician' },
-        { label: 'Warehouse Worker', value: 'warehouse_worker' },
-        { label: 'Web Developer', value: 'web_developer' },
-        { label: 'Welder', value: 'welder' }
+        { label: "Accountant", value: "accountant" },
+        { label: "Admin", value: "admin" },
+        { label: "Airport Ground Staff", value: "airport_ground_staff" },
+        { label: "Airport Operations", value: "airport_operations" },
+        { label: "Barista", value: "barista" },
+        { label: "Bartender", value: "bartender" },
+        { label: "Beautician", value: "beautician" },
+        { label: "Business Development", value: "business_development" },
+        { label: "Cabin Crew", value: "cabin_crew" },
+        { label: "Compounder", value: "compounder" },
+        { label: "Cook / Chef", value: "cook_chef" },
+        { label: "Driver", value: "driver" },
+        { label: "Factory Manager", value: "factory_manager" },
+        { label: "Factory Supervisor", value: "factory_supervisor" },
+        { label: "Field Sales", value: "field_sales" },
+        { label: "Graphic Designer", value: "graphic_designer" },
+        { label: "Gym Trainer", value: "gym_trainer" },
+        { label: "Hair Stylist", value: "hair_stylist" },
+        { label: "Hotel Executive", value: "hotel_executive" },
+        { label: "Hotel Manager", value: "hotel_manager" },
+        { label: "Lab Technician", value: "lab_technician" },
+        { label: "Nurse", value: "nurse" },
+        { label: "Procurement / Purchase", value: "procurement_purchase" },
+        { label: "Receptionist", value: "receptionist" },
+        { label: "Sales Counsellor", value: "sales_counsellor" },
+        { label: "Seaman", value: "seaman" },
+        { label: "Security Bouncer", value: "security_bouncer" },
+        { label: "Security Officer", value: "security_officer" },
+        { label: "Store Manager", value: "store_manager" },
+        { label: "Supply Chain", value: "supply_chain" },
+        { label: "Tailor", value: "tailor" },
+        { label: "Teacher", value: "teacher" },
+        { label: "Technician", value: "technician" },
+        { label: "Web Developer", value: "web_developer" },
+        { label: "Warehouse", value: "warehouse" },
+        { label: "Yoga / Zumba Instructor", value: "yoga_zumba_instructor" },
     ]
     )
 
@@ -301,7 +293,7 @@ const PostJobForm = ({ navigation }) => {
             headerLeft: () => (
                 <TouchableOpacity
                     style={{ marginLeft: 16 }}
-                    onPress={() => navigation.goBack()}
+                    onPress={handleBack}
                 >
                     <Ionicons name="arrow-back" size={24} color="#ffffff" />
                 </TouchableOpacity>
@@ -612,12 +604,21 @@ const PostJobForm = ({ navigation }) => {
     const handleNext = () => {
         if (validateForm()) {
             setCurrentPage(2);
+
         }
+        // console.log("Current Page after next :", currentPage)
     };
 
     const handleBack = () => {
-        setCurrentPage(1);
-    };
+  setCurrentPage(prev => {
+    if (prev === 1) {
+      navigation.navigate("MyJobs");
+      return prev; // don't change state
+    }
+    return 1; // if on page 2 (or more), go back to 1
+  });
+};
+
 
     return (
         <>
@@ -1252,6 +1253,10 @@ const PostJobForm = ({ navigation }) => {
                         onPress={handleNext}
                         disabled={!isPageOneValid()}
                     >
+                        {
+                            // console.log("Current Page after next :", currentPage)
+
+                        }
                         <Text style={styles.saveButtonText}>Next</Text>
                     </TouchableOpacity>
                 ) : (
@@ -1285,7 +1290,7 @@ const PostJobForm = ({ navigation }) => {
                 onClose={() => setAlertVisible(false)}
                 onConfirm={alertOnConfirm ? () => { setAlertVisible(false); alertOnConfirm(); } : () => setAlertVisible(false)}
                 showCancel={alertShowCancel}
-                showButton={alertTitle !== 'Success'}
+                // showButton={alertTitle !== 'Success'}
             />
         </>
     );

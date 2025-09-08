@@ -287,13 +287,13 @@ const AppliedJobsScreen = ({ navigation }) => {
         </View> */}
         <View style={styles.topWhiteBackground}>
           <View style={styles.headerRow}>
-            <Text style={styles.homeTitle}>Applied Jobs</Text>
+            <Text style={styles.homeTitle}></Text>
           </View>
 
 
         </View>
 
-        <View style={styles.filters}>
+        <View style={{ flex: 1 }}>
           {/* Filter Icon inside input */}
           {/* <Ionicons
             name="filter"
@@ -301,56 +301,55 @@ const AppliedJobsScreen = ({ navigation }) => {
             color="#999"
             style={styles.filterIconInside}
           /> */}
-          <View style={styles.filterDropdownWrapper}>
-            <DropDownPicker
-              open={openFilter}
-              value={selectedFilter}
-              items={filterOptions}
-              setOpen={setOpenFilter}
-              setValue={callback => {
-                const value = callback(selectedFilter);
-                setSelectedFilter(value);
-                filterJobs(value); // automatically filter on select
-              }}
-              placeholder="Select Status"
-              style={styles.filterDropdown}
-              listMode="SCROLLVIEW"
-              dropDownContainerStyle={styles.filterDropdownContainer}
-              textStyle={styles.filterDropdownText}
-              placeholderStyle={styles.filterDropdownPlaceholder}
-              // labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16, color: '#333' }}
-              selectedItemLabelStyle={{ color: '#be4145', fontFamily: 'Montserrat-SemiBold' }}
-              tickIconStyle={{ tintColor: "#BE4145" }}
-              zIndex={2000}
-            // zIndex={1000}
-            />
-          </View>
+          <DropDownPicker
+            open={openFilter}
+            value={selectedFilter}
+            items={filterOptions}
+            setOpen={setOpenFilter}
+            setValue={callback => {
+              const value = callback(selectedFilter);
+              setSelectedFilter(value);
+              filterJobs(value); // automatically filter on select
+            }}
+            placeholder="Select Status"
+            style={styles.filterDropdown}
+            listMode="SCROLLVIEW"
+            dropDownContainerStyle={styles.filterDropdownContainer}
+            textStyle={styles.filterDropdownText}
+            placeholderStyle={styles.filterDropdownPlaceholder}
+            // labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16, color: '#333' }}
+            selectedItemLabelStyle={{ color: '#be4145', fontFamily: 'Montserrat-SemiBold' }}
+            tickIconStyle={{ tintColor: "#BE4145" }}
+            zIndex={2000}
+          // zIndex={1000}
+          />
+          {/* Scrollable content */}
+          <ScrollView
+            style={[styles.scrollContainer, { zIndex: 0, elevation: 0, flex: 1 }]}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.scrollContentContainer}
+          >
+            {loading ? (
+              <LoadingIndicator type="skeleton">
+                <SkeletonLoader />
+              </LoadingIndicator>
+            ) : filteredJobs.length > 0 ? (
+              <FlatList
+                data={filteredJobs}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderJobItem}
+                scrollEnabled={false}
+                nestedScrollEnabled={true}
+                contentContainerStyle={{ paddingBottom: 24, paddingHorizontal: 8 }}
+              />
+            ) : (
+              <NoJobsIllustration />
+            )}
+          </ScrollView>
+
         </View>
 
-        {/* Scrollable content */}
-        <ScrollView
-          style={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.scrollContentContainer}
-        >
-          {loading ? (
-            <LoadingIndicator type="skeleton">
-              <SkeletonLoader />
-            </LoadingIndicator>
-          ) : filteredJobs.length > 0 ? (
-            <FlatList
-              data={filteredJobs}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderJobItem}
-              scrollEnabled={false}
-              nestedScrollEnabled={true}
-              contentContainerStyle={{ paddingBottom: 24, paddingHorizontal: 8 }}
-            />
-          ) : (
-            <NoJobsIllustration />
-          )}
-        </ScrollView>
-      </View>
+      </View >
       <BottomNav userType={'job_seeker'} />
       <CustomAlert
         visible={alertConfig.visible}
@@ -495,10 +494,15 @@ const styles = StyleSheet.create({
     zIndex: 3000,
   },
   filterDropdown: {
+    position: 'relative',
     flexDirection: 'row',
-    minWidth: '100%',
+    minWidth: '92%',
+    width: '92%',
     alignItems: 'center',
-    paddingLeft: 32,
+    marginVertical: 20,
+    // paddingLeft: 44,
+    marginLeft: 14,
+    // marginHorizontal: 20,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -506,13 +510,28 @@ const styles = StyleSheet.create({
     height: 40,
     paddingHorizontal: 12,
     justifyContent: 'space-between',
+    paddingBottom: 6,
+    zIndex: 1000,
+    elevation: 5
+    // zIndex: 1000
   },
 
   filterDropdownContainer: {
     borderColor: '#e0e0e0',
     borderRadius: 8,
     backgroundColor: '#fff',
-    zIndex: 1001,
+    width: '92%',
+    marginLeft: 14,
+    // zIndex: 4001,
+    maxHeight: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    // elevation: 3,
+    zIndex: 2000,
+    elevation: 1000,
+    marginTop: 20,
   },
 
   filterDropdownText: {
@@ -686,7 +705,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     // textTransform: 'capitalize',
   },
-    salaryContainer: {
+  salaryContainer: {
     flex: 1,
     marginLeft: 2,
   },

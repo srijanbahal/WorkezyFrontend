@@ -144,7 +144,7 @@ const UserDetails = ({ route }) => {
       cleanPhone = '+91' + cleanPhone;
     }
 
-    const phoneUrl = `tel:${cleanPhone}`;
+    const phoneUrl = `tel://${cleanPhone}`;
 
     Linking.canOpenURL(phoneUrl)
       .then((supported) => {
@@ -197,7 +197,7 @@ const UserDetails = ({ route }) => {
 
     return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   };
-  
+
 
 
   // Handle scroll events to update active index
@@ -269,6 +269,17 @@ const UserDetails = ({ route }) => {
     }));
 
     return educationItems;
+  };
+
+  // Helper function to format role text
+  const formatRoleText = (role) => {
+    if (!role) return 'Job Seeker';
+
+    // Replace underscores with spaces and capitalize each word
+    return role.replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   // Format experience data for carousel
@@ -361,7 +372,7 @@ const UserDetails = ({ route }) => {
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <View style={{ flex: 1 }}>
             <Text style={styles.profileName}>{user.full_name}</Text>
-            <Text style={styles.profileRole}>{user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : '—'}</Text>
+            <Text style={styles.profileRole}>{formatRoleText(user.role || user.industry || '—')}</Text>
           </View>
           {user.profile_image ? (
             <Image
@@ -387,8 +398,8 @@ const UserDetails = ({ route }) => {
       <View style={styles.sectionCardRedesigned}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           <View>
-          <Text style={styles.sectionTitleRedesigned}>Contact Details</Text>
-          <Text style={styles.sectionSubText}>{(interested || showContactInfo) ? 'Marked as Interested' : 'Mark as Interested'}</Text>
+            <Text style={styles.sectionTitleRedesigned}>Contact Details</Text>
+            <Text style={styles.sectionSubText}>{(interested || showContactInfo) ? 'Marked as Interested' : 'Mark as Interested'}</Text>
           </View>
           {(interested || showContactInfo) && (
             <View style={styles.interestedPill}>
@@ -396,7 +407,7 @@ const UserDetails = ({ route }) => {
             </View>
           )}
         </View>
-        
+
 
 
         {(interested || showContactInfo) ? (
@@ -455,22 +466,28 @@ const UserDetails = ({ route }) => {
       </View>
 
       {/* Work Experience Section */}
-      <View style={redesignedStyles.sectionCardRedesigned}>
-        <Text style={redesignedStyles.sectionTitleRedesigned}>Work Experience</Text>
-        {experienceItems.map((item, idx) => (
-          <View key={idx} style={redesignedStyles.expCardRedesigned}>
-            <View style={redesignedStyles.expCardHeader}>
-              <Text style={redesignedStyles.expCardTitle}>{item.jobTitle}</Text>
-              <Text style={redesignedStyles.expCardDate}>
-                {/* {console.log(item.startDate)} */}
-                {formatDate(item.startDate)} - {item.endDate === 'Present' ? 'Present' : formatDate(item.endDate)}{item.duration ? ` · ${item.duration}` : ''}
-              </Text>
+      {experienceItems?.length > 0 && (
+        <View style={redesignedStyles.sectionCardRedesigned}>
+          <Text style={redesignedStyles.sectionTitleRedesigned}>Work Experience</Text>
+          {experienceItems.map((item, idx) => (
+            <View key={idx} style={redesignedStyles.expCardRedesigned}>
+              <View style={redesignedStyles.expCardHeader}>
+                <Text style={redesignedStyles.expCardTitle}>{item.jobTitle}</Text>
+                <Text style={redesignedStyles.expCardDate}>
+                  {formatDate(item.startDate)} -{" "}
+                  {item.endDate === "Present" ? "Present" : formatDate(item.endDate)}
+                  {item.duration ? ` · ${item.duration}` : ""}
+                </Text>
+              </View>
+              <Text style={redesignedStyles.expCardMeta}>{item.company}</Text>
+              <Text style={redesignedStyles.expCardMeta}>{item.location}</Text>
             </View>
-            <Text style={redesignedStyles.expCardMeta}>{item.company}</Text>
-            <Text style={redesignedStyles.expCardMeta}>{item.location}</Text>
-          </View>
-        ))}
-      </View>  
+          ))}
+        </View>
+      )}
+
+
+
       {/* {renderExperienceSection()} */}
 
 
@@ -901,7 +918,7 @@ const redesignedStyles = {
   },
   profileKVItem: {
     marginBottom: 8,
-    
+
   },
   profileKVLabel: {
     fontFamily: 'Inter-Regular',
@@ -981,7 +998,7 @@ const redesignedStyles = {
     fontSize: 12,
     color: '#666',
   },
- 
+
   eduCardRedesigned: {
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -1020,14 +1037,14 @@ const redesignedStyles = {
     borderWidth: 1,
     borderColor: '#f0f0f0',
   },
-  
+
   expCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: 6,
   },
-  
+
   expCardTitle: {
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 15,
@@ -1035,7 +1052,7 @@ const redesignedStyles = {
     flex: 1,             // ensures title doesn’t overlap date
     marginRight: 10,
   },
-  
+
   expCardDate: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
@@ -1043,7 +1060,7 @@ const redesignedStyles = {
     textAlign: 'right',
     flexShrink: 0,
   },
-  
+
   expCardMeta: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
@@ -1051,7 +1068,7 @@ const redesignedStyles = {
     marginTop: 2,
     lineHeight: 18,
   },
-  
+
 };
 
 Object.assign(styles, redesignedStyles);

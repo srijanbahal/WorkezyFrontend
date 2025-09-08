@@ -681,7 +681,7 @@ const EditEmployerProfile = ({ route }) => {
               <TextInput
                 style={[
                   styles.input,
-                  { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40 },
+                  { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40 , color: isEditingPhone && !showOtpInput ? '#333333' : '#999999' },
                   // Add error style if needed
                   // (add error state if you want)
                   // { paddingRight: 40 }
@@ -960,7 +960,7 @@ const EditEmployerProfile = ({ route }) => {
               value={formData.country}
               style={[
                 styles.input,
-                { backgroundColor: "#fff", color: "#999999" }
+                { backgroundColor: "#f5f5f5", color: "#999999" }
               ]}
               onChangeText={(text) => handleChange('country', text)}
               editable={false}
@@ -1334,7 +1334,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
     // overflow: 'scroll',
-    flex: 'column', // allow container to shrink properly
+    // flex: 'column', // allow container to shrink properly
   },
   placeholderText: {
     fontFamily: 'Inter-Regular',

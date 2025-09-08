@@ -256,7 +256,7 @@ const EmployerProfile = () => {
       <View style={styles.container}>
         <View style={styles.topWhiteBackground}>
           <View style={styles.headerRow}>
-            <Text style={styles.postedJobsTitle}>Employer Profile</Text>
+            <Text style={styles.postedJobsTitle}></Text>
           </View>
         </View>
 

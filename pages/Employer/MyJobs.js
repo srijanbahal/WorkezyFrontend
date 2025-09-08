@@ -23,13 +23,14 @@ const MyJobs = ({ navigation }) => {
     const [selectedJob, setSelectedJob] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
     const [questions, setQuestions] = useState([]);
+    const [jobDetails, setJobDetails] = useState([]);
     const [statusOpen, setStatusOpen] = useState(false);
     const [statusValue, setStatusValue] = useState(null);
     const [jobQuestions, setJobQuestions] = useState([])
     const [statusItems, setStatusItems] = useState([
         { label: 'All Jobs', value: 'all' },
-        { label: 'Pending', value: 'pending' },
         { label: 'Active', value: 'active' },
+        { label: 'Pending', value: 'pending' },
         { label: 'Expired', value: 'expired' },
         { label: 'Rejected', value: 'rejected' },
     ]);
@@ -182,17 +183,36 @@ const MyJobs = ({ navigation }) => {
         fetchJobQuestions();
     }, [selectedJob?.id]);
 
+    useEffect(() => {
+        const fetchJobDetails = async () => {
+            try {
+                const response = await getJobDetails(selectedJob?.id);
+                // console.log("raw data: ", response)
+                console.log("Job details: ", response.data);
+                if (response?.data?.job) {
+                    setJobDetails(response.data.job);
+                }
+            } catch (error) {
+                console.error("Error Fetching Job Details: ", error)
+            }
+        };
+        if (selectedJob?.id) {
+            fetchJobDetails();
+        }
+    }, [selectedJob?.id])
+
+
     // Get status button color based on status
     const getStatusColor = (status) => {
         switch (status?.toLowerCase()) {
             case 'active':
-                return 'rgba(232, 245, 233, 1)'; // Light Green background
+                return '#E8F5E9'; // Light Green background
             case 'pending':
-                return 'rgba(255, 248, 225, 1)'; // Light Orange background
+                return '#FFF8E1'; // Light Orange background
             case 'rejected':
                 return 'rgba(255, 245, 243, 1)'; // Light Red background
             case 'expired':
-                return '#9E9E9E'; // Gray
+                return '#f5f5f5'; // Gray
             default:
                 return '#9E9E9E'; // Default Gray
         }
@@ -202,13 +222,14 @@ const MyJobs = ({ navigation }) => {
     const getStatusTextColor = (status) => {
         switch (status?.toLowerCase()) {
             case 'active':
-                return 'rgba(46, 125, 50, 1)'; // Dark Green text
+                // return 'rgba(46, 125, 50, 1)'; // Dark Green text
+                return '#4CAF50'; // Dark Green text
             case 'pending':
-                return 'rgba(245, 124, 0, 1)'; // Dark Orange text
+                return '#FF9800'; // Dark Orange text
             case 'rejected':
                 return 'rgba(190, 65, 69, 1)'; // Dark Red text
             case 'expired':
-                return '#666666'; // Dark Gray text
+                return '#9E9E9E'; // Dark Gray text
             default:
                 return '#666666'; // Default Dark Gray text
         }
@@ -387,7 +408,7 @@ const MyJobs = ({ navigation }) => {
                 {/* Sticky header container */}
                 <View style={styles.topWhiteBackground}>
                     <View style={styles.headerRow}>
-                        <Text style={styles.headerTitle}>My Jobs</Text>
+                        <Text style={styles.headerTitle}></Text>
                     </View>
                 </View>
                 {/* 
@@ -419,7 +440,7 @@ const MyJobs = ({ navigation }) => {
                             />
                         </View>
                 </View> */}
-{/* 
+                {/* 
                 <View style={styles.topWhiteBackground}>
                     <View style={styles.headerRow}>
                         <Text style={styles.postedJobsTitle}>My Jobs</Text>
@@ -595,10 +616,31 @@ const MyJobs = ({ navigation }) => {
                                         <Text style={styles.jobInfoLabel}>Job Shift</Text>
                                         <Text style={styles.jobInfoValue}>{selectedJob.job_shift}</Text>
 
-                                        <Text style={styles.jobInfoLabel}>Experience</Text>
+                                        <Text style={styles.jobInfoLabel}>Experience Required</Text>
                                         <Text style={styles.jobInfoValue}>{selectedJob.experience}</Text>
-                                    </View>
 
+                                        {/* 🔹 Show only if value exists */}
+                                        {jobDetails.min_age && (
+                                            <>
+                                                <Text style={styles.jobInfoLabel}>Minimum Age</Text>
+                                                <Text style={styles.jobInfoValue}>{jobDetails.min_age}</Text>
+                                            </>
+                                        )}
+
+                                        {jobDetails.min_education && (
+                                            <>
+                                                <Text style={styles.jobInfoLabel}>Minimum Education</Text>
+                                                <Text style={styles.jobInfoValue}>{jobDetails.min_education}</Text>
+                                            </>
+                                        )}
+
+                                        {jobDetails.preferred_gender && (
+                                            <>
+                                                <Text style={styles.jobInfoLabel}>Preferred Gender</Text>
+                                                <Text style={styles.jobInfoValue}>{jobDetails.preferred_gender}</Text>
+                                            </>
+                                        )}
+                                    </View>
                                     {/* Description */}
                                     <Text style={{
                                         fontFamily: 'Montserrat-SemiBold',
@@ -679,7 +721,7 @@ const MyJobs = ({ navigation }) => {
                                     </>
 
 
-                                    {/* Status */}
+                                    {/* Status
                                     <View style={{
                                         backgroundColor: '#f9f9f9',
                                         borderRadius: 12,
@@ -690,7 +732,7 @@ const MyJobs = ({ navigation }) => {
                                             <Text style={{ fontFamily: 'Inter-SemiBold', color: '#333' }}>Review Status:</Text> {selectedJob.review_status}
                                         </Text>
 
-                                    </View>
+                                    </View> */}
                                 </>
                             )}
                         </ScrollView>
@@ -1038,7 +1080,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         minWidth: '100%',
         alignItems: 'center',
-        paddingLeft: 44,
+        // paddingLeft: 44,
         backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#e0e0e0',
@@ -1053,6 +1095,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: '#fff',
         zIndex: 1001,
+        // marginLeft: 14,
     },
 
     filterDropdownText: {
@@ -1132,7 +1175,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 8,
+        // marginTop: 8,
         // paddingHorizontal: 4,
         marginBottom: 14,
         paddingBottom: 8,

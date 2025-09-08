@@ -139,7 +139,7 @@ const JobSeekerProfile = () => {
       <View style={styles.container}>
         <View style={styles.topWhiteBackground}>
           <View style={styles.headerRow}>
-            <Text style={styles.homeTitle}>Profile</Text>
+            <Text style={styles.homeTitle}></Text>
           </View>
           {/* <View style={styles.filters}>
             
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: -24, // Decreased left margin for spacing
+    marginLeft: 16, // Decreased left margin for spacing
 
   },
 
@@ -357,6 +357,7 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontSize: 16, // Slightly larger font size
     fontFamily: 'Inter-Regular',
+    textAlign: 'center',
   },
   card: {
     backgroundColor: '#fff',

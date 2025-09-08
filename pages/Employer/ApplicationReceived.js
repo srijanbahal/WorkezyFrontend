@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,17 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
-  Dimensions
+  Dimensions,
+  TextInput,
+  Modal
 } from 'react-native';
 import { Ionicons, FontAwesome5, MaterialIcons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getApplicants } from '../../utils/api';
+// import { Modal } from 'react-native-paper';
 
 const { width } = Dimensions.get('window');
+
 
 const ApplicationReceived = ({ route, navigation }) => {
   const { job } = route.params;
@@ -31,6 +35,10 @@ const ApplicationReceived = ({ route, navigation }) => {
     { label: 'Relevant Candidates', value: 'relevant' },
     { label: 'Latest Applications', value: 'latest' },
   ]);
+  const [questionModalVisible, setQuestionModalVisible] = useState(false);
+  const [questions, setQuestions] = useState([{ question: "", correctAnswer: "" }]);
+  const inputRefs = useRef({});
+  const [status, setStatus] = useState({});
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -67,6 +75,7 @@ const ApplicationReceived = ({ route, navigation }) => {
         filtered = applicants.filter(applicant =>
           applicant.relavant_candidate === 'yes'
         );
+
         break;
       case 'latest':
         // Sort by application date (assuming there's a created_at or applied_at field)
@@ -90,6 +99,94 @@ const ApplicationReceived = ({ route, navigation }) => {
 
     setFilteredApplicants(filtered);
   }, [filterValue, applicants]);
+
+  // --- Functions ---
+  const addQuestion = () => {
+    if (questions.length < 3) {
+      setQuestions([...questions, { question: "", correctAnswer: "" }]);
+    }
+  };
+
+  const removeQuestion = (index) => {
+    const updated = [...questions];
+    updated.splice(index, 1);
+    setQuestions(updated);
+  };
+
+  const updateQuestion = (index, field, value) => {
+    const updated = [...questions];
+    updated[index][field] = value;
+    setQuestions(updated);
+  };
+  const handleSubmit = () => {
+    const incomplete = questions.some(
+      (q) => q.question.trim() === "" || q.correctAnswer === ""
+    );
+
+    if (incomplete) {
+      alert("Please complete all questions before submitting");
+      return;
+    }
+
+    console.log("Saved Questions:", questions);
+
+    // // Get all relevant candidates (filter them however you’re already doing it)
+    // const filtered = candidates.filter(
+    //   (c) => selectedFilter === "Relevant Candidates"
+    // );
+    console.log("Filtered candidates: ", filteredApplicants)
+    // Mark all relevant candidates as Pending
+    const updatedStatus = {};
+    filteredApplicants.forEach((c) => {
+      updatedStatus[c.id] = "Pending";
+
+    });
+
+    setStatus((prev) => ({
+      ...prev,
+      ...updatedStatus
+    }));
+    { console.log('Status of Applicant:', status) }
+
+    setQuestionModalVisible(false);
+  };
+
+
+  // Helper function to format role text
+  const formatRoleText = (role) => {
+    if (!role) return 'Job Seeker';
+
+    // Replace underscores with spaces and capitalize each word
+    return role.replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Get status button color based on status
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+
+      case 'pending':
+        return '#FFF8E1'; // Light Orange background
+      case 'completed':
+        return '#E8F5E9'; // Gray
+      default:
+        return '#9E9E9E'; // Default Gray
+    }
+  };
+
+  // Get status text color based on status
+  const getStatusTextColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'pending':
+        return '#FF9800'; // Light Orange background
+      case 'completed':
+        return '#4CAF50'; // Gray
+      default:
+        return '#9E9E9E'; // Default Gray
+    }
+  };
 
   const renderApplicantItem = ({ item }) => {
     // Get initials from full name
@@ -130,25 +227,101 @@ const ApplicationReceived = ({ route, navigation }) => {
         )}
         {/* Name and Role */}
         <Text style={styles.candidateName}>{item.full_name}</Text>
-        <Text style={styles.candidateRole}>{item.role || item.industry || '—'}</Text>
+        <Text style={styles.candidateRole}>{formatRoleText(item.role || item.industry || '—')}</Text>
+        {/* <Text style={styles.candidateRole}>{item.role || item.industry || '—'}</Text> */}
         {/* Attribute Tags */}
         <View style={styles.attributesContainerRedesigned}>
-          {attributeTags.map((tag, idx) => (
-            <View style={styles.attributeTagRedesigned} key={idx}>
-              <Text style={styles.attributeTextRedesigned}>{tag}</Text>
+          {/* 🔹 Experience Years */}
+          {item.experience_years && (
+            <View style={styles.attributeTagRedesigned}>
+              <Ionicons name="time-outline" size={14} color="#555" />
+              <Text style={styles.attributeTextRedesigned}>{item.experience_years}</Text>
             </View>
-          ))}
+          )}
+
+          {/* 🔹 Highest Education */}
+          {item.highest_education && (
+            <View style={styles.attributeTagRedesigned}>
+              <Ionicons name="school-outline" size={14} color="#555" />
+              <Text style={styles.attributeTextRedesigned}>{item.highest_education}</Text>
+            </View>
+          )}
+
+          {/* 🔹 Role */}
+          {/* {item.role && (
+            <View style={styles.attributeTagRedesigned}>
+              <Ionicons name="briefcase-outline" size={14} color="#555" />
+              <Text style={styles.attributeTextRedesigned}>{item.role}</Text>
+            </View>
+          )} */}
+
         </View>
-        {/* View Details Button */}
-        <TouchableOpacity
-          style={styles.viewDetailsButtonRedesigned}
-          onPress={() => navigation.navigate('CandidateDetails', { candidateId: item.id, jobId: job.id })}
-        >
-          <View style={styles.buttonContentRedesigned}>
-            <Text style={styles.viewDetailsTextRedesigned}>View Details</Text>
-            <MaterialIcons name="arrow-forward-ios" size={18} color="#45a6be" style={styles.arrowIcon} />
-          </View>
-        </TouchableOpacity>
+
+          {filterValue === "relevant" ? (
+            <View style={styles.buttomRow}>
+              {/* Status Pill */}
+              <View
+                style={[
+                  styles.statusButton,
+                  { backgroundColor: getStatusColor(status[item.id] || "Pending") }
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.statusText,
+                    { color: getStatusTextColor(status[item.id] || "Pending") }
+                  ]}
+                >
+                  {status[item.id] || "Pending"}
+                </Text>
+              </View>
+
+              {/* View Details Button */}
+              <TouchableOpacity
+                style={styles.viewDetailsButtonRedesigned}
+                onPress={() =>
+                  navigation.navigate("CandidateDetails", {
+                    candidateId: item.id,
+                    jobId: job.id,
+                  })
+                }
+              >
+                <View style={styles.buttonContentRedesigned}>
+                  <Text style={styles.viewDetailsTextRedesigned}>View Details</Text>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={18}
+                    color="#45a6be"
+                    style={styles.arrowIcon}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            // Only show View Details button
+            <TouchableOpacity
+              style={styles.viewDetailsButtonRedesigned}
+              onPress={() =>
+                navigation.navigate("CandidateDetails", {
+                  candidateId: item.id,
+                  jobId: job.id,
+                })
+              }
+            >
+              <View style={styles.buttonContentRedesigned}>
+                <Text style={styles.viewDetailsTextRedesigned}>View Details</Text>
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={18}
+                  color="#45a6be"
+                  style={styles.arrowIcon}
+                />
+              </View>
+            </TouchableOpacity>
+          )}
+        
+
+
       </View>
     );
   };
@@ -213,6 +386,7 @@ const ApplicationReceived = ({ route, navigation }) => {
       {/* Filter Section */}
       {!loading && !error && applicants.length > 0 && <FilterSection />}
 
+
       {loading ? (
         <ActivityIndicator size="large" color="#BE4145" style={styles.loader} />
       ) : error ? (
@@ -227,9 +401,312 @@ const ApplicationReceived = ({ route, navigation }) => {
           contentContainerStyle={{ paddingBottom: 24 }}
         />
       )}
+
+      {filterValue === 'relevant' && (
+        <View style={styles.stickyAiScreeningButton}>
+
+          <TouchableOpacity
+            style={styles.aiScreeningButton}
+            onPress={() => setQuestionModalVisible(true)}
+          >
+            <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
+          </TouchableOpacity>
+
+        </View>
+        // <Modal>
+
+        // </Modal>
+      )}
+      <Modal
+        visible={questionModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setQuestionModalVisible(false)}
+      >
+        {/* Overlay */}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {/* Card */}
+          <View
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: 16,
+              padding: 16,
+              width: '90%',
+              maxHeight: '80%',
+              elevation: 6, // Android shadow
+              shadowColor: '#000', // iOS shadow
+              shadowOpacity: 0.15,
+              shadowRadius: 6,
+              shadowOffset: { width: 0, height: 3 },
+            }}
+          >
+            {/* Close Icon */}
+            <TouchableOpacity
+              onPress={() => setQuestionModalVisible(false)}
+              style={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                height: 32,
+                width: 32,
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+              }}
+            >
+              <Ionicons name="close" size={24} color="#BE4145" />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* Title */}
+              <Text
+                style={{
+                  fontFamily: 'Montserrat-SemiBold',
+                  fontSize: 22,
+                  color: '#BE4145',
+                  marginBottom: 8,
+                }}
+              >
+                Screening Questions (Optional)
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Inter-Regular',
+                  fontSize: 14,
+                  color: '#666',
+                  marginBottom: 16,
+                }}
+              >
+                Add up to 3 questions with Yes/No answers
+              </Text>
+
+              {/* Questions */}
+              {questions.map((question, index) => (
+                <View
+                  key={index}
+                  style={{
+                    backgroundColor: '#f9f9f9',
+                    borderRadius: 12,
+                    padding: 12,
+                    marginBottom: 16,
+                  }}
+                >
+                  {/* Header */}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-SemiBold',
+                        fontSize: 16,
+                        color: '#333',
+                      }}
+                    >
+                      Question {index + 1}
+                    </Text>
+                    {questions.length > 1 && (
+                      <TouchableOpacity onPress={() => removeQuestion(index)}>
+                        <Ionicons name="close-circle" size={22} color="#BE4145" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+
+                  {/* Input */}
+                  <TextInput
+                    ref={(ref) => (inputRefs.current[`question_${index}`] = ref)}
+                    value={question.question}
+                    onChangeText={(text) => updateQuestion(index, 'question', text)}
+                    placeholder="Enter your question"
+                    style={{
+                      borderWidth: 1,
+                      borderColor: '#ddd',
+                      borderRadius: 8,
+                      padding: 10,
+                      fontFamily: 'Inter-Regular',
+                      fontSize: 14,
+                      color: '#333',
+                      marginBottom: 12,
+                    }}
+                    placeholderTextColor="#999"
+                  />
+
+                  {/* Answer Selector */}
+                  <View>
+                    <Text
+                      style={{
+                        fontFamily: 'Inter-SemiBold',
+                        fontSize: 14,
+                        color: '#333',
+                        marginBottom: 6,
+                      }}
+                    >
+                      Expected Answer
+                    </Text>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                      <TouchableOpacity
+                        style={[
+                          {
+                            flex: 1,
+                            padding: 10,
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            borderColor: '#ddd',
+                            alignItems: 'center',
+                          },
+                          question.correctAnswer === 'Yes' && {
+                            backgroundColor: '#FCF0F0',
+                            borderColor: '#BE4145',
+                          },
+                        ]}
+                        onPress={() => updateQuestion(index, 'correctAnswer', 'Yes')}
+                      >
+                        <Text
+                          style={[
+                            {
+                              fontFamily: 'Inter-Regular',
+                              fontSize: 14,
+                              color: '#333',
+                            },
+                            question.correctAnswer === 'Yes' && {
+                              color: '#BE4145',
+                              fontFamily: 'Inter-SemiBold',
+                            },
+                          ]}
+                        >
+                          Yes
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={[
+                          {
+                            flex: 1,
+                            padding: 10,
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            borderColor: '#ddd',
+                            alignItems: 'center',
+                          },
+                          question.correctAnswer === 'No' && {
+                            backgroundColor: '#FCF0F0',
+                            borderColor: '#BE4145',
+                          },
+                        ]}
+                        onPress={() => updateQuestion(index, 'correctAnswer', 'No')}
+                      >
+                        <Text
+                          style={[
+                            {
+                              fontFamily: 'Inter-Regular',
+                              fontSize: 14,
+                              color: '#333',
+                            },
+                            question.correctAnswer === 'No' && {
+                              color: '#BE4145',
+                              fontFamily: 'Inter-SemiBold',
+                            },
+                          ]}
+                        >
+                          No
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              ))}
+
+              {/* Add Question */}
+              {questions.length < 3 && (
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 8,
+                  }}
+                  onPress={addQuestion}
+                >
+                  <Ionicons name="add-circle-outline" size={20} color="#BE4145" />
+                  <Text
+                    style={{
+                      marginLeft: 6,
+                      fontFamily: 'Inter-Regular',
+                      fontSize: 14,
+                      color: '#BE4145',
+                    }}
+                  >
+                    Add Another Question
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </ScrollView>
+
+            {/* Actions */}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginTop: 20,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: '#ddd',
+                  marginRight: 10,
+                }}
+                onPress={() => setQuestionModalVisible(false)}
+              >
+                <Text
+                  style={{ fontFamily: 'Inter-Regular', fontSize: 14, color: '#333' }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                  backgroundColor: '#BE4145',
+                }}
+                onPress={handleSubmit}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'Inter-SemiBold',
+                    fontSize: 14,
+                    color: '#fff',
+                  }}
+                >
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -547,36 +1024,62 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   attributesContainerRedesigned: {
-        flexDirection: "row",
-        // flexWrap: "wrap",
-        alignItems: "center",
-        gap: 4,
-        width: "100%",
-        marginTop: 4,
-        marginBottom: 8, // 12 -> 8
-        marginLeft: -4, // aligns with job title
+    flexDirection: "row",
+    // flexWrap: "wrap",
+    alignItems: "center",
+    gap: 4,
+    width: "100%",
+    marginTop: 4,
+    marginBottom: 8, // 12 -> 8
+    marginLeft: -4, // aligns with job title
 
-    },
+  },
 
-    attributeTagRedesigned: {
-        backgroundColor: "#f5f5f5",
-        borderWidth: 1,
-        borderColor: "#e0e0e0",
-        borderRadius: 20,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        flexDirection: "row",
-        alignItems: "center",
-        marginRight: 4,
-        marginBottom: 6,
-    },
+  attributeTagRedesigned: {
+    backgroundColor: "#f5f5f5",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 4,
+    marginBottom: 6,
+    // marginLeft: 4,
+  },
 
   attributeTextRedesigned: {
     fontSize: 12,
     color: '#444',
     fontFamily: 'Inter-Regular',
     textTransform: 'capitalize',
+    marginLeft: 6,
   },
+  buttomRow: {
+    flexDirection: "row",      // arrange horizontally
+    justifyContent: "space-between", // push Pending left, View Details right
+    alignItems: "center",      // vertical alignment
+    marginTop: 10,
+
+  },
+
+  statusButton: {
+    minHeight: 28,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
+    // marginLeft: 8,
+  },
+
+  statusText: {
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    textTransform: 'capitalize',
+  },
+
   viewDetailsButtonRedesigned: {
     alignSelf: 'flex-end',
     backgroundColor: 'transparent',
@@ -645,6 +1148,155 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
+
+  // AI screening styles 
+
+  aiScreeningButton: {
+    // backgroundColor: '#rgba(233, 255, 234, 1)',
+    backgroundColor: '#ffd2d2ff',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+    // Border
+    borderWidth: 1,
+    borderColor: '#BE4145',
+
+    // Shadow (iOS)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+
+    // Shadow (Android)
+    elevation: 4,
+  },
+  aiScreeningButtonText: {
+    color: '#BE4145',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  stickyAiScreeningButton: {
+    position: 'absolute',
+    bottom: 0,
+    paddingTop: 16,
+    paddingBottom: 24,
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)', // dimmed background
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContainer: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+
+    // Shadow (iOS)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+
+    // Shadow (Android)
+    elevation: 5,
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 4,
+    color: "#222",
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 12,
+  },
+  questionContainer: {
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+  },
+  questionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  questionNumber: { fontSize: 14, fontWeight: "500", color: "#333" },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 8,
+    fontSize: 14,
+    color: "#333",
+  },
+  answerContainer: { marginBottom: 6 },
+  answerLabel: { fontSize: 13, color: "#444", marginBottom: 4 },
+  answerButtons: { flexDirection: "row", gap: 8 },
+  answerButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  selectedAnswerButton: {
+    backgroundColor: "#FCF0F0",
+    borderColor: "#BE4145",
+  },
+  answerButtonText: { fontSize: 14, color: "#444" },
+  selectedAnswerText: { color: "#BE4145", fontWeight: "600" },
+  addQuestionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+    marginBottom: 12,
+  },
+  addQuestionText: { marginLeft: 6, color: "#BE4145", fontSize: 14 },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 10,
+    gap: 12,
+  },
+  cancelButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  cancelButtonText: { color: "#333" },
+  submitButton: {
+    backgroundColor: "#BE4145",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+  },
+  submitButtonText: { color: "#fff", fontWeight: "600" },
 });
+
 
 export default ApplicationReceived;
