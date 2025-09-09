@@ -33,7 +33,7 @@ const ApplicationReceived = ({ route, navigation }) => {
   const [filterItems] = useState([
     { label: 'All Applications', value: 'all' },
     { label: 'Relevant Candidates', value: 'relevant' },
-    { label: 'Latest Applications', value: 'latest' },
+    // { label: 'Latest Applications', value: 'latest' },
   ]);
   const [questionModalVisible, setQuestionModalVisible] = useState(false);
   const [questions, setQuestions] = useState([{ question: "", correctAnswer: "" }]);

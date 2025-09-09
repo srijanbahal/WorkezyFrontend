@@ -411,20 +411,20 @@ const UserDetails = ({ route }) => {
 
 
         {(interested || showContactInfo) ? (
-          <View style={styles.contactDetailsRow}>
+          <View style={contactDetailsLayoutStyles.contactDetailsRow}>
             {/* Left: Phone and City */}
-            <View style={styles.contactDetailsLeft}>
-              <View style={styles.kvItemContactDetails}>
-                <Text style={styles.kvKeyContactDetails}>Phone Number</Text>
-                <Text style={styles.kvValueContactDetails}>{user.phone || '+91 98765 43210'}</Text>
+            <View style={contactDetailsLayoutStyles.contactDetailsLeft}>
+              <View style={contactDetailsRedesignedStyles.kvItemContactDetails}>
+                <Text style={contactDetailsRedesignedStyles.kvKeyContactDetails}>Phone Number</Text>
+                <Text style={contactDetailsRedesignedStyles.kvValueContactDetails}>{user.phone || '+91 98765 43210'}</Text>
               </View>
-              <View style={styles.kvItemContactDetails}>
+              {/* <View style={styles.kvItemContactDetails}>
                 <Text style={styles.kvKeyContactDetails}>City</Text>
                 <Text style={styles.kvValueContactDetails}>{user.city || 'N/A'}</Text>
-              </View>
+              </View> */}
             </View>
             {/* Right: Call and WhatsApp buttons */}
-            <View style={styles.contactButtonsColumnRight}>
+            <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}>
               <TouchableOpacity style={styles.callButtonRedesigned} onPress={makePhoneCall}>
                 <Ionicons name="call" size={18} color="#fff" style={{ marginRight: 8 }} />
                 {/* <Text style={styles.callButtonTextRedesigned}></Text> */}
@@ -699,9 +699,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   contactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // marginBottom: 12,
   },
   contactIcon: {
     marginRight: 8,
@@ -1093,6 +1093,7 @@ const contactDetailsRedesignedStyles = {
   },
   kvItemContactDetails: {
     marginBottom: 12,
+    marginTop: 4,
   },
   kvKeyContactDetails: {
     fontFamily: 'Inter-Regular',
@@ -1117,19 +1118,21 @@ const contactDetailsRedesignedStyles = {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#be4145',
+    backgroundColor: '#F44336',
+    // backgroundColor: '#be4145',
     // marginBottom: 8,
     // marginTop: 8,
-    borderRadius: 8,
+    borderRadius: '80%', // 8->80%
     paddingHorizontal: 8,
     paddingVertical: 8,
     paddingLeft: 14,
-    minHeight: 28, // 44 -> 28 for redesigned button
+    minHeight: 44, // 44 -> 28 for redesigned button
     // marginRight: 8,
-    minWidth: 58,
+    minWidth: 44, //58->44
   },
   callButtonTextRedesigned: {
-    color: '#fff',
+    color: '#FFEBEE',
+    // color: '#fff',
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 14,
   },
@@ -1138,17 +1141,18 @@ const contactDetailsRedesignedStyles = {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#4CAF50',
-    borderRadius: 8,
+    borderRadius: '80%',
     marginTop: 2,
     paddingHorizontal: 8,
     paddingVertical: 8,
     paddingLeft: 16,
     // marginRight: 6,
-    minWidth: 58,
-    minHeight: 28, // 44 -> 28 for redesigned button
+    minWidth: 44,
+    minHeight: 44, // 44 -> 28 for redesigned button
   },
   whatsappButtonTextRedesigned: {
-    color: '#fff',
+    // color: '#fff',
+    color: '#4CAF50',
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 18,
   },
@@ -1168,23 +1172,47 @@ Object.assign(styles, contactButtonsColumnStyles);
 
 // Add/replace styles for correct Contact Details layout
 const contactDetailsLayoutStyles = {
+  // contactDetailsRow: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'center',
+  //   alignItems: 'flex-start',
+  //   marginTop: 16,
+  //   gap: 16,
+  // },
+  // contactDetailsLeft: {
+  //   flex: 1,
+  //   justifyContent: 'flex-start',
+  //   minHeight: 120,
+  // },
+  // contactButtonsColumnRight: {
+  //   flexDirection: 'column',
+  //   alignItems: 'flex-end',
+  //   // gap: 12,
+  //   minWidth: 120,
+  //   minHeight: 120,
+  // },
   contactDetailsRow: {
-    flexDirection: 'row',
+    flexDirection: 'row',   // put children side by side
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginTop: 16,
-    gap: 16,
   },
+
   contactDetailsLeft: {
-    flex: 1,
-    justifyContent: 'flex-start',
+    flex: 1,                // take equal space
+    // minHeight: 120,
   },
+
   contactButtonsColumnRight: {
+    flex: 1,                // also take equal space
     flexDirection: 'column',
     alignItems: 'flex-end',
-    gap: 12,
-    minWidth: 120,
+    gap: 2,
+    justifyContent: 'flex-end',
+    // minHeight: 120,
   },
+
+
 };
 Object.assign(styles, contactDetailsLayoutStyles);
 
