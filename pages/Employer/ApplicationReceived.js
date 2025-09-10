@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { Ionicons, FontAwesome5, MaterialIcons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getApplicants } from '../../utils/api';
+import { getApplicants, addScreeningQuestions, addCandidatesToScreening, getScreeningStatuses, createScreening } from '../../utils/api';
 // import { Modal } from 'react-native-paper';
 
 const { width } = Dimensions.get('window');
@@ -39,6 +39,8 @@ const ApplicationReceived = ({ route, navigation }) => {
   const [questions, setQuestions] = useState([{ question: "", correctAnswer: "" }]);
   const inputRefs = useRef({});
   const [status, setStatus] = useState({});
+  const [statusMap, setStatusMap] = useState({});
+  const [screeningStarted, setScreeningStarted] = useState(false);
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -100,6 +102,61 @@ const ApplicationReceived = ({ route, navigation }) => {
     setFilteredApplicants(filtered);
   }, [filterValue, applicants]);
 
+
+  // useEffect(() => {
+  //   const fetchStatuses = async () => {
+  //     try {
+  //       const res = await getScreeningStatuses(job.id);
+  //       console.log("reaches here")
+  //       // convert array → object { candidateId: status }
+  //       const map = {};
+  //       res.data.forEach((c) => {
+  //         map[c.candidate_id] = c.status;
+  //       });
+  //       setStatusMap(map);
+  //     } catch (err) {
+  //       console.error("Error fetching statuses:", err);
+  //     }
+  //   };
+
+  //   if (filterValue === "relevant") {
+  //     fetchStatuses();
+  //   }
+  // }, [filterValue, job.id]);
+
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      console.log("Fetching screening statuses for jobId:", job.id);
+      try {
+        const res = await getScreeningStatuses(job.id);
+        console.log("Screening statuses fetched:", res.data);
+        // Screening exists
+        const map = {};
+        res.data.candidates.forEach((c) => {
+          map[c.candidate_id] = c.status;
+        });
+
+        setStatusMap(map);
+        setScreeningStarted(true);
+      } catch (err) {
+        if (err.response?.data?.message === "No screening exists for this job") {
+          // No screening exists → mark as not started
+          console.log("No screening found for this job.");
+          setScreeningStarted(false);
+          setStatusMap({});
+        } else {
+          console.error("Error fetching statuses:", err);
+          console.log("Error details:", err.response?.data || err.message);
+        }
+      }
+    };
+    console.log("useEffect triggered with filterValue:", filterValue, "jobId:", job.id);
+    if (filterValue === "relevant") {
+      fetchStatuses();
+    }
+  }, [filterValue, job.id, screeningStarted]);
+
+
   // --- Functions ---
   const addQuestion = () => {
     if (questions.length < 3) {
@@ -118,9 +175,11 @@ const ApplicationReceived = ({ route, navigation }) => {
     updated[index][field] = value;
     setQuestions(updated);
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
+    // 1️⃣ Validate employer entered all questions
     const incomplete = questions.some(
-      (q) => q.question.trim() === "" || q.correctAnswer === ""
+      (q) => !q.question.trim() || !q.correctAnswer
     );
 
     if (incomplete) {
@@ -128,29 +187,42 @@ const ApplicationReceived = ({ route, navigation }) => {
       return;
     }
 
-    console.log("Saved Questions:", questions);
+    try {
+      // 2️⃣ Save Screening Questions for this Job
+      await addScreeningQuestions(job.id, questions.map((q) => ({
+        question_text: q.question,
+        ideal_answer: q.correctAnswer
+      })));
 
-    // // Get all relevant candidates (filter them however you’re already doing it)
-    // const filtered = candidates.filter(
-    //   (c) => selectedFilter === "Relevant Candidates"
-    // );
-    console.log("Filtered candidates: ", filteredApplicants)
-    // Mark all relevant candidates as Pending
-    const updatedStatus = {};
-    filteredApplicants.forEach((c) => {
-      updatedStatus[c.id] = "Pending";
+      // 3️⃣ Assign all relevant candidates to this Screening
+      const relevantCandidateIds = filteredApplicants.map((c) => c.id);
+      await addCandidatesToScreening(job.id, relevantCandidateIds);
 
-    });
+      // 4️⃣ Success UI feedback
+      alert("Screening started successfully!");
+      setQuestionModalVisible(false);
+      setScreeningStarted(true);
 
-    setStatus((prev) => ({
-      ...prev,
-      ...updatedStatus
-    }));
-    { console.log('Status of Applicant:', status) }
-
-    setQuestionModalVisible(false);
+    } catch (err) {
+      console.error("Error starting screening:", err);
+      console.log("Error details:", err.response?.data || err.message);
+      alert(err.message || "Something went wrong while starting screening.");
+    }
   };
 
+
+  const createScreeningOnPress = async (jobId) => {
+    try {
+      const res = await createScreening(jobId, `Screening for ${job.title}`);
+      console.log("Screening created:", res.data);
+      // setScreeningStarted(true);
+      setQuestionModalVisible(true);
+    } catch (err) {
+      console.error("Error creating screening:", err);
+      console.log("Error details:", err.response?.data || err.message);
+      alert(err.message || "Could not create screening. Try again.");
+    }
+  };
 
   // Helper function to format role text
   const formatRoleText = (role) => {
@@ -257,48 +329,31 @@ const ApplicationReceived = ({ route, navigation }) => {
 
         </View>
 
-          {filterValue === "relevant" ? (
-            <View style={styles.buttomRow}>
-              {/* Status Pill */}
-              <View
+        {screeningStarted === true ? (
+          <View style={styles.buttomRow}>
+            {/* Status Pill */}
+            {/* <View style={styles.buttomRow}> */}
+            {/* Status Pill */}
+            <View
+              style={[
+                styles.statusButton,
+                { backgroundColor: getStatusColor(statusMap[item.id]) }
+              ]}
+            >
+              <Text
                 style={[
-                  styles.statusButton,
-                  { backgroundColor: getStatusColor(status[item.id] || "Pending") }
+                  styles.statusText,
+                  { color: getStatusTextColor(statusMap[item.id]) }
                 ]}
               >
-                <Text
-                  style={[
-                    styles.statusText,
-                    { color: getStatusTextColor(status[item.id] || "Pending") }
-                  ]}
-                >
-                  {status[item.id] || "Pending"}
-                </Text>
-              </View>
-
-              {/* View Details Button */}
-              <TouchableOpacity
-                style={styles.viewDetailsButtonRedesigned}
-                onPress={() =>
-                  navigation.navigate("CandidateDetails", {
-                    candidateId: item.id,
-                    jobId: job.id,
-                  })
-                }
-              >
-                <View style={styles.buttonContentRedesigned}>
-                  <Text style={styles.viewDetailsTextRedesigned}>View Details</Text>
-                  <MaterialIcons
-                    name="arrow-forward-ios"
-                    size={18}
-                    color="#45a6be"
-                    style={styles.arrowIcon}
-                  />
-                </View>
-              </TouchableOpacity>
+                {statusMap[item.id]}
+              </Text>
             </View>
-          ) : (
-            // Only show View Details button
+
+
+            {/* </View> */}
+
+            {/* View Details Button */}
             <TouchableOpacity
               style={styles.viewDetailsButtonRedesigned}
               onPress={() =>
@@ -318,8 +373,30 @@ const ApplicationReceived = ({ route, navigation }) => {
                 />
               </View>
             </TouchableOpacity>
-          )}
-        
+          </View>
+        ) : (
+          // Only show View Details button
+          <TouchableOpacity
+            style={styles.viewDetailsButtonRedesigned}
+            onPress={() =>
+              navigation.navigate("CandidateDetails", {
+                candidateId: item.id,
+                jobId: job.id,
+              })
+            }
+          >
+            <View style={styles.buttonContentRedesigned}>
+              <Text style={styles.viewDetailsTextRedesigned}>View Details</Text>
+              <MaterialIcons
+                name="arrow-forward-ios"
+                size={18}
+                color="#45a6be"
+                style={styles.arrowIcon}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+
 
 
       </View>
@@ -407,7 +484,7 @@ const ApplicationReceived = ({ route, navigation }) => {
 
           <TouchableOpacity
             style={styles.aiScreeningButton}
-            onPress={() => setQuestionModalVisible(true)}
+            onPress={createScreeningOnPress.bind(this, job.id)}
           >
             <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
           </TouchableOpacity>
