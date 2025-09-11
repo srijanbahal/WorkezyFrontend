@@ -3,11 +3,11 @@ import axios from "axios";
 // Use the AWS server endpoint
 // const API_BASE_URL = "https://api.workezy.org/api"; 
 // Local development server - comment out when using the AWS endpoint
-// const API_BASE_URL = "http://192.168.0.104:5000/api";
+const API_BASE_URL = "http://192.168.0.105:5000/api";
 // const API_BASE_URL = "http://172.16.48.26:5000/api"; 
 // const API_BASE_URL = "http://127.0.0.1:5000/api"; 
 // const API_BASE_URL = "http://10.31.128.157:5000/api";
-const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
+// const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
 
 
 
@@ -87,6 +87,20 @@ export const getScreeningStatuses = (jobId) => {
   if (!jobId) throw new Error("jobId is required to fetch screening statuses");
   return api.get(`/employers/screening/${jobId}`);
 };
+
+
+// 1️⃣ Evaluate Candidate
+export const evaluateCandidate = (screeningId) =>
+  api.post("/employers/screening/evaluate", { screeningId });
+
+// 2️⃣ Get Candidate Details (Questions + Answers + Status)
+export const getShortlistedCandidates = async (screeningId) => {
+  console.log("Fetching shortlisted candidates for screeningId:", screeningId);
+  return api.get("/employers/shortlisted-candidates", {
+    params: { screeningId },
+  });
+};
+
 
 // Fixed API endpoint to match backend structure with fallback options
 export const

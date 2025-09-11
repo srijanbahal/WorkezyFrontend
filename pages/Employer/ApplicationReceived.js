@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { Ionicons, FontAwesome5, MaterialIcons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getApplicants, addScreeningQuestions, addCandidatesToScreening, getScreeningStatuses, createScreening } from '../../utils/api';
+import { getApplicants, addScreeningQuestions, addCandidatesToScreening, getScreeningStatuses, createScreening, evaluateCandidate } from '../../utils/api';
 // import { Modal } from 'react-native-paper';
 import CustomAlert from '../../components/CustomAlert';
 
@@ -43,7 +43,8 @@ const ApplicationReceived = ({ route, navigation }) => {
   const [status, setStatus] = useState({});
   const [statusMap, setStatusMap] = useState({});
   const [screeningStarted, setScreeningStarted] = useState(false);
-
+  const [screeningId, setScreeningId] = useState(null);
+  const [screeningStatusMap, setScreeningStatusMap] = useState({});
   // Alert state
   const [alertConfig, setAlertConfig] = useState({
     visible: false,
@@ -53,7 +54,7 @@ const ApplicationReceived = ({ route, navigation }) => {
   });
 
 
-
+  // For fetching Applicants
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
@@ -125,8 +126,10 @@ const ApplicationReceived = ({ route, navigation }) => {
         const map = {};
         res.data.candidates.forEach((c) => {
           map[c.candidate_id] = c.status;
+          // console.log(`Mapping candidate ${c.candidate_id} to status ${c.status}`);
         });
-
+        console.log("screening_id:", res.data.screening.screening_id);
+        setScreeningId(res.data.screening.screening_id);
         setStatusMap(map);
         setScreeningStarted(true);
       } catch (err) {
@@ -226,7 +229,6 @@ const ApplicationReceived = ({ route, navigation }) => {
     }
   };
 
-
   const createScreeningOnPress = async (jobId) => {
     try {
 
@@ -249,6 +251,43 @@ const ApplicationReceived = ({ route, navigation }) => {
       alert(err.message || "Could not create screening. Try again.");
     }
   };
+
+  const evaluateCandidateOnPress = async () => {
+    if (!screeningStarted) {
+      createScreeningOnPress(job.id);
+      return;
+    }
+
+    // Check if this screeningId is already evaluated
+    if (screeningStatusMap[screeningId] === 1) {
+      console.log("✅ Candidate already evaluated, skipping API call.");
+      navigation.navigate("ShortlistedCandidates", { jobId: job.id, screeningId: screeningId });
+      return;
+    }
+
+    try {
+      const response = await evaluateCandidate(screeningId);
+
+      if (response.status === 404) {
+        showAlert("No relevant candidates found for AI Screening.", "info");
+        return;
+      }
+
+      // Mark as evaluated
+      setScreeningStatusMap(prev => ({
+        ...prev,
+        [screeningId]: 1
+      }));
+
+      // Navigate to shortlisted candidates
+      navigation.navigate("ShortlistedCandidates", { jobId: job.id });
+    } catch (error) {
+      console.error("Error evaluating candidates:", error);
+      console.log("Error details:", error.response?.data || error.message);
+      showAlert("Something went wrong while evaluating candidates.", "error");
+    }
+  };
+
 
   // Helper function to format role text
   const formatRoleText = (role) => {
@@ -506,25 +545,57 @@ const ApplicationReceived = ({ route, navigation }) => {
       )}
 
       {filterValue === "relevant" && (
+        // <View style={styles.stickyAiScreeningButton}>
+        //   <TouchableOpacity
+        //     style={[
+        //       styles.aiScreeningButton,
+        //       screeningStarted && styles.aiScreeningButtonActive,
+        //     ]}
+        //     onPress={
+        //       screeningStarted
+        //         ? () => navigation.navigate("ShortlistedCandidates", { jobId: job.id })
+        //         : () => createScreeningOnPress(job.id)
+        //     }
+        //   >
+        //     {screeningStarted ? (
+        //       <View style={styles.aiScreeningButtonContent}>
+        //         <Text style={[styles.aiScreeningButtonText, styles.aiScreeningButtonTextActive]}>
+        //           Go to Shortlisted Candidates
+        //         </Text>
+        //         <MaterialIcons name="east" size={18} color="#4CAF50" />
+        //       </View>
+        //     ) : (
+        //       <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
+        //     )}
+        //   </TouchableOpacity>
+        // </View>
         <View style={styles.stickyAiScreeningButton}>
           <TouchableOpacity
             style={[
               styles.aiScreeningButton,
-              screeningStarted && styles.aiScreeningButtonDisabled,
+              screeningStarted && styles.aiScreeningButtonActive,
             ]}
-            onPress={!screeningStarted ? createScreeningOnPress.bind(this, job.id) : null}
-            disabled={screeningStarted}
+            onPress={evaluateCandidateOnPress}
           >
-            <Text
-              style={[
-                styles.aiScreeningButtonText,
-                screeningStarted && styles.aiScreeningButtonTextDisabled,
-              ]}
-            >
-              {screeningStarted ? "AI Screening Started" : "Start AI Screening"}
-            </Text>
+            {screeningStarted ? (
+              <View style={styles.aiScreeningButtonContent}>
+                <Text
+                  style={[
+                    styles.aiScreeningButtonText,
+                    styles.aiScreeningButtonTextActive,
+                  ]}
+                >
+                  Go to Shortlisted Candidates
+                </Text>
+                <MaterialIcons name="east" size={18} color="#4CAF50" />
+              </View>
+            ) : (
+              <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
+            )}
           </TouchableOpacity>
         </View>
+
+
       )}
       <Modal
         visible={questionModalVisible}
@@ -1288,21 +1359,29 @@ const styles = StyleSheet.create({
     // Shadow (Android)
     elevation: 4,
   },
+
+  aiScreeningButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6, // adds space between text and arrow (React Native 0.71+)
+  },
+
   aiScreeningButtonText: {
     color: '#BE4145',
     fontSize: 14,
     fontWeight: '600',
   },
-  aiScreeningButtonDisabled: {
-    backgroundColor: '#b4b4b4', // lighter/redder shade to indicate disabled
-    borderColor: '#e0e0e0',     // softer border color
+  aiScreeningButtonActive: {
+    backgroundColor: '#E8F5E9', // lighter/redder shade to indicate disabled
+    borderColor: '#C8E6C9',     // softer border color
     shadowOpacity: 0,           // remove shadow for disabled
     elevation: 0,               // remove elevation for Android
   },
 
   // Disabled text style
-  aiScreeningButtonTextDisabled: {
-    color: '#fff',           // lighter/redder text
+  aiScreeningButtonTextActive: {
+    color: '#4CAF50',           // lighter/redder text
     fontWeight: '600',
   },
 
