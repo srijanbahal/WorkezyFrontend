@@ -425,10 +425,12 @@ const UserDetails = ({ route }) => {
             </View>
             {/* Right: Call and WhatsApp buttons */}
             <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}>
-              <TouchableOpacity style={styles.callButtonRedesigned} onPress={makePhoneCall}>
+              <TouchableOpacity style={contactDetailsRedesignedStyles.callButtonRedesigned} onPress={makePhoneCall}>
                 <Ionicons name="call" size={18} color="#fff" style={{ marginRight: 8 }} />
                 {/* <Text style={styles.callButtonTextRedesigned}></Text> */}
               </TouchableOpacity>
+              {/* </View> */}
+            {/* <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}> */}
               <TouchableOpacity style={styles.whatsappButtonRedesigned} onPress={openWhatsApp}>
                 <FontAwesome5 name="whatsapp" size={18} color="#fff" style={{ marginRight: 8 }} />
                 {/* <Text style={styles.whatsappButtonTextRedesigned}></Text> */}
@@ -1209,7 +1211,12 @@ const contactDetailsLayoutStyles = {
     alignItems: 'flex-end',
     gap: 2,
     justifyContent: 'flex-end',
-    // minHeight: 120,
+    // overflow: 'hidden',
+    // borderRadius: '80%', // 8->80%
+    // minHeight: 44, // 44 -> 28 for redesigned button
+    // // marginRight: 8,
+    // minWidth: 44, 
+    // // minHeight: 120,
   },
 
 

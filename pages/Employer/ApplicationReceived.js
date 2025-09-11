@@ -16,6 +16,8 @@ import { Ionicons, FontAwesome5, MaterialIcons, MaterialCommunityIcons, Feather 
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getApplicants, addScreeningQuestions, addCandidatesToScreening, getScreeningStatuses, createScreening } from '../../utils/api';
 // import { Modal } from 'react-native-paper';
+import CustomAlert from '../../components/CustomAlert';
+
 
 const { width } = Dimensions.get('window');
 
@@ -41,6 +43,16 @@ const ApplicationReceived = ({ route, navigation }) => {
   const [status, setStatus] = useState({});
   const [statusMap, setStatusMap] = useState({});
   const [screeningStarted, setScreeningStarted] = useState(false);
+
+  // Alert state
+  const [alertConfig, setAlertConfig] = useState({
+    visible: false,
+    message: '',
+    type: 'info',
+    title: '',
+  });
+
+
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -103,27 +115,6 @@ const ApplicationReceived = ({ route, navigation }) => {
   }, [filterValue, applicants]);
 
 
-  // useEffect(() => {
-  //   const fetchStatuses = async () => {
-  //     try {
-  //       const res = await getScreeningStatuses(job.id);
-  //       console.log("reaches here")
-  //       // convert array → object { candidateId: status }
-  //       const map = {};
-  //       res.data.forEach((c) => {
-  //         map[c.candidate_id] = c.status;
-  //       });
-  //       setStatusMap(map);
-  //     } catch (err) {
-  //       console.error("Error fetching statuses:", err);
-  //     }
-  //   };
-
-  //   if (filterValue === "relevant") {
-  //     fetchStatuses();
-  //   }
-  // }, [filterValue, job.id]);
-
   useEffect(() => {
     const fetchStatuses = async () => {
       console.log("Fetching screening statuses for jobId:", job.id);
@@ -157,7 +148,25 @@ const ApplicationReceived = ({ route, navigation }) => {
   }, [filterValue, job.id, screeningStarted]);
 
 
+
   // --- Functions ---
+
+  // Helper function to show alert (always provide type)
+  const showAlert = (message, type) => {
+    setAlertConfig({
+      visible: true,
+      // title,
+      message,
+      type,
+    });
+    setTimeout(() => hideAlert(), 1000);
+  };
+
+  // Helper function to hide alert
+  const hideAlert = () => {
+    setAlertConfig(prev => ({ ...prev, visible: false }));
+  };
+
   const addQuestion = () => {
     if (questions.length < 3) {
       setQuestions([...questions, { question: "", correctAnswer: "" }]);
@@ -196,13 +205,20 @@ const ApplicationReceived = ({ route, navigation }) => {
 
       // 3️⃣ Assign all relevant candidates to this Screening
       const relevantCandidateIds = filteredApplicants.map((c) => c.id);
+
+      if (relevantCandidateIds.length === 0) {
+        // No relevant candidates found
+        showAlert("No relevant candidates found for AI Screening.", "info");
+        return; // exit the function early
+      }
+
       await addCandidatesToScreening(job.id, relevantCandidateIds);
 
       // 4️⃣ Success UI feedback
-      alert("Screening started successfully!");
+      // alert("Screening started successfully!");
       setQuestionModalVisible(false);
       setScreeningStarted(true);
-
+      showAlert("AI Screening started successfully!", "success");
     } catch (err) {
       console.error("Error starting screening:", err);
       console.log("Error details:", err.response?.data || err.message);
@@ -213,6 +229,16 @@ const ApplicationReceived = ({ route, navigation }) => {
 
   const createScreeningOnPress = async (jobId) => {
     try {
+
+      // 3️⃣ Assign all relevant candidates to this Screening
+      const relevantCandidateIds = filteredApplicants.map((c) => c.id);
+
+      if (relevantCandidateIds.length === 0) {
+        // No relevant candidates found
+        showAlert("No relevant candidates found for AI Screening.", "info");
+        return; // exit the function early
+      }
+
       const res = await createScreening(jobId, `Screening for ${job.title}`);
       console.log("Screening created:", res.data);
       // setScreeningStarted(true);
@@ -329,7 +355,7 @@ const ApplicationReceived = ({ route, navigation }) => {
 
         </View>
 
-        {screeningStarted === true ? (
+        {screeningStarted === true && filterValue === 'relevant' ? (
           <View style={styles.buttomRow}>
             {/* Status Pill */}
             {/* <View style={styles.buttomRow}> */}
@@ -479,20 +505,26 @@ const ApplicationReceived = ({ route, navigation }) => {
         />
       )}
 
-      {filterValue === 'relevant' && (
+      {filterValue === "relevant" && (
         <View style={styles.stickyAiScreeningButton}>
-
           <TouchableOpacity
-            style={styles.aiScreeningButton}
-            onPress={createScreeningOnPress.bind(this, job.id)}
+            style={[
+              styles.aiScreeningButton,
+              screeningStarted && styles.aiScreeningButtonDisabled,
+            ]}
+            onPress={!screeningStarted ? createScreeningOnPress.bind(this, job.id) : null}
+            disabled={screeningStarted}
           >
-            <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
+            <Text
+              style={[
+                styles.aiScreeningButtonText,
+                screeningStarted && styles.aiScreeningButtonTextDisabled,
+              ]}
+            >
+              {screeningStarted ? "AI Screening Started" : "Start AI Screening"}
+            </Text>
           </TouchableOpacity>
-
         </View>
-        // <Modal>
-
-        // </Modal>
       )}
       <Modal
         visible={questionModalVisible}
@@ -551,7 +583,7 @@ const ApplicationReceived = ({ route, navigation }) => {
                   marginBottom: 8,
                 }}
               >
-                Screening Questions (Optional)
+                Screening Questions
               </Text>
               <Text
                 style={{
@@ -779,6 +811,13 @@ const ApplicationReceived = ({ route, navigation }) => {
         </View>
       </Modal>
 
+      <CustomAlert
+        visible={alertConfig.visible}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        title={alertConfig.title}
+        onClose={hideAlert}
+      />
     </View>
   );
 };
@@ -1254,6 +1293,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  aiScreeningButtonDisabled: {
+    backgroundColor: '#b4b4b4', // lighter/redder shade to indicate disabled
+    borderColor: '#e0e0e0',     // softer border color
+    shadowOpacity: 0,           // remove shadow for disabled
+    elevation: 0,               // remove elevation for Android
+  },
+
+  // Disabled text style
+  aiScreeningButtonTextDisabled: {
+    color: '#fff',           // lighter/redder text
+    fontWeight: '600',
+  },
+
   stickyAiScreeningButton: {
     position: 'absolute',
     bottom: 0,

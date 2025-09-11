@@ -3,11 +3,11 @@ import axios from "axios";
 // Use the AWS server endpoint
 // const API_BASE_URL = "https://api.workezy.org/api"; 
 // Local development server - comment out when using the AWS endpoint
-const API_BASE_URL = "http://192.168.0.104:5000/api";
+// const API_BASE_URL = "http://192.168.0.104:5000/api";
 // const API_BASE_URL = "http://172.16.48.26:5000/api"; 
 // const API_BASE_URL = "http://127.0.0.1:5000/api"; 
 // const API_BASE_URL = "http://10.31.128.157:5000/api";
-// const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
+const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
 
 
 

@@ -1365,7 +1365,6 @@ const styles = StyleSheet.create({
     dropdownError: {
         borderColor: '#BE4145',
         marginBottom: 16,
-
     },
     dropdownContainer: {
         marginBottom: 8, // Reduced from 16 to make room for error text
@@ -1442,6 +1441,7 @@ const styles = StyleSheet.create({
     },
     disabledInput: {
         color: '#b4b4b4',
+        backgroundColor: '#f0f0f0',
         borderColor: '#e0e0e0',
         fontSize: 16,
         fontFamily: 'Inter-Regular',

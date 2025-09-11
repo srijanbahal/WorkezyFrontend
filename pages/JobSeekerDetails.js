@@ -439,6 +439,9 @@ const JobSeekerDetails = ({ route }) => {
             placeholderStyle={{ color: '#b4b4b4', fontSize: 14, fontFamily: 'Inter-Regular' }}
             textStyle={{ fontSize: 14, color: '#333333', fontFamily: 'Inter-Regular' }}
             zIndex={3000}
+            // tickIconContainerStyle={{ marginRight: 12 }}  
+            tickIconStyle={{ tintColor: "#BE4145" }}
+
           />
 
           {/* Dynamic Education Fields */}
@@ -491,6 +494,8 @@ const JobSeekerDetails = ({ route }) => {
                         placeholderStyle={{ color: '#b4b4b4', fontSize: 14, fontFamily: 'Inter-Regular' }}
                         textStyle={{ fontSize: 14, color: '#333333', fontFamily: 'Inter-Regular' }}
                         zIndex={2000 - idx * 100}
+                        tickIconStyle={{ tintColor: "#BE4145" }}
+
                       />
 
                       <View style={styles.inputRow}>
@@ -606,6 +611,8 @@ const JobSeekerDetails = ({ route }) => {
                         listMode="SCROLLVIEW"
                         zIndex={3000}
                         zIndexInverse={1000}
+                        tickIconStyle={{ tintColor: "#BE4145" }}
+
                       />
                     </View>
 
@@ -627,6 +634,8 @@ const JobSeekerDetails = ({ route }) => {
                         listMode="SCROLLVIEW"
                         zIndex={2000}
                         zIndexInverse={2000}
+                        tickIconStyle={{ tintColor: "#BE4145" }}
+
                       />
                     </View>
                   </View>
@@ -655,6 +664,8 @@ const JobSeekerDetails = ({ route }) => {
                           listMode="SCROLLVIEW"
                           zIndex={1000}
                           zIndexInverse={3000}
+                          tickIconStyle={{ tintColor: "#BE4145" }}
+
                         />
                       </View>
 
@@ -676,6 +687,8 @@ const JobSeekerDetails = ({ route }) => {
                           listMode="SCROLLVIEW"
                           zIndex={1000}
                           zIndexInverse={4000}
+                          tickIconStyle={{ tintColor: "#BE4145" }}
+
                         />
                       </View>
                     </View>
