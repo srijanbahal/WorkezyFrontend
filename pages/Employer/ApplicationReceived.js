@@ -288,6 +288,13 @@ const ApplicationReceived = ({ route, navigation }) => {
     }
   };
 
+  const editQuestionsOnPress = () => {
+    console.log("Edit Questions button pressed!");
+    // You can later navigate to your Edit Questions screen here
+    // e.g., navigation.navigate('EditQuestions', { jobId: job.id });
+  };
+
+
 
   // Helper function to format role text
   const formatRoleText = (role) => {
@@ -544,31 +551,7 @@ const ApplicationReceived = ({ route, navigation }) => {
         />
       )}
 
-      {filterValue === "relevant" && (
-        // <View style={styles.stickyAiScreeningButton}>
-        //   <TouchableOpacity
-        //     style={[
-        //       styles.aiScreeningButton,
-        //       screeningStarted && styles.aiScreeningButtonActive,
-        //     ]}
-        //     onPress={
-        //       screeningStarted
-        //         ? () => navigation.navigate("ShortlistedCandidates", { jobId: job.id })
-        //         : () => createScreeningOnPress(job.id)
-        //     }
-        //   >
-        //     {screeningStarted ? (
-        //       <View style={styles.aiScreeningButtonContent}>
-        //         <Text style={[styles.aiScreeningButtonText, styles.aiScreeningButtonTextActive]}>
-        //           Go to Shortlisted Candidates
-        //         </Text>
-        //         <MaterialIcons name="east" size={18} color="#4CAF50" />
-        //       </View>
-        //     ) : (
-        //       <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
-        //     )}
-        //   </TouchableOpacity>
-        // </View>
+      {/* {filterValue === "relevant" && (
         <View style={styles.stickyAiScreeningButton}>
           <TouchableOpacity
             style={[
@@ -578,17 +561,42 @@ const ApplicationReceived = ({ route, navigation }) => {
             onPress={evaluateCandidateOnPress}
           >
             {screeningStarted ? (
-              <View style={styles.aiScreeningButtonContent}>
-                <Text
-                  style={[
-                    styles.aiScreeningButtonText,
-                    styles.aiScreeningButtonTextActive,
-                  ]}
-                >
-                  Go to Shortlisted Candidates
-                </Text>
-                <MaterialIcons name="east" size={18} color="#4CAF50" />
-              </View>
+              // <View style={styles.aiScreeningButtonContent}>
+              //   <Text style={[styles.aiScreeningButtonText, styles.aiScreeningButtonTextActive,]} >
+              //     Go to Shortlisted Candidates
+              //   </Text>
+              //   <MaterialIcons name="east" size={18} color="#4CAF50" />
+              // </View>
+              <>
+              {
+                job.review_status !== 'expired' ? (
+                  // Both buttons side by side
+                  <>
+                    <TouchableOpacity style={[styles.button, { flex: 1, marginRight: 4 }]}>
+                      <View style={styles.buttonContent}>
+                        <Text style={[styles.buttonText, styles.editButtonText]}>Edit Questions</Text>
+                        <MaterialIcons name="edit" size={18} color="#2196F3" />
+                      </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[styles.button, { flex: 1, marginLeft: 4 }]}>
+                      <View style={styles.buttonContent}>
+                        <Text style={[styles.buttonText, styles.goButtonText]}>Go to Shortlisted Candidates</Text>
+                        <MaterialIcons name="east" size={18} color="#4CAF50" />
+                      </View>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  // Only Go to Shortlisted Candidates, full width
+                  <TouchableOpacity style={styles.button}>
+                    <View style={styles.buttonContent}>
+                      <Text style={[styles.buttonText, styles.goButtonText]}>Go to Shortlisted Candidates</Text>
+                      <MaterialIcons name="east" size={18} color="#4CAF50" />
+                    </View>
+                  </TouchableOpacity>
+                )
+              }
+              </>
             ) : (
               <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
             )}
@@ -596,7 +604,68 @@ const ApplicationReceived = ({ route, navigation }) => {
         </View>
 
 
+      )} */}
+
+      {filterValue === "relevant" && (
+        <View style={styles.stickyAiScreeningButton}>
+          {screeningStarted ? (
+            job.review_status === 'expired' ? (
+              // Screening started but job expired → single full-width button
+              <TouchableOpacity
+                style={[screeningStarted && styles.aiScreeningButtonActive, { flex: 1, marginLeft: 4, justifyContent: 'center', alignItems: 'center', padding: 8, backgroundColor: '#E8F5E9', borderRadius: 8, borderColor: '#4CAF50', borderWidth: 1 }]}
+                onPress={evaluateCandidateOnPress}
+              >
+                <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 4 }, styles.aiScreeningButtonContent]}>
+                  <Text style={[styles.aiScreeningButtonTextActive]}>
+                    Shortlisted Candidates
+                  </Text>
+                  <MaterialIcons name="east" size={18} color="#4CAF50" style={styles.arrowRightIcon} />
+                </View>
+              </TouchableOpacity>
+            ) : (
+              // Screening started and job not expired → dual buttons
+              <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', gap: 8 }}>
+                {/* Edit Questions Button */}
+
+                <TouchableOpacity
+                  style={{ flex: 1, marginRight: 4, justifyContent: 'center', alignItems: 'center', padding: 8, backgroundColor: '#E3F2FD', borderRadius: 8, borderColor: '#45a6be', borderWidth: 1 }}
+                  onPress={editQuestionsOnPress}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    <Text style={{ fontWeight: 'bold', color: '#45a6be' }}>Edit Questions</Text>
+                    <MaterialIcons name="edit" size={18} color="#45a6be" />
+                  </View>
+                </TouchableOpacity>
+
+                {/* Go to Shortlisted Candidates Button */}
+                <TouchableOpacity
+                  style={[screeningStarted && styles.aiScreeningButtonActive, { flex: 1, marginLeft: 4, justifyContent: 'center', alignItems: 'center', padding: 8, backgroundColor: '#E8F5E9', borderRadius: 8, borderColor: '#4CAF50', borderWidth: 1 }]}
+                  onPress={evaluateCandidateOnPress}
+                >
+                  <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 4 }, styles.aiScreeningButtonContent]}>
+                    <Text style={[styles.aiScreeningButtonTextActive]}>
+                      Shortlisted Candidates
+                    </Text>
+                    <MaterialIcons name="east" size={18} color="#4CAF50" style={styles.arrowRightIcon} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )
+          ) : (
+            <TouchableOpacity
+              style={[
+                styles.aiScreeningButton,
+                screeningStarted && styles.aiScreeningButtonActive,
+              ]}
+              onPress={createScreeningOnPress.bind(this, job.id)}
+            >
+              <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       )}
+
+
       <Modal
         visible={questionModalVisible}
         animationType="slide"
@@ -1367,11 +1436,11 @@ const styles = StyleSheet.create({
     gap: 6, // adds space between text and arrow (React Native 0.71+)
   },
 
-  aiScreeningButtonText: {
-    color: '#BE4145',
-    fontSize: 14,
-    fontWeight: '600',
-  },
+  // aiScreeningButtonText: {
+  //   color: '#BE4145',
+  //   fontSize: 14,
+  //   fontWeight: '600',
+  // },
   aiScreeningButtonActive: {
     backgroundColor: '#E8F5E9', // lighter/redder shade to indicate disabled
     borderColor: '#C8E6C9',     // softer border color
@@ -1379,10 +1448,38 @@ const styles = StyleSheet.create({
     elevation: 0,               // remove elevation for Android
   },
 
+  // Button for edit questions and go to shortlisted candidates
+  buttonContainer: {
+    flexDirection: 'row',
+    marginVertical: 8,
+    gap: 8, // space between buttons (React Native 0.71+)
+  },
+
+  button: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   // Disabled text style
   aiScreeningButtonTextActive: {
     color: '#4CAF50',           // lighter/redder text
     fontWeight: '600',
+    textAlign: 'center',
+    marginLeft: 8,
+    fontSize: 14,
+    position: 'relative',
+  },
+
+  arrowRightIcon: {
+    marginRight: 8, // to adjust spacing when in active state
+    marginLeft: -14,
   },
 
   stickyAiScreeningButton: {

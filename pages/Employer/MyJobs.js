@@ -9,6 +9,8 @@ import { useAuth } from "../../utils/AuthContext";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { BackHandler } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as Clipboard from 'expo-clipboard';
+import CustomAlert from '../../components/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
@@ -27,6 +29,11 @@ const MyJobs = ({ navigation }) => {
     const [statusOpen, setStatusOpen] = useState(false);
     const [statusValue, setStatusValue] = useState(null);
     const [jobQuestions, setJobQuestions] = useState([])
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('info');
+    const [alertOnConfirm, setAlertOnConfirm] = useState(null);
     const [statusItems, setStatusItems] = useState([
         { label: 'All Jobs', value: 'all' },
         { label: 'Active', value: 'active' },
@@ -202,6 +209,22 @@ const MyJobs = ({ navigation }) => {
     }, [selectedJob?.id])
 
 
+    const showAlert = (message, onConfirm = null, type = 'info', autoClose = true) => {
+        // setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertType(type);
+        setAlertOnConfirm(() => onConfirm);
+        setAlertVisible(true);
+        if (autoClose) {
+            setTimeout(() => {
+                setAlertVisible(false);
+                if (onConfirm) {
+                    onConfirm();
+                }
+            }, 1000);
+        }
+    };
+
     // Get status button color based on status
     const getStatusColor = (status) => {
         switch (status?.toLowerCase()) {
@@ -268,24 +291,43 @@ const MyJobs = ({ navigation }) => {
                     <Text style={styles.companyName}>{item.company}</Text>
                 </View>
 
-                {/* <View style={styles.shareButton}> */}
-                <View
-                    style={[
-                        styles.statusButton,
-                        { backgroundColor: getStatusColor(item.review_status || "pending") }
-                    ]}
-                >
-                    <Text
+                <View style={styles.shareButton}>
+                    <View
                         style={[
-                            styles.statusText,
-                            { color: getStatusTextColor(item.review_status || "pending") }
+                            styles.statusButton,
+                            { backgroundColor: getStatusColor(item.review_status || "pending") }
                         ]}
                     >
-                        {item.review_status || "Pending"}
-                    </Text>
-                </View>
+                        <Text
+                            style={[
+                                styles.statusText,
+                                { color: getStatusTextColor(item.review_status || "pending") }
+                            ]}
+                        >
+                            {item.review_status || "Pending"}
+                        </Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.shareView}
+                        onPress={() => {
+                            const jobUrl = "https://workezy.org/user_details/45";
 
-                {/* </View> */}
+                            // Copy to clipboard
+                            Clipboard.setStringAsync(jobUrl);
+                            // Alert.alert("Link copied!", "You can now share it anywhere.");
+                            showAlert("Link copied to clipboard!", null, 'success', true);
+                        }}
+                    >
+                        <Text style={styles.shareText}>Share Job</Text>
+                        <Ionicons
+                            name="share-social"
+                            size={14}
+                            color="#45a6be"
+                            style={styles.shareIcon}
+                        />
+                    </TouchableOpacity>
+
+                </View>
             </View>
 
             {/* Attributes Row */}
@@ -319,21 +361,35 @@ const MyJobs = ({ navigation }) => {
                         <Text style={styles.salaryUnit}>/month</Text>
                     </Text>
                 </View>
-                {/* Left side : Date Posted */}
-                <Text style={styles.postedDateText}>
-                    Posted {getPostedTime(item.posted_at)}
-                </Text>
+
             </View>
 
             {/* Action Buttons Row */}
             {(item.review_status !== "rejected" && item.review_status !== "expired") && (
                 <View style={styles.actionButtonsContainer}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                        <Text style={styles.shareText}>
-                            Share Job
-                        </Text>
-                        <Ionicons name="share-social-outline" size={14} color='#45a6be' style={styles.shareIcon} />
-                    </View>
+                    {/* <TouchableOpacity
+                        style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+                        onPress={() => {
+                            const jobUrl = "https://workezy.org/user_details/45";
+
+                            // Copy to clipboard
+                            Clipboard.setStringAsync(jobUrl);
+                            // Alert.alert("Link copied!", "You can now share it anywhere.");
+                            showAlert("Link copied to clipboard!", null, 'success', true);
+                        }}
+                    >
+                        <Text style={styles.shareText}>Share Job</Text>
+                        <Ionicons
+                            name="share-social"
+                            size={14}
+                            color="#45a6be"
+                            style={styles.shareIcon}
+                        />
+                    </TouchableOpacity> */}
+                    {/* Left side : Date Posted */}
+                    <Text style={styles.postedDateText}>
+                        Posted {getPostedTime(item.posted_at)}
+                    </Text>
 
                     {/* Right Side: Action Button */}
                     <TouchableOpacity
@@ -476,6 +532,24 @@ const MyJobs = ({ navigation }) => {
                 </ScrollView>
             </View >
             <BottomNav activeuser={"employer"} />
+
+            {/* CustomAlert sticky at the bottom */}
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                type={alertType}
+                onClose={() => setAlertVisible(false)}
+                onConfirm={() => {
+                    setAlertVisible(false);
+                    if (alertOnConfirm) {
+                        alertOnConfirm();
+                    }
+                }}
+            />
+
+
+
 
             {/* Modal for Job Details */}
 
@@ -815,6 +889,8 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
 
+shareView: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 14 },
+
     shareText: {
         fontSize: 14,
         color: '#45a6be',
@@ -824,7 +900,7 @@ const styles = StyleSheet.create({
     },
 
     shareIcon: {
-        marginTop: 4,
+        marginTop: 2,
     },
 
     statusButton: {
@@ -1190,6 +1266,7 @@ const styles = StyleSheet.create({
         color: '#666666',
         fontFamily: 'Inter-Regular',
         marginTop: 4,
+        marginLeft: 4,
     },
 
 
