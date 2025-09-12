@@ -268,6 +268,7 @@ const MyJobs = ({ navigation }) => {
                     <Text style={styles.companyName}>{item.company}</Text>
                 </View>
 
+                {/* <View style={styles.shareButton}> */}
                 <View
                     style={[
                         styles.statusButton,
@@ -283,6 +284,8 @@ const MyJobs = ({ navigation }) => {
                         {item.review_status || "Pending"}
                     </Text>
                 </View>
+
+                {/* </View> */}
             </View>
 
             {/* Attributes Row */}
@@ -316,15 +319,21 @@ const MyJobs = ({ navigation }) => {
                         <Text style={styles.salaryUnit}>/month</Text>
                     </Text>
                 </View>
+                {/* Left side : Date Posted */}
+                <Text style={styles.postedDateText}>
+                    Posted {getPostedTime(item.posted_at)}
+                </Text>
             </View>
 
             {/* Action Buttons Row */}
             {(item.review_status !== "rejected" && item.review_status !== "expired") && (
                 <View style={styles.actionButtonsContainer}>
-                    {/* Left side : Date Posted */}
-                    <Text style={styles.postedDateText}>
-                        Posted {getPostedTime(item.posted_at)}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Text style={styles.shareText}>
+                            Share Job
+                        </Text>
+                        <Ionicons name="share-social-outline" size={14} color='#45a6be' style={styles.shareIcon} />
+                    </View>
 
                     {/* Right Side: Action Button */}
                     <TouchableOpacity
@@ -340,12 +349,15 @@ const MyJobs = ({ navigation }) => {
                         {item.review_status?.toLowerCase() === 'active' ? (
                             <View style={styles.buttonContent}>
                                 <Text style={styles.viewDetailsText}>View Candidates</Text>
-                                <MaterialIcons
+                                {/* <MaterialIcons
                                     name="arrow-forward-ios"
                                     size={16}
                                     color="#45a6be"
                                     style={styles.arrowIcon}
-                                />
+                                /> */}
+                                <Ionicons name="arrow-forward-outline" size={16}
+                                    color="#45a6be"
+                                    style={styles.arrowIcon} />
                             </View>
                         ) : item.review_status?.toLowerCase() === 'pending' ? (
                             <View style={styles.buttonContent}>
@@ -411,42 +423,7 @@ const MyJobs = ({ navigation }) => {
                         <Text style={styles.headerTitle}></Text>
                     </View>
                 </View>
-                {/* 
-                <View style={styles.filterContainer}>
-                    <View style={styles.filterDropdownWrapper}>
-                    
 
-                {/* <DropDownPicker
-                                open={statusOpen}
-                                value={statusValue}
-                                items={statusItems}
-                                setOpen={setStatusOpen}
-                                setValue={setStatusValue}
-                                setItems={setStatusItems}
-                                placeholder="All Jobs"
-                                style={styles.filterDropdown}
-                                dropDownContainerStyle={styles.filterDropdownContainer}
-                                textStyle={styles.filterDropdownText}
-                                placeholderStyle={styles.filterDropdownPlaceholder}
-                                listMode="SCROLLVIEW"
-                                ArrowDownIconComponent={({ style }) => (
-                                    <Ionicons name="chevron-down" size={18} color="#999" style={style} />
-                                )}
-                                ArrowUpIconComponent={({ style }) => (
-                                    <Ionicons name="chevron-up" size={18} color="#999" style={style} />
-                                )}
-                                tickIconStyle={{ tintColor: "#BE4145" }}
-                                zIndex={1000}
-                            />
-                        </View>
-                </View> */}
-                {/* 
-                <View style={styles.topWhiteBackground}>
-                    <View style={styles.headerRow}>
-                        <Text style={styles.postedJobsTitle}>My Jobs</Text>
-
-                    </View>
-                </View> */}
                 <View style={styles.filterDropdownWrapper}>
                     <DropDownPicker
                         open={statusOpen}
@@ -832,7 +809,28 @@ const styles = StyleSheet.create({
         marginBottom: 8, // space before attributes
     },
 
+    shareButton: {
+        flexDirection: 'column',
+        flexWrap: 'nowrap',
+        flexShrink: 0,
+    },
+
+    shareText: {
+        fontSize: 14,
+        color: '#45a6be',
+        fontFamily: 'Montserrat-SemiBold',
+        marginLeft: 8,
+        textDecorationLine: 'underline',
+    },
+
+    shareIcon: {
+        marginTop: 4,
+    },
+
     statusButton: {
+        // position: 'absolute',
+        // top: 8,
+        // right: 8,
         minHeight: 28,
         paddingHorizontal: 8,
         borderRadius: 20,
@@ -840,6 +838,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#f5f5f5',
         marginLeft: 8,
+        // margintop: 50,
+        // paddingTop: 4,
     },
 
     statusText: {
@@ -886,9 +886,9 @@ const styles = StyleSheet.create({
     salaryContentContainer: {
         flex: 1,
         marginLeft: 2,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        // marginTop: 8,
+        flexDirection: 'row', // <-- VERY important for left/right layout
+        alignItems: 'center', // or 'flex-start' if you want top alignment
+        justifyContent: 'space-between', // <-- puts one item on left, other on right
         marginBottom: 16,
     },
     salaryContainer: {
@@ -926,6 +926,11 @@ const styles = StyleSheet.create({
         // marginRight: 6,
         textDecorationLine: 'underline',
         // marginTop: 2,
+    },
+
+    arrowIcon: {
+        marginLeft: 4,
+        marginTop: 2,
     },
     // viewDetailsText1: {
     //     color: '#666666',
@@ -1177,19 +1182,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // marginTop: 8,
         // paddingHorizontal: 4,
-        marginBottom: 14,
-        paddingBottom: 8,
+        marginBottom: 16,
+        // paddingBottom: 8,
     },
     postedDateText: {
         fontSize: 12,
         color: '#666666',
         fontFamily: 'Inter-Regular',
-
+        marginTop: 4,
     },
 
-    salaryContainer: {
-        flex: 1,
-    },
+
+    // salaryContainer: {
+    //     flex: 1,
+    // },
 
     // salaryText: {
     //     fontSize: 18,
