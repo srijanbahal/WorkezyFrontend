@@ -30,7 +30,7 @@ const CustomAlert = ({ visible, title, message, onClose, onConfirm, type = 'info
           {renderIcon()}
           {/* <Text style={styles.titleText}>{title}</Text> */}
           <Text style={styles.message}>{message}</Text>
-          {showButton && (
+          {/* {showButton && (
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.button, styles.confirmButton]}
@@ -39,7 +39,7 @@ const CustomAlert = ({ visible, title, message, onClose, onConfirm, type = 'info
                 <Text style={styles.confirmButtonText}>OK</Text>
               </TouchableOpacity>
             </View>
-          )}
+          )} */}
         </View>
       </View>
     </Modal>

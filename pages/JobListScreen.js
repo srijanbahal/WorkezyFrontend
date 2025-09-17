@@ -11,6 +11,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getMyJobs } from '../utils/api';
 import WorkezyLogo from '../assets/workezyLogo.png';
 // import { BackHandler } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+// import { showAlert } from '../component/CustomAlert';
+import CustomAlert from '../components/CustomAlert';
+
 
 const NoJobsIllustration = () => (
   <View style={styles.noJobsContainer}>
@@ -47,6 +51,12 @@ const JobListScreen = ({ navigation }) => {
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [searchJobs, setSearchJobs] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('info');
+  const [alertOnConfirm, setAlertOnConfirm] = useState(null);
+
   //  // Handle Android back button to always go to MyJobs
   // useEffect(() => {
   //   const backHandler = BackHandler.addEventListener(
@@ -71,100 +81,6 @@ const JobListScreen = ({ navigation }) => {
     { city: "London", country: "UK" },
   ];
 
-  // // Sample Job Titles
-  // const industryItems = [
-  //   { label: 'All', value: 'all' },
-  //   { label: 'Admin', value: 'admin' },
-  //   { label: 'Babysitter', value: 'babysitter' },
-  //   { label: 'Back Office', value: 'back_office' },
-  //   { label: 'Bartender', value: 'bartender' },
-  //   { label: 'Beautician', value: 'beautician' },
-  //   { label: 'Business Development', value: 'business_development' },
-  //   { label: 'Carpenter', value: 'carpenter' },
-  //   { label: 'Compounder', value: 'compounder' },
-  //   { label: 'Content Writer', value: 'content_writer' },
-  //   { label: 'Customer Support', value: 'customer_support' },
-  //   { label: 'Data Entry', value: 'data_entry' },
-  //   { label: 'Digital Marketing', value: 'digital_marketing' },
-  //   { label: 'Education', value: 'education' },
-  //   { label: 'Electrician', value: 'electrician' },
-  //   { label: 'Field Sales', value: 'field_sales' },
-  //   { label: 'Finance', value: 'finance' },
-  //   { label: 'Graphics Designer', value: 'graphics_designer' },
-  //   { label: 'Healthcare', value: 'healthcare' },
-  //   { label: 'Hotel Manager', value: 'hotel_manager' },
-  //   { label: 'House Cleaner', value: 'house_cleaner' },
-  //   { label: 'Housekeeping', value: 'housekeeping' },
-  //   { label: 'IT', value: 'it' },
-  //   { label: 'Key Account Manager (KAM)', value: 'kam' },
-  //   { label: 'Lab Technician', value: 'lab_technician' },
-  //   { label: 'Machine Operator', value: 'machine_operator' },
-  //   { label: 'Maid / Caretaker', value: 'maid_caretaker' },
-  //   { label: 'Mechanic', value: 'mechanic' },
-  //   { label: 'Nanny', value: 'nanny' },
-  //   { label: 'Nurse', value: 'nurse' },
-  //   { label: 'Office Boy', value: 'office_boy' },
-  //   { label: 'Operations', value: 'operations' },
-  //   { label: 'Other', value: 'other' },
-  //   { label: 'Painter', value: 'painter' },
-  //   { label: 'Pest Control', value: 'pest_control' },
-  //   { label: 'Plumber', value: 'plumber' },
-  //   { label: 'Procurement/Purchase', value: 'procurement_purchase' },
-  //   { label: 'Receptionist', value: 'receptionist' },
-  //   { label: 'Supply Chain', value: 'supply_chain' },
-  //   { label: 'Tailor', value: 'tailor' },
-  //   { label: 'Technician (AC, Refrigerator, etc.)', value: 'technician' },
-  //   { label: 'Warehouse Worker', value: 'warehouse_worker' },
-  //   { label: 'Web Developer', value: 'web_developer' },
-  //   { label: 'Welder', value: 'welder' }
-  // ];
-
-  // const [industryItems, setIndustryItems] = useState([
-  //   { label: 'All', value: 'all' },
-  //   { label: 'Admin', value: 'admin' },
-  //   { label: 'Babysitter', value: 'babysitter' },
-  //   { label: 'Back Office', value: 'back_office' },
-  //   { label: 'Bartender', value: 'bartender' },
-  //   { label: 'Beautician', value: 'beautician' },
-  //   { label: 'Business Development', value: 'business_development' },
-  //   { label: 'Carpenter', value: 'carpenter' },
-  //   { label: 'Compounder', value: 'compounder' },
-  //   { label: 'Content Writer', value: 'content_writer' },
-  //   { label: 'Customer Support', value: 'customer_support' },
-  //   { label: 'Data Entry', value: 'data_entry' },
-  //   { label: 'Digital Marketing', value: 'digital_marketing' },
-  //   { label: 'Education', value: 'education' },
-  //   { label: 'Electrician', value: 'electrician' },
-  //   { label: 'Field Sales', value: 'field_sales' },
-  //   { label: 'Finance', value: 'finance' },
-  //   { label: 'Graphics Designer', value: 'graphics_designer' },
-  //   { label: 'Healthcare', value: 'healthcare' },
-  //   { label: 'Hotel Manager', value: 'hotel_manager' },
-  //   { label: 'House Cleaner', value: 'house_cleaner' },
-  //   { label: 'Housekeeping', value: 'housekeeping' },
-  //   { label: 'IT', value: 'it' },
-  //   { label: 'Key Account Manager (KAM)', value: 'kam' },
-  //   { label: 'Lab Technician', value: 'lab_technician' },
-  //   { label: 'Machine Operator', value: 'machine_operator' },
-  //   { label: 'Maid / Caretaker', value: 'maid_caretaker' },
-  //   { label: 'Mechanic', value: 'mechanic' },
-  //   { label: 'Nanny', value: 'nanny' },
-  //   { label: 'Nurse', value: 'nurse' },
-  //   { label: 'Office Boy', value: 'office_boy' },
-  //   { label: 'Operations', value: 'operations' },
-  //   { label: 'Other', value: 'other' },
-  //   { label: 'Painter', value: 'painter' },
-  //   { label: 'Pest Control', value: 'pest_control' },
-  //   { label: 'Plumber', value: 'plumber' },
-  //   { label: 'Procurement/Purchase', value: 'procurement_purchase' },
-  //   { label: 'Receptionist', value: 'receptionist' },
-  //   { label: 'Supply Chain', value: 'supply_chain' },
-  //   { label: 'Tailor', value: 'tailor' },
-  //   { label: 'Technician (AC, Refrigerator, etc.)', value: 'technician' },
-  //   { label: 'Warehouse Worker', value: 'warehouse_worker' },
-  //   { label: 'Web Developer', value: 'web_developer' },
-  //   { label: 'Welder', value: 'welder' }
-  // ]);
 
 
   useEffect(() => {
@@ -324,6 +240,23 @@ const JobListScreen = ({ navigation }) => {
     }
   };
 
+
+  const showAlert = (message, onConfirm = null, type = 'info', autoClose = true) => {
+    // setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOnConfirm(() => onConfirm);
+    setAlertVisible(true);
+    if (autoClose) {
+      setTimeout(() => {
+        setAlertVisible(false);
+        if (onConfirm) {
+          onConfirm();
+        }
+      }, 1000);
+    }
+  };
+
   // Add a Skeleton Loader component that matches the placeholder image
   const SkeletonLoader = () => {
     return (
@@ -460,6 +393,7 @@ const JobListScreen = ({ navigation }) => {
     { label: "Yoga / Zumba Instructor", value: "yoga_zumba_instructor" },
   ]);
 
+
   const renderJobItem = ({ item }) => (
     <View style={styles.jobCard}>
       {/* Right Section - Company Logo */}
@@ -471,9 +405,34 @@ const JobListScreen = ({ navigation }) => {
       <View style={styles.topSection}>
         {/* Left Side - Job Title + Company Name */}
         <View style={styles.leftSection}>
-          <Text style={styles.jobTitle}>{item.title}</Text>
+
+          <View style={styles.titleRow}>
+            <Text style={styles.jobTitle}>{item.title}</Text> 
+            <TouchableOpacity
+              style={styles.shareView}
+              onPress={() => {
+                const jobUrl = "https://workezy.org/user_details/45";
+
+                // Copy to clipboard
+                Clipboard.setStringAsync(jobUrl);
+                // Alert.alert("Link copied!", "You can now share it anywhere.");
+                showAlert("Link copied to clipboard!", null, 'success', true);
+              }}
+            >
+              
+              <Ionicons
+                name="share-social"
+                size={18}
+                color="#45a6be"
+                style={styles.shareIcon}
+              />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.company}>{item.company}</Text>
+
         </View>
+
+
 
         {/* Right Side - Company Logo */}
         <View style={styles.rightSection}>
@@ -490,6 +449,7 @@ const JobListScreen = ({ navigation }) => {
             </View>
           )}
         </View>
+
       </View>
       {/* </TouchableOpacity> */}
 
@@ -627,6 +587,19 @@ const JobListScreen = ({ navigation }) => {
 
       </View>
 
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        type={alertType}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={() => {
+          setAlertVisible(false);
+          if (alertOnConfirm) {
+            alertOnConfirm();
+          }
+        }}
+      />
 
       {/* </View /> */}
 
@@ -634,132 +607,6 @@ const JobListScreen = ({ navigation }) => {
       <BottomNav activeuser="jobseeker" />
 
     </>
-
-    // <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
-    //   <View style={{ flex: 1 }}>
-    //     {/* =============================================================== */}
-    //     {/* 1. TOP CONTAINER: Must have a zIndex higher than the list     */}
-    //     {/* =============================================================== */}
-    //     <View
-    //       style={{
-    //         padding: 15,
-    //         backgroundColor: 'white',
-    //         // CRITICAL: A high zIndex to ensure this entire block
-    //         // is "on top of" the FlatList sibling.
-    //         zIndex: 10,
-    //       }}>
-    //       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 15 }}>
-    //         Home
-    //       </Text>
-
-    //       <DropDownPicker
-    //         open={open}
-    //         value={value}
-    //         items={items}
-    //         setOpen={setOpen}
-    //         setValue={setValue}
-    //         setItems={setItems}
-
-    //         listMode="FLATLIST"
-    //         placeholder="Select a category"
-
-    //         // These two props are essential for the library to manage its overlay
-    //         zIndex={5000}
-    //         zIndexInverse={1000}
-
-    //         // Basic styling for the component itself
-    //         style={{
-    //           borderColor: '#ddd',
-    //           borderWidth: 1,
-    //           zIndex: 1000,
-    //         }}
-    //         dropDownContainerStyle={{
-    //           borderColor: '#ddd',
-    //           borderWidth: 1,
-    //           zIndex: 1008,
-    //           elevation: 10,
-    //         }}
-    //       />
-    //     </View>
-
-    //     {/* =============================================================== */}
-    //     {/* 2. SCROLLABLE CONTENT: Must have a lower (or no) zIndex        */}
-    //     {/* =============================================================== */}
-    //     {loading ? (
-    //       <SkeletonLoader />
-    //     ) : (
-    //       <FlatList
-    //         data={filteredJobs}
-    //         keyExtractor={(item) => item.id.toString()}
-    //         renderItem={renderJobItem}
-    //         contentContainerStyle={styles.listContentContainer}
-    //         ListEmptyComponent={!loading ? <NoJobsIllustration /> : null}
-    //       />
-    //     )}
-    //   </View>
-    // </SafeAreaView>
-
-    // <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-    //   <View style={{ flex: 1 }}>
-    //     {/* 1. TOP CONTAINER FOR HEADER AND FILTER */}
-    //     {/* This View is NOT scrollable. It stays at the top. */}
-    //     <View style={styles.topSectionContainer}>
-    //       <Text style={styles.homeTitle}>Home</Text>
-
-    //       {/* The DropDownPicker lives here. 
-    //         We give it a high zIndex so its list appears above the FlatList.
-    //       */}
-    //       <DropDownPicker
-    //         open={open}
-    //         value={value}
-    //         items={items}
-    //         setOpen={setOpen}
-    //         setValue={setValue}
-    //         setItems={setItems}
-
-    //         // CRITICAL PROPS FOR STACKING
-    //         zIndex={3000}
-    //         zIndexInverse={1000}
-
-    //         listMode="SCROLLVIEW"
-    //         placeholder="Select a category"
-    //         style={styles.filterDropdown}
-    //         dropDownContainerStyle={styles.filterDropdownContainer}
-    //         // Add any other props you need
-    //         onChangeValue={(selectedValue) => {
-    //           console.log("Changed value:", selectedValue);
-    //           if (selectedValue === "all") {
-    //             setFilteredJobs(searchJobs);
-    //           } else {
-    //             const filtered = searchJobs.filter((job) =>
-    //               job.category?.toLowerCase().includes(selectedValue.toLowerCase())
-    //             );
-    //             setFilteredJobs(filtered);
-    //           }
-    //         }}
-    //       />
-    //     </View>
-
-    //     {/* 2. SCROLLABLE LIST OF JOBS */}
-    //     {/* Use a FlatList directly. It's scrollable by default.
-    //       It will automatically take up the remaining space because of `flex: 1` on the parent.
-    //       NO zIndex is needed here.
-    //     */}
-    //     {loading ? (
-    //       <SkeletonLoader />
-    //     ) : (
-    //       <FlatList
-    //         data={filteredJobs}
-    //         keyExtractor={(item) => item.id.toString()}
-    //         renderItem={renderJobItem}
-    //         contentContainerStyle={styles.listContentContainer}
-    //         ListEmptyComponent={!loading ? <NoJobsIllustration /> : null}
-    //       />
-    //     )}
-    //   </View>
-
-    //   <BottomNav activeuser="jobseeker" />
-    // </SafeAreaView>
   );
 };
 
@@ -876,6 +723,14 @@ const styles = StyleSheet.create({
     paddingRight: 12, // reduced since logo is now inline, not absolute
   },
 
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    // justifyContent: "space-between",
+    marginBottom: 8, // optional spacing
+
+  },
+
   rightSection: {
     position: 'relative', // removed absolute positioning
     top: 0,
@@ -917,6 +772,23 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginBottom: 8,
   },
+
+  shareView: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 14 },
+
+  shareText: {
+    fontSize: 14,
+    color: '#45a6be',
+    fontFamily: 'Montserrat-SemiBold',
+    marginLeft: 8,
+    textDecorationLine: 'underline',
+  },
+
+  shareIcon: {
+    // marginTop: 2,
+    marginLeft: 14,
+  },
+
+
   detailText: {
     fontSize: 14,
     color: '#666666',

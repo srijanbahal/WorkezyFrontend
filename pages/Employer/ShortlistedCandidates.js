@@ -76,7 +76,7 @@ const ShortlistedCandidates = () => {
     if (loading) {
         return (
             <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#4CAF50" />
+                <ActivityIndicator size="large" color="#BE4145" />
                 <Text style={styles.loadingText}>Loading shortlisted candidates...</Text>
             </View>
         );

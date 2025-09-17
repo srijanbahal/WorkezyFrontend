@@ -512,8 +512,9 @@ const EditEmployerProfile = ({ route }) => {
       return;
     }
 
+    console.log("Verifying OTP:", enteredOTP);
     setIsLoading(true);
-
+    
     try {
       const response = await verifyOTP({
         mobile: newPhoneNumber,
@@ -521,7 +522,7 @@ const EditEmployerProfile = ({ route }) => {
         otpToken: otpToken,
         userType: 'employer'
       });
-
+      console.log("OTP Verification Response:", response.data);
       if (response.data && response.data.success) {
         setFormData(prev => ({ ...prev, phone: newPhoneNumber }));
         setIsPhoneVerified(true);
@@ -531,17 +532,20 @@ const EditEmployerProfile = ({ route }) => {
         showAlert('Success', 'Phone number verified successfully', 'success');
         setTimeout(() => hideAlert(), 1000);
       } else {
-        showAlert('Invalid OTP. Please try again.', 'error');
+        showAlert('Error','Invalid OTP. Please try again.', 'error');
         setTimeout(() => hideAlert(), 1000);
       }
     } catch (error) {
-      showAlert(error.response?.data?.message || 'Failed to verify OTP', 'error');
+      showAlert('', error.response?.data?.message || 'Failed to verify OTP', 'error');
+      // console.error("OTP Verification Error:", error);
+      console.log("response data:", error.response?.data);
       setTimeout(() => hideAlert(), 1000);
     } finally {
       setIsLoading(false);
     }
-  };
 
+  };
+  
   // Handle Form Submission
   const handleSubmit = async () => {
     if (!isPhoneVerified && isEditingPhone) {

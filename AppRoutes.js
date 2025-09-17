@@ -316,7 +316,7 @@ const AppRouter = () => {
                 elevation: 0,
                 shadowOpacity: 0,
                 borderBottomWidth: 0,
-                padding: '8%',
+                // padding: '8%',
               },
             }}
           />

@@ -4,10 +4,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomNav from '../component/BottomNav';
 import { getMyJobs } from '../utils/api'; // Import API call function
 import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
-import CustomAlert from '../components/CustomAlert';
+// import CustomAlert from '../components/CustomAlert';
 import LoadingIndicator from '../components/LoadingIndicator';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { BackHandler } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+// import { showAlert } from '../component/CustomAlert';
+import CustomAlert from '../components/CustomAlert';
 
 
 const NoJobsIllustration = () => (
@@ -34,7 +37,11 @@ const AppliedJobsScreen = ({ navigation }) => {
     message: '',
     type: 'info'
   });
-
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('info');
+  const [alertOnConfirm, setAlertOnConfirm] = useState(null);
   const filterOptions = [
     { label: 'All', value: 'All' },
     { label: 'Applied', value: 'applied' },
@@ -43,13 +50,13 @@ const AppliedJobsScreen = ({ navigation }) => {
     { label: 'Expired', value: 'Expired' },
   ];
 
-  const showAlert = (message, type = 'info') => {
-    setAlertConfig({
-      visible: true,
-      message,
-      type
-    });
-  };
+  // const showAlert = (message, type = 'info') => {
+  //   setAlertConfig({
+  //     visible: true,
+  //     message,
+  //     type
+  //   });
+  // };
 
 
 
@@ -126,6 +133,23 @@ const AppliedJobsScreen = ({ navigation }) => {
       return `1 month ago`;
     }
   };
+
+  const showAlert = (message, onConfirm = null, type = 'info', autoClose = true) => {
+    // setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOnConfirm(() => onConfirm);
+    setAlertVisible(true);
+    if (autoClose) {
+      setTimeout(() => {
+        setAlertVisible(false);
+        if (onConfirm) {
+          onConfirm();
+        }
+      }, 1000);
+    }
+  };
+
   const renderJobItem = ({ item }) => (
     <View style={styles.jobCard}>
 
@@ -187,7 +211,27 @@ const AppliedJobsScreen = ({ navigation }) => {
                     item.status === 'Rejected' ? styles.statusTextRejected :
                       styles.statusTextDefault
             ]}>{item.status || 'Applied'}</Text>
+
           </View>
+          <TouchableOpacity
+            style={styles.shareView}
+            onPress={() => {
+              const jobUrl = "https://workezy.org/user_details/45";
+
+              // Copy to clipboard
+              Clipboard.setStringAsync(jobUrl);
+              // Alert.alert("Link copied!", "You can now share it anywhere.");
+              showAlert("Link copied to clipboard!", null, 'success', true);
+            }}
+          >
+            <Text style={styles.shareText}>Share Job</Text>
+            <Ionicons
+              name="share-social"
+              size={14}
+              color="#45a6be"
+              style={styles.shareIcon}
+            />
+          </TouchableOpacity>
         </View>
       </View>
       {/* Attributes Row */}
@@ -349,6 +393,19 @@ const AppliedJobsScreen = ({ navigation }) => {
 
         </View>
 
+        <CustomAlert
+          visible={alertVisible}
+          title={alertTitle}
+          message={alertMessage}
+          type={alertType}
+          onClose={() => setAlertVisible(false)}
+          onConfirm={() => {
+            setAlertVisible(false);
+            if (alertOnConfirm) {
+              alertOnConfirm();
+            }
+          }}
+        />
       </View >
       <BottomNav userType={'job_seeker'} />
       <CustomAlert
@@ -661,6 +718,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginRight: 8,
+  },
+
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    // justifyContent: "space-between",
+    marginBottom: 8, // optional spacing
+
+  },
+  shareView: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 14 },
+
+  shareText: {
+    fontSize: 14,
+    color: '#45a6be',
+    fontFamily: 'Montserrat-SemiBold',
+    marginLeft: 8,
+    textDecorationLine: 'underline',
+  },
+
+  shareIcon: {
+    marginTop: 2,
+    // marginLeft: 14,
   },
   jobTitle: {
     fontSize: 24,

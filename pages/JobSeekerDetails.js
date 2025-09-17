@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from '@react-native-picker/picker';
 
 const JobSeekerDetails = ({ route }) => {
-  const { userId, fromJobApply } = route.params;
+  const { userId, fromJobApply, job } = route.params;
   const navigation = useNavigation();
 
   const [formData, setFormData] = useState({
@@ -333,23 +333,64 @@ const JobSeekerDetails = ({ route }) => {
     });
   };
 
+  // const showAlert = (title = '', message, type = 'error', onCloseCb) => {
+  //   setAlertTitle(title);
+  //   setAlertMessage(message);
+  //   setAlertType(type);
+  //   setAlertVisible(true);
+  //   if (onCloseCb) {
+  //     // store callback in ref via state closure
+  //     showAlert.onClose = false;
+  //   }
+
+  // };
   const showAlert = (title = '', message, type = 'error', onCloseCb) => {
     setAlertTitle(title);
     setAlertMessage(message);
     setAlertType(type);
     setAlertVisible(true);
-    if (onCloseCb) {
-      // store callback in ref via state closure
-      showAlert.onClose = false;
-    }
 
+    // Automatically hide after 3 seconds
+    setTimeout(() => {
+      setAlertVisible(false);
+      if (onCloseCb) onCloseCb(); // Execute callback if provided
+    }, 1000);
   };
 
+
   const handleSubmit = async () => {
-    // ----- education validation -----
+    const selectedLevel = formData.highestEducation;
+    const educationDetails = formData.educationDetails || {};
+
+    if (!selectedLevel) {
+      showAlert('Missing Data', 'Please select your highest education before submitting.', 'error');
+      return;
+    }
+
+    // Determine which levels must be filled based on selection
+    const requiredLevels = [];
+    if (selectedLevel === "10th") requiredLevels.push("10th");
+    if (selectedLevel === "12th") requiredLevels.push("10th", "12th");
+    if (selectedLevel === "UG") requiredLevels.push("10th", "12th", "UG");
+    if (selectedLevel === "PG") requiredLevels.push("10th", "12th", "UG", "PG");
+
+    // Validate each required level
+    for (let level of requiredLevels) {
+      const details = educationDetails[level];
+      if (!details || !details.board || !details.percentage || !details.year) {
+        showAlert(
+          'Incomplete Details',
+          `Please fill all fields for ${level === "UG" ? "Graduate" : level === "PG" ? "Post Graduate" : level}.`,
+          'error'
+        );
+        return; // Stop submission
+      }
+    }
+
+    // ----- existing percentage/year range validation -----
     const currentYr = new Date().getFullYear();
     let eduErrs = {};
-    Object.entries(formData.educationDetails || {}).forEach(([level, details]) => {
+    Object.entries(educationDetails).forEach(([level, details]) => {
       const errs = {};
       const pct = details?.percentage;
       const yr = details?.year;
@@ -357,57 +398,40 @@ const JobSeekerDetails = ({ route }) => {
         errs.percentage = 'Percentage must be between 1 and 100';
       }
       const minYear = 1970;
-      const maxYear = 2025;
-      if (yr && (!/^\d{4}$/.test(yr) || Number(yr) < minYear || Number(yr) > maxYear)) {
-        errs.year = `Passing year must be between ${minYear} and ${maxYear}`;
+      if (yr && (!/^\d{4}$/.test(yr) || Number(yr) < minYear || Number(yr) > currentYr)) {
+        errs.year = `Passing year must be between ${minYear} and ${currentYr}`;
       }
-      if (Object.keys(errs).length) {
-        eduErrs[level] = errs;
-      }
+      if (Object.keys(errs).length) eduErrs[level] = errs;
     });
 
     if (Object.keys(eduErrs).length) {
       setEduErrors(eduErrs);
-      setIsSubmitting(false);
       return;
     } else {
       setEduErrors({});
     }
 
-    // Validate form before submission
-    // if (!validateForm()) {
-    //   return;
-    // }
-
-    // Start submission process
     setIsSubmitting(true);
-
-    console.log("This is form data", formData);
-
     try {
-      // Replace with your actual API endpoint
       const response = await ResumeData(formData);
-
-      // Handle successful submission
       showAlert('', 'Details updated successfully!', 'success');
       setTimeout(() => {
         setAlertVisible(false);
         if (fromJobApply) {
-          navigation.navigate('JobList');
+          if (navigation.canGoBack()) {
+            navigation.goBack(); // ✅ works only if a screen exists behind
+          } else {
+            // Fallback - navigate manually to jobDetails
+            navigation.navigate('jobDetails', { job: route.params.job });
+          }
         } else {
           navigation.navigate('JobSeekerProfile');
         }
-      }, 800);
-
-      // Note: Don't put navigation here, as it would execute before the Alert is dismissed
-      // Instead, we put it in the onPress callback above
-
+      }, 1000);
     } catch (error) {
-      // Handle submission errors
       showAlert('Error', error.response?.data?.message || 'Failed to submit details. Please try again.');
       console.error("Submission error:", error);
     } finally {
-      // End submission process
       setIsSubmitting(false);
     }
   };

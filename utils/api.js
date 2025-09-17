@@ -3,11 +3,11 @@ import axios from "axios";
 // Use the AWS server endpoint
 // const API_BASE_URL = "https://api.workezy.org/api"; 
 // Local development server - comment out when using the AWS endpoint
-const API_BASE_URL = "http://192.168.0.105:5000/api";
+// const API_BASE_URL = "http://192.168.0.105:5000/api";
 // const API_BASE_URL = "http://172.16.48.26:5000/api"; 
 // const API_BASE_URL = "http://127.0.0.1:5000/api"; 
 // const API_BASE_URL = "http://10.31.128.157:5000/api";
-// const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
+const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
 
 
 
@@ -66,7 +66,8 @@ export const updateJob = (jobId, data) => api.put(`/employers/update-job/${jobId
 
 export const ResumeData = (data) => api.put("users/update-resume", data);
 
-export const getJobQuestions = (jobId) => api.get(`users/job-questions/${jobId}`);
+export const getJobQuestions = (jobId,jobSeekerId ) => api.get(`users/job-questions/${jobId}/${jobSeekerId}`);
+export const getJobQuestionsJobId = (jobId ) => api.get(`users/job-questions/${jobId}`);
 // export const getJobExtradetails = (jobId) => api.get(`users/`)
 
 export const createScreening = (jobId, title) => api.post("/employers/create-screening", { jobId, title});

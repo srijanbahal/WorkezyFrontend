@@ -116,40 +116,103 @@ const ApplicationReceived = ({ route, navigation }) => {
   }, [filterValue, applicants]);
 
 
+  // useEffect(() => {
+  //   const fetchStatuses = async () => {
+  //     console.log("Fetching screening statuses for jobId:", job.id);
+  //     try {
+  //       const res = await getScreeningStatuses(job.id);
+  //       console.log("Screening statuses fetched:", res.data);
+
+  //       // ✅ Screening exists
+  //       const map = {};
+  //       res.data.candidates.forEach((c) => {
+  //         map[c.candidate_id] = c.status;
+  //         // console.log(`Mapping candidate ${c.candidate_id} to status ${c.status}`);
+  //       });
+
+  //       console.log("screening_id:", res.data.screening.screening_id);
+  //       setScreeningId(res.data.screening.screening_id);
+
+  //       console.log("Status Map:", map);
+  //       setStatusMap(map);
+
+  //       setScreeningStarted(true);
+  //     } catch (err) {
+  //       if (err.response?.data?.message === "No screening exists for this job") {
+  //         // ❌ No screening exists → mark as not started
+  //         console.log("No screening found for this job.");
+  //         setScreeningStarted(false);
+  //         setStatusMap({});
+  //       } else {
+  //         console.error("Error fetching statuses:", err);
+  //         console.log("Error details:", err.response?.data || err.message);
+  //       }
+  //     }
+  //   };
+
+  //   console.log(
+  //     "useEffect triggered with filterValue:",
+  //     filterValue,
+  //     "jobId:",
+  //     job.id
+  //   );
+
+  //   if (filterValue === "relevant") {
+  //     fetchStatuses();
+  //   }
+  // }, [filterValue, job.id, screeningStarted]);
+
+
   useEffect(() => {
-    const fetchStatuses = async () => {
-      console.log("Fetching screening statuses for jobId:", job.id);
+    const assignAndFetch = async () => {
       try {
+        console.log("Assign & Fetch triggered");
+
+        // ✅ Step 1: Assign relevant candidates
+        const relevantCandidateIds = filteredApplicants.map((c) => c.id);
+        if (relevantCandidateIds.length === 0) {
+          showAlert("No relevant candidates found for AI Screening.", "info");
+          return;
+        }
+
+        console.log("Assigning candidates to screening:", relevantCandidateIds);
+        await addCandidatesToScreening(job.id, relevantCandidateIds);
+        console.log("Candidates successfully assigned to screening");
+
+        // ✅ Step 2: Fetch statuses (your existing logic)
+        console.log("Fetching screening statuses for jobId:", job.id);
         const res = await getScreeningStatuses(job.id);
         console.log("Screening statuses fetched:", res.data);
-        // Screening exists
+
         const map = {};
         res.data.candidates.forEach((c) => {
           map[c.candidate_id] = c.status;
-          // console.log(`Mapping candidate ${c.candidate_id} to status ${c.status}`);
         });
+
         console.log("screening_id:", res.data.screening.screening_id);
         setScreeningId(res.data.screening.screening_id);
+        console.log("Status Map:", map);
         setStatusMap(map);
-        setScreeningStarted(true);
+        // setScreeningStarted(true);
       } catch (err) {
         if (err.response?.data?.message === "No screening exists for this job") {
-          // No screening exists → mark as not started
           console.log("No screening found for this job.");
-          setScreeningStarted(false);
+          // setScreeningStarted(false);
           setStatusMap({});
         } else {
-          console.error("Error fetching statuses:", err);
+          console.error("Error during assign & fetch:", err);
           console.log("Error details:", err.response?.data || err.message);
         }
       }
     };
-    console.log("useEffect triggered with filterValue:", filterValue, "jobId:", job.id);
-    if (filterValue === "relevant") {
-      fetchStatuses();
-    }
-  }, [filterValue, job.id, screeningStarted]);
 
+    if (filterValue === "relevant") {
+      assignAndFetch();
+    }
+  }, [filterValue, job.id, filteredApplicants]);
+
+
+  console.log("Render: screeningId =", screeningId, "filterValue =", filterValue);
 
 
   // --- Functions ---
@@ -253,7 +316,7 @@ const ApplicationReceived = ({ route, navigation }) => {
   };
 
   const evaluateCandidateOnPress = async () => {
-    if (!screeningStarted) {
+    if (!screeningId) {
       createScreeningOnPress(job.id);
       return;
     }
@@ -290,6 +353,7 @@ const ApplicationReceived = ({ route, navigation }) => {
 
   const editQuestionsOnPress = () => {
     console.log("Edit Questions button pressed!");
+    setQuestionModalVisible(true);
     // You can later navigate to your Edit Questions screen here
     // e.g., navigation.navigate('EditQuestions', { jobId: job.id });
   };
@@ -401,7 +465,7 @@ const ApplicationReceived = ({ route, navigation }) => {
 
         </View>
 
-        {screeningStarted === true && filterValue === 'relevant' ? (
+        {screeningId && filterValue === 'relevant' ? (
           <View style={styles.buttomRow}>
             {/* Status Pill */}
             {/* <View style={styles.buttomRow}> */}
@@ -409,13 +473,13 @@ const ApplicationReceived = ({ route, navigation }) => {
             <View
               style={[
                 styles.statusButton,
-                { backgroundColor: getStatusColor(statusMap[item.id]) }
+                { backgroundColor: getStatusColor(statusMap[item.id]) || 'Pending' }
               ]}
             >
               <Text
                 style={[
                   styles.statusText,
-                  { color: getStatusTextColor(statusMap[item.id]) }
+                  { color: getStatusTextColor(statusMap[item.id] || 'Pending') }
                 ]}
               >
                 {statusMap[item.id]}
@@ -475,6 +539,7 @@ const ApplicationReceived = ({ route, navigation }) => {
     );
   };
 
+
   const EmptyApplicationsState = () => (
     <View style={styles.emptyStateContainer}>
       <View style={styles.emptyStateGraphic}>
@@ -531,88 +596,333 @@ const ApplicationReceived = ({ route, navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Filter Section */}
-      {!loading && !error && applicants.length > 0 && <FilterSection />}
+    <>
+      <View style={styles.container}>
+        {/* Filter Section */}
+        {!loading && !error && applicants.length > 0 && <FilterSection />}
 
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#BE4145" style={styles.loader} />
-      ) : error ? (
-        <Text style={styles.error}>{error}</Text>
-      ) : applicants.length === 0 ? (
-        <EmptyApplicationsState />
-      ) : (
-        <FlatList
-          data={filteredApplicants}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderApplicantItem}
-          contentContainerStyle={{ paddingBottom: 24 }}
-        />
-      )}
+        {loading ? (
+          <ActivityIndicator size="large" color="#BE4145" style={styles.loader} />
+        ) : error ? (
+          <Text style={styles.error}>{error}</Text>
+        ) : applicants.length === 0 ? (
+          <EmptyApplicationsState />
+        ) : (
+          <FlatList
+            data={filteredApplicants}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderApplicantItem}
+            // scrollEnabled={false}
+            nestedScrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 24 }}
+          />
+        )}
 
-      {/* {filterValue === "relevant" && (
-        <View style={styles.stickyAiScreeningButton}>
-          <TouchableOpacity
-            style={[
-              styles.aiScreeningButton,
-              screeningStarted && styles.aiScreeningButtonActive,
-            ]}
-            onPress={evaluateCandidateOnPress}
+
+
+        <Modal
+          visible={questionModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setQuestionModalVisible(false)}
+        >
+          {/* Overlay */}
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'rgba(0,0,0,0.4)',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
           >
-            {screeningStarted ? (
-              // <View style={styles.aiScreeningButtonContent}>
-              //   <Text style={[styles.aiScreeningButtonText, styles.aiScreeningButtonTextActive,]} >
-              //     Go to Shortlisted Candidates
-              //   </Text>
-              //   <MaterialIcons name="east" size={18} color="#4CAF50" />
-              // </View>
-              <>
-              {
-                job.review_status !== 'expired' ? (
-                  // Both buttons side by side
-                  <>
-                    <TouchableOpacity style={[styles.button, { flex: 1, marginRight: 4 }]}>
-                      <View style={styles.buttonContent}>
-                        <Text style={[styles.buttonText, styles.editButtonText]}>Edit Questions</Text>
-                        <MaterialIcons name="edit" size={18} color="#2196F3" />
-                      </View>
-                    </TouchableOpacity>
+            {/* Card */}
+            <View
+              style={{
+                backgroundColor: '#fff',
+                borderRadius: 16,
+                padding: 16,
+                width: '90%',
+                maxHeight: '80%',
+                elevation: 6, // Android shadow
+                shadowColor: '#000', // iOS shadow
+                shadowOpacity: 0.15,
+                shadowRadius: 6,
+                shadowOffset: { width: 0, height: 3 },
+              }}
+            >
+              {/* Close Icon */}
+              <TouchableOpacity
+                onPress={() => setQuestionModalVisible(false)}
+                style={{
+                  position: 'absolute',
+                  top: 16,
+                  right: 16,
+                  height: 32,
+                  width: 32,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10,
+                }}
+              >
+                <Ionicons name="close" size={24} color="#BE4145" />
+              </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.button, { flex: 1, marginLeft: 4 }]}>
-                      <View style={styles.buttonContent}>
-                        <Text style={[styles.buttonText, styles.goButtonText]}>Go to Shortlisted Candidates</Text>
-                        <MaterialIcons name="east" size={18} color="#4CAF50" />
-                      </View>
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  // Only Go to Shortlisted Candidates, full width
-                  <TouchableOpacity style={styles.button}>
-                    <View style={styles.buttonContent}>
-                      <Text style={[styles.buttonText, styles.goButtonText]}>Go to Shortlisted Candidates</Text>
-                      <MaterialIcons name="east" size={18} color="#4CAF50" />
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {/* Title */}
+                <Text
+                  style={{
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 22,
+                    color: '#BE4145',
+                    marginBottom: 8,
+                  }}
+                >
+                  Screening Questions
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: 'Inter-Regular',
+                    fontSize: 14,
+                    color: '#666',
+                    marginBottom: 16,
+                  }}
+                >
+                  Add up to 3 questions with Yes/No answers
+                </Text>
+
+                {/* Questions */}
+                {questions.map((question, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      backgroundColor: '#f9f9f9',
+                      borderRadius: 12,
+                      padding: 12,
+                      marginBottom: 16,
+                    }}
+                  >
+                    {/* Header */}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 8,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: 'Montserrat-SemiBold',
+                          fontSize: 16,
+                          color: '#333',
+                        }}
+                      >
+                        Question {index + 1}
+                      </Text>
+                      {questions.length > 1 && (
+                        <TouchableOpacity onPress={() => removeQuestion(index)}>
+                          <Ionicons name="close-circle" size={22} color="#BE4145" />
+                        </TouchableOpacity>
+                      )}
                     </View>
+
+                    {/* Input */}
+                    <TextInput
+                      ref={(ref) => (inputRefs.current[`question_${index}`] = ref)}
+                      value={question.question}
+                      onChangeText={(text) => updateQuestion(index, 'question', text)}
+                      placeholder="Enter your question"
+                      style={{
+                        borderWidth: 1,
+                        borderColor: '#ddd',
+                        borderRadius: 8,
+                        padding: 10,
+                        fontFamily: 'Inter-Regular',
+                        fontSize: 14,
+                        color: '#333',
+                        marginBottom: 12,
+                      }}
+                      placeholderTextColor="#999"
+                    />
+
+                    {/* Answer Selector */}
+                    <View>
+                      <Text
+                        style={{
+                          fontFamily: 'Inter-SemiBold',
+                          fontSize: 14,
+                          color: '#333',
+                          marginBottom: 6,
+                        }}
+                      >
+                        Expected Answer
+                      </Text>
+                      <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <TouchableOpacity
+                          style={[
+                            {
+                              flex: 1,
+                              padding: 10,
+                              borderRadius: 8,
+                              borderWidth: 1,
+                              borderColor: '#ddd',
+                              alignItems: 'center',
+                            },
+                            question.correctAnswer === 'Yes' && {
+                              backgroundColor: '#FCF0F0',
+                              borderColor: '#BE4145',
+                            },
+                          ]}
+                          onPress={() => updateQuestion(index, 'correctAnswer', 'Yes')}
+                        >
+                          <Text
+                            style={[
+                              {
+                                fontFamily: 'Inter-Regular',
+                                fontSize: 14,
+                                color: '#333',
+                              },
+                              question.correctAnswer === 'Yes' && {
+                                color: '#BE4145',
+                                fontFamily: 'Inter-SemiBold',
+                              },
+                            ]}
+                          >
+                            Yes
+                          </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={[
+                            {
+                              flex: 1,
+                              padding: 10,
+                              borderRadius: 8,
+                              borderWidth: 1,
+                              borderColor: '#ddd',
+                              alignItems: 'center',
+                            },
+                            question.correctAnswer === 'No' && {
+                              backgroundColor: '#FCF0F0',
+                              borderColor: '#BE4145',
+                            },
+                          ]}
+                          onPress={() => updateQuestion(index, 'correctAnswer', 'No')}
+                        >
+                          <Text
+                            style={[
+                              {
+                                fontFamily: 'Inter-Regular',
+                                fontSize: 14,
+                                color: '#333',
+                              },
+                              question.correctAnswer === 'No' && {
+                                color: '#BE4145',
+                                fontFamily: 'Inter-SemiBold',
+                              },
+                            ]}
+                          >
+                            No
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                ))}
+
+                {/* Add Question */}
+                {questions.length < 3 && (
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginTop: 8,
+                    }}
+                    onPress={addQuestion}
+                  >
+                    <Ionicons name="add-circle-outline" size={20} color="#BE4145" />
+                    <Text
+                      style={{
+                        marginLeft: 6,
+                        fontFamily: 'Inter-Regular',
+                        fontSize: 14,
+                        color: '#BE4145',
+                      }}
+                    >
+                      Add Another Question
+                    </Text>
                   </TouchableOpacity>
-                )
-              }
-              </>
-            ) : (
-              <Text style={styles.aiScreeningButtonText}>Start AI Screening</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+                )}
+              </ScrollView>
 
+              {/* Actions */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  marginTop: 20,
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    paddingVertical: 10,
+                    paddingHorizontal: 20,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: '#ddd',
+                    marginRight: 10,
+                  }}
+                  onPress={() => setQuestionModalVisible(false)}
+                >
+                  <Text
+                    style={{ fontFamily: 'Inter-Regular', fontSize: 14, color: '#333' }}
+                  >
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
 
-      )} */}
+                <TouchableOpacity
+                  style={{
+                    paddingVertical: 10,
+                    paddingHorizontal: 20,
+                    borderRadius: 8,
+                    backgroundColor: '#BE4145',
+                  }}
+                  onPress={handleSubmit}
+                >
+                  <Text
+                    style={{
+                      fontFamily: 'Inter-SemiBold',
+                      fontSize: 14,
+                      color: '#fff',
+                    }}
+                  >
+                    Save
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
+        <CustomAlert
+          visible={alertConfig.visible}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          title={alertConfig.title}
+          onClose={hideAlert}
+        />
+      </View>
+      {/* Sticky AI Screening Button */}
       {filterValue === "relevant" && (
         <View style={styles.stickyAiScreeningButton}>
-          {screeningStarted ? (
+          {screeningId != null ? (
             job.review_status === 'expired' ? (
               // Screening started but job expired → single full-width button
               <TouchableOpacity
-                style={[screeningStarted && styles.aiScreeningButtonActive, { flex: 1, marginLeft: 4, justifyContent: 'center', alignItems: 'center', padding: 8, backgroundColor: '#E8F5E9', borderRadius: 8, borderColor: '#4CAF50', borderWidth: 1 }]}
+                style={[screeningId != null && styles.aiScreeningButtonActive, { flex: 1, marginLeft: 4, justifyContent: 'center', alignItems: 'center', padding: 8, backgroundColor: '#E8F5E9', borderRadius: 8, borderColor: '#4CAF50', borderWidth: 1 }]}
                 onPress={evaluateCandidateOnPress}
               >
                 <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 4 }, styles.aiScreeningButtonContent]}>
@@ -639,7 +949,7 @@ const ApplicationReceived = ({ route, navigation }) => {
 
                 {/* Go to Shortlisted Candidates Button */}
                 <TouchableOpacity
-                  style={[screeningStarted && styles.aiScreeningButtonActive, { flex: 1, marginLeft: 4, justifyContent: 'center', alignItems: 'center', padding: 8, backgroundColor: '#E8F5E9', borderRadius: 8, borderColor: '#4CAF50', borderWidth: 1 }]}
+                  style={[screeningId != null && styles.aiScreeningButtonActive, { flex: 1, marginLeft: 4, justifyContent: 'center', alignItems: 'center', padding: 8, backgroundColor: '#E8F5E9', borderRadius: 8, borderColor: '#4CAF50', borderWidth: 1 }]}
                   onPress={evaluateCandidateOnPress}
                 >
                   <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 4 }, styles.aiScreeningButtonContent]}>
@@ -655,7 +965,7 @@ const ApplicationReceived = ({ route, navigation }) => {
             <TouchableOpacity
               style={[
                 styles.aiScreeningButton,
-                screeningStarted && styles.aiScreeningButtonActive,
+                screeningId != null && styles.aiScreeningButtonActive,
               ]}
               onPress={createScreeningOnPress.bind(this, job.id)}
             >
@@ -664,301 +974,8 @@ const ApplicationReceived = ({ route, navigation }) => {
           )}
         </View>
       )}
+    </>
 
-
-      <Modal
-        visible={questionModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setQuestionModalVisible(false)}
-      >
-        {/* Overlay */}
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          {/* Card */}
-          <View
-            style={{
-              backgroundColor: '#fff',
-              borderRadius: 16,
-              padding: 16,
-              width: '90%',
-              maxHeight: '80%',
-              elevation: 6, // Android shadow
-              shadowColor: '#000', // iOS shadow
-              shadowOpacity: 0.15,
-              shadowRadius: 6,
-              shadowOffset: { width: 0, height: 3 },
-            }}
-          >
-            {/* Close Icon */}
-            <TouchableOpacity
-              onPress={() => setQuestionModalVisible(false)}
-              style={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                height: 32,
-                width: 32,
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10,
-              }}
-            >
-              <Ionicons name="close" size={24} color="#BE4145" />
-            </TouchableOpacity>
-
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {/* Title */}
-              <Text
-                style={{
-                  fontFamily: 'Montserrat-SemiBold',
-                  fontSize: 22,
-                  color: '#BE4145',
-                  marginBottom: 8,
-                }}
-              >
-                Screening Questions
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter-Regular',
-                  fontSize: 14,
-                  color: '#666',
-                  marginBottom: 16,
-                }}
-              >
-                Add up to 3 questions with Yes/No answers
-              </Text>
-
-              {/* Questions */}
-              {questions.map((question, index) => (
-                <View
-                  key={index}
-                  style={{
-                    backgroundColor: '#f9f9f9',
-                    borderRadius: 12,
-                    padding: 12,
-                    marginBottom: 16,
-                  }}
-                >
-                  {/* Header */}
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: 8,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: 'Montserrat-SemiBold',
-                        fontSize: 16,
-                        color: '#333',
-                      }}
-                    >
-                      Question {index + 1}
-                    </Text>
-                    {questions.length > 1 && (
-                      <TouchableOpacity onPress={() => removeQuestion(index)}>
-                        <Ionicons name="close-circle" size={22} color="#BE4145" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-
-                  {/* Input */}
-                  <TextInput
-                    ref={(ref) => (inputRefs.current[`question_${index}`] = ref)}
-                    value={question.question}
-                    onChangeText={(text) => updateQuestion(index, 'question', text)}
-                    placeholder="Enter your question"
-                    style={{
-                      borderWidth: 1,
-                      borderColor: '#ddd',
-                      borderRadius: 8,
-                      padding: 10,
-                      fontFamily: 'Inter-Regular',
-                      fontSize: 14,
-                      color: '#333',
-                      marginBottom: 12,
-                    }}
-                    placeholderTextColor="#999"
-                  />
-
-                  {/* Answer Selector */}
-                  <View>
-                    <Text
-                      style={{
-                        fontFamily: 'Inter-SemiBold',
-                        fontSize: 14,
-                        color: '#333',
-                        marginBottom: 6,
-                      }}
-                    >
-                      Expected Answer
-                    </Text>
-                    <View style={{ flexDirection: 'row', gap: 10 }}>
-                      <TouchableOpacity
-                        style={[
-                          {
-                            flex: 1,
-                            padding: 10,
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            borderColor: '#ddd',
-                            alignItems: 'center',
-                          },
-                          question.correctAnswer === 'Yes' && {
-                            backgroundColor: '#FCF0F0',
-                            borderColor: '#BE4145',
-                          },
-                        ]}
-                        onPress={() => updateQuestion(index, 'correctAnswer', 'Yes')}
-                      >
-                        <Text
-                          style={[
-                            {
-                              fontFamily: 'Inter-Regular',
-                              fontSize: 14,
-                              color: '#333',
-                            },
-                            question.correctAnswer === 'Yes' && {
-                              color: '#BE4145',
-                              fontFamily: 'Inter-SemiBold',
-                            },
-                          ]}
-                        >
-                          Yes
-                        </Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        style={[
-                          {
-                            flex: 1,
-                            padding: 10,
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            borderColor: '#ddd',
-                            alignItems: 'center',
-                          },
-                          question.correctAnswer === 'No' && {
-                            backgroundColor: '#FCF0F0',
-                            borderColor: '#BE4145',
-                          },
-                        ]}
-                        onPress={() => updateQuestion(index, 'correctAnswer', 'No')}
-                      >
-                        <Text
-                          style={[
-                            {
-                              fontFamily: 'Inter-Regular',
-                              fontSize: 14,
-                              color: '#333',
-                            },
-                            question.correctAnswer === 'No' && {
-                              color: '#BE4145',
-                              fontFamily: 'Inter-SemiBold',
-                            },
-                          ]}
-                        >
-                          No
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              ))}
-
-              {/* Add Question */}
-              {questions.length < 3 && (
-                <TouchableOpacity
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginTop: 8,
-                  }}
-                  onPress={addQuestion}
-                >
-                  <Ionicons name="add-circle-outline" size={20} color="#BE4145" />
-                  <Text
-                    style={{
-                      marginLeft: 6,
-                      fontFamily: 'Inter-Regular',
-                      fontSize: 14,
-                      color: '#BE4145',
-                    }}
-                  >
-                    Add Another Question
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </ScrollView>
-
-            {/* Actions */}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                marginTop: 20,
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: '#ddd',
-                  marginRight: 10,
-                }}
-                onPress={() => setQuestionModalVisible(false)}
-              >
-                <Text
-                  style={{ fontFamily: 'Inter-Regular', fontSize: 14, color: '#333' }}
-                >
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 8,
-                  backgroundColor: '#BE4145',
-                }}
-                onPress={handleSubmit}
-              >
-                <Text
-                  style={{
-                    fontFamily: 'Inter-SemiBold',
-                    fontSize: 14,
-                    color: '#fff',
-                  }}
-                >
-                  Save
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      <CustomAlert
-        visible={alertConfig.visible}
-        message={alertConfig.message}
-        type={alertConfig.type}
-        title={alertConfig.title}
-        onClose={hideAlert}
-      />
-    </View>
   );
 };
 
@@ -970,6 +987,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f4f2ee',
     marginTop: 8, // fixed from 10 to 8 for consistency
+    paddingBottom: 0, // fixed from 16 to 0 to accommodate sticky button
   },
   filterContainer: {
     marginBottom: 20,
@@ -1247,6 +1265,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     minHeight: 120,
     justifyContent: 'flex-start',
+    // width: '92%',
   },
   initialsCircle: {
     position: 'absolute',
@@ -1361,7 +1380,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 8,
     marginBottom: 24,
-    width: '100%',
+    width: '92%',
+
   },
   headerRedesigned: {
     fontFamily: 'Montserrat-SemiBold',
@@ -1483,12 +1503,12 @@ const styles = StyleSheet.create({
   },
 
   stickyAiScreeningButton: {
-    position: 'absolute',
-    bottom: 0,
+    position: 'relative',
+    // bottom: 0,
     paddingTop: 16,
     paddingBottom: 24,
-    left: 0,
-    right: 0,
+    // left: 0,
+    // right: 0,
     backgroundColor: '#ffffff',
     paddingHorizontal: 16,
     borderTopWidth: 1,
@@ -1498,6 +1518,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 3,
+    width: '100%',
   },
   modalOverlay: {
     flex: 1,

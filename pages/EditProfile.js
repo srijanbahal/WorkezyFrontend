@@ -47,11 +47,10 @@ const EditProfile = ({ route }) => {
   ]);
 
   const [educationItems, setEducationItems] = useState([
-    { label: '10th Pass', value: '10th' },
-    { label: '12th Pass', value: '12th' },
-    { label: 'Undergraduate (UG)', value: 'UG' },
-    { label: 'Postgraduate (PG)', value: 'PG' },
-    { label: 'PhD', value: 'PhD' },
+    { label: "10th Pass", value: "10th" },
+    { label: "12th Pass", value: "12th" },
+    { label: "Graduate", value: "UG" },
+    { label: "Post Graduate", value: "PG" },
   ]);
 
   const [stateItems, setStateItems] = useState([
@@ -94,50 +93,6 @@ const EditProfile = ({ route }) => {
   ]);
 
   const [industryItems, setIndustryItems] = useState([
-    // { label: 'IT', value: 'it' },
-    // { label: 'Finance', value: 'finance' },
-    // { label: 'Healthcare', value: 'healthcare' },
-    // { label: 'Education', value: 'education' },
-    // { label: 'Electrician', value: 'electrician' },
-    // { label: 'Plumber', value: 'plumber' },
-    // { label: 'Carpenter', value: 'carpenter' },
-    // { label: 'Painter', value: 'painter' },
-    // { label: 'Welder', value: 'welder' },
-    // { label: 'Mechanic', value: 'mechanic' },
-    // { label: 'Technician (AC, Refrigerator, etc.)', value: 'technician' },
-    // { label: 'Machine Operator', value: 'machine_operator' },
-    // { label: 'Hotel Manager', value: 'hotel_manager' },
-    // { label: 'Office Boy', value: 'office_boy' },
-    // { label: 'Admin', value: 'admin' },
-    // { label: 'Receptionist', value: 'receptionist' },
-    // { label: 'Bartender', value: 'bartender' },
-    // { label: 'Housekeeping', value: 'housekeeping' },
-    // { label: 'Beautician', value: 'beautician' },
-    // { label: 'Warehouse Worker', value: 'warehouse_worker' },
-    // { label: 'Procurement/Purchase', value: 'procurement_purchase' },
-    // { label: 'Supply Chain', value: 'supply_chain' },
-    // { label: 'Operations', value: 'operations' },
-    // { label: 'Field Sales', value: 'field_sales' },
-    // { label: 'Business Development', value: 'business_development' },
-    // { label: 'Key Account Manager (KAM)', value: 'kam' },
-    // { label: 'Customer Support', value: 'customer_support' },
-    // { label: 'Lab Technician', value: 'lab_technician' },
-    // { label: 'Nurse', value: 'nurse' },
-    // { label: 'Compounder', value: 'compounder' },
-    // { label: 'Content Writer', value: 'content_writer' },
-    // { label: 'Graphics Designer', value: 'graphics_designer' },
-    // { label: 'Digital Marketing', value: 'digital_marketing' },
-    // { label: 'Web Developer', value: 'web_developer' },
-    // { label: 'Tailor', value: 'tailor' },
-    // { label: 'Maid / Caretaker', value: 'maid_caretaker' },
-    // { label: 'Babysitter', value: 'babysitter' },
-    // { label: 'Nanny', value: 'nanny' },
-    // { label: 'House Cleaner', value: 'house_cleaner' },
-    // { label: 'Pest Control', value: 'pest_control' },
-    // { label: 'Data Entry', value: 'data_entry' },
-    // { label: 'Back Office', value: 'back_office' },
-    // { label: 'Other', value: 'other' },
-    // { label: "All", value: "all" },
     { label: "Accountant", value: "accountant" },
     { label: "Admin", value: "admin" },
     { label: "Airport Ground Staff", value: "airport_ground_staff" },
@@ -176,54 +131,14 @@ const EditProfile = ({ route }) => {
     { label: "Yoga / Zumba Instructor", value: "yoga_zumba_instructor" },
   ]);
 
-  const [roleItems, setRoleItems] = useState([
-    { label: "All", value: "all" },
-    { label: "Accountant", value: "accountant" },
-    { label: "Admin", value: "admin" },
-    { label: "Airport Ground Staff", value: "airport_ground_staff" },
-    { label: "Airport Operations", value: "airport_operations" },
-    { label: "Barista", value: "barista" },
-    { label: "Bartender", value: "bartender" },
-    { label: "Beautician", value: "beautician" },
-    { label: "Business Development", value: "business_development" },
-    { label: "Cabin Crew", value: "cabin_crew" },
-    { label: "Compounder", value: "compounder" },
-    { label: "Cook / Chef", value: "cook_chef" },
-    { label: "Driver", value: "driver" },
-    { label: "Factory Manager", value: "factory_manager" },
-    { label: "Factory Supervisor", value: "factory_supervisor" },
-    { label: "Field Sales", value: "field_sales" },
-    { label: "Graphic Designer", value: "graphic_designer" },
-    { label: "Gym Trainer", value: "gym_trainer" },
-    { label: "Hair Stylist", value: "hair_stylist" },
-    { label: "Hotel Executive", value: "hotel_executive" },
-    { label: "Hotel Manager", value: "hotel_manager" },
-    { label: "Lab Technician", value: "lab_technician" },
-    { label: "Nurse", value: "nurse" },
-    { label: "Procurement / Purchase", value: "procurement_purchase" },
-    { label: "Receptionist", value: "receptionist" },
-    { label: "Sales Counsellor", value: "sales_counsellor" },
-    { label: "Seaman", value: "seaman" },
-    { label: "Security Bouncer", value: "security_bouncer" },
-    { label: "Security Officer", value: "security_officer" },
-    { label: "Store Manager", value: "store_manager" },
-    { label: "Supply Chain", value: "supply_chain" },
-    { label: "Tailor", value: "tailor" },
-    { label: "Teacher", value: "teacher" },
-    { label: "Technician", value: "technician" },
-    { label: "Web Developer", value: "web_developer" },
-    { label: "Warehouse", value: "warehouse" },
-    { label: "Yoga / Zumba Instructor", value: "yoga_zumba_instructor" },
-  ])
-
   const ExperienceItems = [
     { label: 'Fresher', value: 'fresher' },
-    { label: '1-2 Years', value: '1-2 Years' },
-    { label: '3-5 Years', value: '3-5 Years' },
-    { label: '6-8 Years', value: '6-8  Years' },
-    { label: '9-12 Years', value: '9-12 Years' },
-    { label: '13-15 Years', value: '13-15 Years' },
-    { label: '15+ Years', value: '15+ Years' },
+    { label: '1-2 Years', value: '1-2years' },
+    { label: '3-5 Years', value: '3-5years' },
+    { label: '6-8 Years', value: '6-8years' },
+    { label: '9-12 Years', value: '9-12years' },
+    { label: '13-15 Years', value: '13-15years' },
+    { label: '15+ Years', value: '15+years' },
   ];
 
   // Phone verification states
@@ -451,7 +366,7 @@ const EditProfile = ({ route }) => {
       try {
         const response = await getProfileDetails(userId, userType);
         const userData = response.data;
-
+        console.log("User Data:", userData);
         // Parse the date of birth if it exists
         let day = '', month = '', year = '';
         if (userData.user.dob) {
@@ -465,7 +380,7 @@ const EditProfile = ({ route }) => {
           setSelectedMonth(month);
           setSelectedYear(year);
         }
-
+        console.log("Experience Years:", userData.user.experience_years);
         setFormData({
           full_name: userData.user.full_name || '',
           profileImage: userData.user.profile_image || '',
@@ -486,8 +401,9 @@ const EditProfile = ({ route }) => {
           },
           dateOfBirth: userData.user.dob || '',
         });
+        console.log("formData:", formData.experience);
         setProfileImage(userData.user.profile_image)
-        console.log(userData.user)
+        console.log("userData : ", userData.user)
 
         if (userData.profileImage) {
           setProfileImage(userData.profileImage);
@@ -556,11 +472,11 @@ const EditProfile = ({ route }) => {
       newErrors.full_name = 'Please enter your full name';
     }
     // Comment out email input and validation
-    // if (!formData.email) {
-    //   newErrors.email = 'Please enter your email address';
-    // } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    //   newErrors.email = 'Please enter a valid email address';
-    // }
+    if (!formData.email) {
+      newErrors.email = 'Please enter your email address';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
     if (!formData.gender) {
       newErrors.gender = 'Please select your gender';
     }
@@ -574,6 +490,7 @@ const EditProfile = ({ route }) => {
       newErrors.country = 'Please enter your country';
     }
     if (!formData.experience) {
+
       newErrors.experience = 'Please select your experience';
     }
     if (!formData.industry) {
@@ -646,7 +563,16 @@ const EditProfile = ({ route }) => {
       message,
       type,
     });
+
+    // Hide after 1 second
+    setTimeout(() => {
+      setAlertConfig(prev => ({
+        ...prev,
+        visible: false,
+      }));
+    }, 1000);
   };
+
 
   const hideAlert = () => {
     setAlertConfig(prev => ({ ...prev, visible: false }));
@@ -740,7 +666,7 @@ const EditProfile = ({ route }) => {
               <TextInput
                 style={[
                   { ...styles.input, backgroundColor: "#fff", color: "#999999" },
-                  { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40 },
+                  { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40, color: isEditingPhone ? '#333333' : '#999999' },
                   errors.phone ? styles.inputError : null
                 ]}
                 value={isEditingPhone ? newPhoneNumber : formData.phone}
@@ -1037,7 +963,7 @@ const EditProfile = ({ route }) => {
             />
             {errors.experience ? <Text style={styles.errorText}>{errors.experience}</Text> : null}
 
-            
+
             {/* Role */}
             <Text style={styles.label}>Job Category<Text style={styles.requiredStar}>*</Text></Text>
             <DropDownPicker

@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "WorkezyApp",
@@ -25,7 +26,18 @@
         "READ_CONTACTS",
         "WRITE_CONTACTS"
       ],
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "queries": [
+        {
+          "package": "com.whatsapp"
+        },
+        {
+          "intent": "android.intent.action.DIAL",
+          "data": {
+            "scheme": "tel"
+          }
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

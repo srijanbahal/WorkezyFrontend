@@ -206,14 +206,10 @@ const PostJobForm = ({ navigation }) => {
 
     // Add dropdown items for the new fields
     const minEducationItems = [
-        { label: '10th pass', value: '10th' },
-        { label: 'Secondary Education', value: 'secondary' },
-        { label: 'High School', value: 'high_school' },
-        { label: 'Diploma', value: 'diploma' },
-        { label: 'Bachelor\'s Degree', value: 'bachelors' },
-        { label: 'Master\'s Degree', value: 'masters' },
-        { label: 'Doctorate', value: 'doctorate' },
-        { label: 'Not Required', value: 'not_required' },
+        { label: "10th Pass", value: "10th" },
+        { label: "12th Pass", value: "12th" },
+        { label: "Graduate", value: "UG" },
+        { label: "Post Graduate", value: "PG" },
     ];
 
     const genderItems = [
@@ -380,8 +376,8 @@ const PostJobForm = ({ navigation }) => {
                     setIndustry(jobData.industry || jobData.category || '');
 
                     // Fix for job category field
-                    setJobCategory(jobData.category || jobData.jobCategory || jobData.industry || jobData.title || null);
-
+                    setJobCategory(jobData.jobCategory || null);
+                    console.log("Job Category set to:", jobData.jobCategory || null);
                     // Set the new fields
                     setMinAge(jobData.min_age?.toString() || '');
                     setMinEducation(jobData.min_education || '');
@@ -438,7 +434,11 @@ const PostJobForm = ({ navigation }) => {
         setAlertMessage(message);
         setAlertShowCancel(showCancel);
         setAlertOnConfirm(() => onConfirm);
-        setAlertVisible(true);
+
+        // Delay showing the alert by 1 second (1000ms)
+        setTimeout(() => {
+            setAlertVisible(true);
+        }, 1000);
     };
 
     const handlepostJob = async () => {
@@ -459,7 +459,7 @@ const PostJobForm = ({ navigation }) => {
                 question_text: q.question,
                 ideal_answer: q.correctAnswer.toLowerCase()
             }));
-
+            console.log("Job category on submit is" , jobCategory)
         const jobData = {
             employerId,
             employer_id: employerId, // Adding alternative format for API compatibility
@@ -469,8 +469,7 @@ const PostJobForm = ({ navigation }) => {
             company: company,
             city,
             country: "India",
-            job_type: jobType,
-            jobType,
+            jobType: jobType,
             experience,
             job_shift: shift,
             shift,
@@ -482,8 +481,7 @@ const PostJobForm = ({ navigation }) => {
             numEmployees,
             no_of_employees: numEmployees,
             employees_required: numEmployees, // Adding alternative format for API compatibility
-            category: jobCategory,
-            jobCategory,
+            JobCategory: jobCategory,
             industry: industry,
             // Add the new fields
             min_age: minAge,
@@ -492,6 +490,7 @@ const PostJobForm = ({ navigation }) => {
             // Add the formatted questions
             screening_questions: formattedQuestions,
         };
+        console.log("Submitting Job Data:", jobData.JobCategory); // Debugging output
 
         try {
             let response;
@@ -524,6 +523,7 @@ const PostJobForm = ({ navigation }) => {
             }
         } catch (error) {
             console.error('Error submitting job:', error);
+            console.log('Error details:', error.response?.data || error.message);
             showCustomAlert('Error', 'An error occurred. Please try again.', false);
         }
     };
@@ -610,14 +610,14 @@ const PostJobForm = ({ navigation }) => {
     };
 
     const handleBack = () => {
-  setCurrentPage(prev => {
-    if (prev === 1) {
-      navigation.navigate("MyJobs");
-      return prev; // don't change state
-    }
-    return 1; // if on page 2 (or more), go back to 1
-  });
-};
+        setCurrentPage(prev => {
+            if (prev === 1) {
+                navigation.navigate("MyJobs");
+                return prev; // don't change state
+            }
+            return 1; // if on page 2 (or more), go back to 1
+        });
+    };
 
 
     return (
@@ -679,11 +679,17 @@ const PostJobForm = ({ navigation }) => {
                                             if (open) dismissDropdownsAndFocus();
                                             setJobCategoryOpen(open);
                                         }}
-                                        setValue={setJobCategory}
+                                        setValue={(callback) => {
+                                            const value = callback(jobCategory); // callback returns new value
+                                            setJobCategory(value);
+                                            console.log("Selected Job Category:", value);
+                                            if (value) {
+                                                setFormErrors({ ...formErrors, jobCategory: '' });
+                                            }
+                                        }}
                                         placeholder="Select Job Category"
                                         style={[
-                                            styles.dropdown,
-                                            formErrors.jobCategory ? styles.dropdownError : null
+                                            styles.dropdown
                                         ]}
                                         dropDownContainerStyle={styles.dropdownList}
                                         listMode="SCROLLVIEW"
@@ -783,8 +789,7 @@ const PostJobForm = ({ navigation }) => {
                                         }}
                                         placeholder="Select job type"
                                         style={[
-                                            styles.dropdown,
-                                            formErrors.jobType ? styles.dropdownError : null
+                                            styles.dropdown
                                         ]}
                                         dropDownContainerStyle={styles.dropdownList}
                                         listMode="SCROLLVIEW"
@@ -822,8 +827,7 @@ const PostJobForm = ({ navigation }) => {
                                         }}
                                         placeholder="Select shift"
                                         style={[
-                                            styles.dropdown,
-                                            formErrors.shift ? styles.dropdownError : null
+                                            styles.dropdown
                                         ]}
                                         dropDownContainerStyle={styles.dropdownList}
                                         listMode="SCROLLVIEW"
@@ -861,8 +865,7 @@ const PostJobForm = ({ navigation }) => {
                                         }}
                                         placeholder="Select location type"
                                         style={[
-                                            styles.dropdown,
-                                            formErrors.locationType ? styles.dropdownError : null
+                                            styles.dropdown
                                         ]}
                                         dropDownContainerStyle={styles.dropdownList}
                                         listMode="SCROLLVIEW"
@@ -1069,7 +1072,7 @@ const PostJobForm = ({ navigation }) => {
                                         <View style={styles.fullInputContainer}>
                                             <TextInput
                                                 ref={(ref) => inputRefs.current.minAge = ref}
-                                                label="Minimum Age"
+                                                label="Minimum Age (Optional)"
                                                 value={minAge}
                                                 onChangeText={setMinAge}
                                                 style={styles.input}
@@ -1098,7 +1101,7 @@ const PostJobForm = ({ navigation }) => {
 
                                 {/* Minimum Education */}
                                 <Text style={{ ...styles.label, marginBottom: -4 }}>
-                                    Minimum Education
+                                    Minimum Education (Optional)
                                 </Text>
                                 <View style={styles.fieldWrapper}>
                                     <DropDownPicker
@@ -1290,7 +1293,7 @@ const PostJobForm = ({ navigation }) => {
                 onClose={() => setAlertVisible(false)}
                 onConfirm={alertOnConfirm ? () => { setAlertVisible(false); alertOnConfirm(); } : () => setAlertVisible(false)}
                 showCancel={alertShowCancel}
-                // showButton={alertTitle !== 'Success'}
+            // showButton={alertTitle !== 'Success'}
             />
         </>
     );

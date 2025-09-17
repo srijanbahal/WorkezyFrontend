@@ -10,7 +10,7 @@ import BottomNav from '../component/BottomNav';
 const JobDetailsScreen = ({ route, navigation }) => {
   const { job } = route.params;
 
-
+  // console.log("Job Details:", job);
   const [userId, setUserId] = useState(null);
   const [userEducation, setUserEducation] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
@@ -56,11 +56,11 @@ const JobDetailsScreen = ({ route, navigation }) => {
           setUserId(parsedUser.id);
           setUserEducation(parsedUser.education);
           console.log("My Details", parsedUser);
-
+          console.log("User ID:", userId);
           // Fetch user profile for scoring
           try {
             const profileResponse = await getProfileDetails(parsedUser.id, 'job_seeker');
-            console.log("Profile Response", profileResponse.data.user);
+            // console.log("Profile Response", profileResponse.data.user);
             if (profileResponse?.data) {
               setUserProfile(profileResponse.data.user);
             }
@@ -74,6 +74,43 @@ const JobDetailsScreen = ({ route, navigation }) => {
     };
     fetchUserId();
   }, []);
+
+
+  useEffect(() => {
+    if (!userId || userId === null) return;
+
+    const fetchJobQuestions = async () => {
+      try {
+        const response = await getJobQuestions(job.id, userId);
+        console.log("Job Questions Response:", response.data);
+
+        // ✅ Stop silently if user hasn't applied
+        if (response?.data?.applied === false) return;
+
+        if (response?.data?.job_questions) {
+          const { questions, candidate_answers, ideal_answers } = response.data.job_questions;
+
+          // Build array of objects for easy mapping
+          const formattedQuestions = questions.map((q, i) => ({
+            question_text: q,
+            candidate_answer: candidate_answers[i] || "Not Answered",
+            ideal_answer: ideal_answers[i]
+          }));
+
+          setJobQuestions(formattedQuestions);
+        }
+
+        if (response?.data?.preferred_slot) {
+          setPreferredSlot(response.data.preferred_slot);
+        }
+      } catch (error) {
+        console.error("Error fetching job questions:", error);
+        console.log("Error response:", error.response?.data || error.message);
+      }
+    };
+
+    fetchJobQuestions();
+  }, [job.id, userId]);
 
   // Calculate relevant candidate score
   const calculateRelevantScore = () => {
@@ -176,21 +213,6 @@ const JobDetailsScreen = ({ route, navigation }) => {
     return score;
   };
 
-  // Fetch job questions when component mounts
-  useEffect(() => {
-    const fetchJobQuestions = async () => {
-      try {
-        const response = await getJobQuestions(job.id);
-        console.log("Job Questions", response.data);
-        if (response?.data?.questions) {
-          setJobQuestions(response.data.questions);
-        }
-      } catch (error) {
-        console.error("Error fetching job questions:", error);
-      }
-    };
-    fetchJobQuestions();
-  }, [job.id]);
 
   const submitJobApplication = async () => {
     try {
@@ -275,7 +297,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
     // Check education before allowing to apply
     try {
       const response = await checkEducation(userId);
-      if (response?.data?.hasEducation) {
+      if (response?.data?.isHighestEducationValid) {
         // If there are screening questions, show the modal
         if (jobQuestions.length > 0) {
           setShowQuestionsModal(true);
@@ -286,7 +308,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
         }
       } else {
         // Redirect to JobSeekerDetails if education is not filled, pass fromJobApply param
-        navigation.navigate('JobSeekerDetails', { userId, fromJobApply: true });
+        navigation.navigate('JobSeekerDetails', { userId, fromJobApply: true, job: job});
       }
     } catch (error) {
       // On error, redirect to JobSeekerDetails as a fallback, pass fromJobApply param
@@ -449,6 +471,114 @@ const JobDetailsScreen = ({ route, navigation }) => {
           <Text style={styles.companyDescription2}>{job.company_description || 'No company description available.'}</Text>
         </View>
 
+        {/* <View style={styles.companyCard}>
+          <Text style={styles.companySectionTitle}>Job Questions</Text>
+
+          {Array.isArray(jobQuestions) && jobQuestions.length > 0 ? (
+            jobQuestions.map((q, index) => (
+              <View key={q.id} style={styles.companyMetaRow2}>
+                <View style={styles.companyMetaCol2}>
+                  <Text style={styles.companyMetaLabel2}>Q{index + 1}</Text>
+                  <Text style={styles.companyMetaValue2}>{q.question_text}</Text>
+                </View>
+                <View style={styles.companyMetaCol2}>
+                  <Text style={styles.companyMetaLabel2}>Candidate Answer</Text>
+                  <Text style={styles.companyMetaValue2}>{q.ideal_answer.toUpperCase()}</Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.companyDescription2}>No job questions available.</Text>
+          )}
+        </View> */}
+
+        {/* <View style={styles.companyCard}>
+          <Text style={styles.companySectionTitle}>Job Questions</Text>
+
+          {Array.isArray(jobQuestions) && jobQuestions.length > 0 ? (
+            jobQuestions.map((q, index) => (
+              <View key={index} style={styles.companyMetaRow2}>
+                <View style={styles.companyMetaCol2}>
+                  <Text style={styles.companyMetaLabel2}>Q{index + 1}</Text>
+                  <Text style={styles.companyMetaValue2}>{q.question_text}</Text>
+                </View>
+
+                <View style={styles.companyMetaCol2}>
+                  <Text style={styles.companyMetaLabel2}>Candidate Answer</Text>
+                  <Text style={styles.companyMetaValue2}>
+                    {q.candidate_answer?.toString() || "NOT ANSWERED"}
+                  </Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.companyDescription2}>No job questions available.</Text>
+          )}
+        </View>
+         */}
+        {/* Show Job Questions only if at least one candidate_answer exists */}
+        {Array.isArray(jobQuestions) &&
+          jobQuestions.some(q => q.candidate_answer) && (
+            <View style={styles.companyCard}>
+              <Text style={styles.companySectionTitle}>Job Questions</Text>
+
+              {jobQuestions.map((q, index) => (
+                <View key={index} style={styles.companyMetaRow2}>
+                  <View style={styles.companyMetaCol2}>
+                    <Text style={styles.companyMetaLabel2}>Q{index + 1}</Text>
+                    <Text style={styles.companyMetaValue2}>{q.question_text}</Text>
+                  </View>
+
+                  <View style={styles.companyMetaCol2}>
+                    <Text style={styles.companyMetaLabel2}>Candidate Answer</Text>
+                    <Text style={styles.companyMetaValue2}>
+                      {q.candidate_answer?.toString() || "NOT ANSWERED"}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+
+        {/* Preferred Slot Card
+        {preferredSlot && preferredSlot.length > 0 && (
+          <View style={styles.companyCard}>
+            <Text style={styles.companySectionTitle}>Preferred Time Slot</Text>
+
+            {preferredSlot.map((slot, index) => (
+              <View key={index} style={styles.companyMetaRow2}>
+                <View style={styles.companyMetaCol2}>
+                  <Text style={styles.companyMetaLabel2}>Slot</Text>
+                  <Text style={styles.companyMetaValue2}>{slot}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+ */}
+
+        {/* Show Preferred Slot only if it exists */}
+        {Array.isArray(preferredSlot) && preferredSlot.length > 0 && (
+          <View style={styles.companyCard}>
+            <Text style={styles.companySectionTitle}>Preferred Time Slot</Text>
+
+            {preferredSlot.map((slot, index) => (
+              <View key={index} style={styles.companyMetaRow2}>
+                <View style={styles.companyMetaCol2}>
+                  <Text style={styles.companyMetaLabel2}>Slot {index + 1}</Text>
+                  <Text style={styles.companyMetaValue2}>{slot}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+
+
+
+        {/* Screening Questions Modal */}
         <Modal
           visible={showQuestionsModal}
           transparent={true}

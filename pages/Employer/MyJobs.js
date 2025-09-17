@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Dimensions, Modal, ScrollView } from "react-native";
-import { employerJobs, getProfileDetails, getJobDetails, getJobQuestions } from "../../utils/api";
+import { employerJobs, getProfileDetails, getJobDetails, getJobQuestionsJobId } from "../../utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BottomNav from "../../component/BottomNav";
 import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
@@ -162,7 +162,7 @@ const MyJobs = ({ navigation }) => {
                 return b.id - a.id;
             });
             setJobs(sortedJobs);
-            console.log("Sorted jobs:", sortedJobs);
+            console.log("Sorted jobs:", sortedJobs[0]);
         } catch (err) {
             setError("Failed to fetch jobs. Please try again.");
             console.error("API Fetch Error:", err);
@@ -178,7 +178,7 @@ const MyJobs = ({ navigation }) => {
     useEffect(() => {
         const fetchJobQuestions = async () => {
             try {
-                const response = await getJobQuestions(selectedJob?.id);
+                const response = await getJobQuestionsJobId(selectedJob?.id);
                 console.log("Job Questions", response.data);
                 if (response?.data?.questions) {
                     setJobQuestions(response.data.questions);
@@ -663,6 +663,9 @@ const MyJobs = ({ navigation }) => {
                                     <View style={styles.jobInfoCard}>
                                         <Text style={styles.jobInfoLabel}>Job Type</Text>
                                         <Text style={styles.jobInfoValue}>{selectedJob.job_type}</Text>
+{/* 
+                                        <Text style={styles.jobInfoLabel}>Job Category</Text>
+                                        <Text style={styles.jobInfoValue}>{selectedJob.job_type}</Text> */}
 
                                         <Text style={styles.jobInfoLabel}>Job Shift</Text>
                                         <Text style={styles.jobInfoValue}>{selectedJob.job_shift}</Text>
@@ -733,43 +736,56 @@ const MyJobs = ({ navigation }) => {
                                     </View>
 
                                     {/* Screening Questions (from state) */}
-
                                     <>
-                                        <Text style={{
-                                            fontFamily: 'Montserrat-SemiBold',
-                                            fontSize: 18,
-                                            color: '#333',
-                                            marginBottom: 8
-                                        }}>
-                                            Screening Questions
-                                        </Text>
-                                        <View style={{
-                                            backgroundColor: '#f9f9f9',
-                                            borderRadius: 12,
-                                            padding: 16,
-                                            marginBottom: 16
-                                        }}>
-                                            {jobQuestions.map((q, index) => (
-                                                <View key={index} style={{ marginBottom: 12 }}>
-                                                    <Text style={{
-                                                        fontFamily: 'Inter-SemiBold',
-                                                        fontSize: 12,
+                                        {jobQuestions && jobQuestions.length > 0 && (
+                                            <>
+                                                <Text
+                                                    style={{
+                                                        fontFamily: 'Montserrat-SemiBold',
+                                                        fontSize: 18,
                                                         color: '#333',
-                                                        marginBottom: 4
-                                                    }}>
-                                                        Q{index + 1}: {q.question_text}
-                                                    </Text>
-                                                    <Text style={{
-                                                        fontFamily: 'Inter-Regular',
-                                                        fontSize: 14,
-                                                        color: '#666'
-                                                    }}>
-                                                        Correct Answer: {String(q.ideal_answer)}
-                                                    </Text>
+                                                        marginBottom: 8,
+                                                    }}
+                                                >
+                                                    Screening Questions
+                                                </Text>
+
+                                                <View
+                                                    style={{
+                                                        backgroundColor: '#f9f9f9',
+                                                        borderRadius: 12,
+                                                        padding: 16,
+                                                        marginBottom: 16,
+                                                    }}
+                                                >
+                                                    {jobQuestions.map((q, index) => (
+                                                        <View key={index} style={{ marginBottom: 12 }}>
+                                                            <Text
+                                                                style={{
+                                                                    fontFamily: 'Inter-SemiBold',
+                                                                    fontSize: 12,
+                                                                    color: '#333',
+                                                                    marginBottom: 4,
+                                                                }}
+                                                            >
+                                                                Q{index + 1}: {q.question_text}
+                                                            </Text>
+                                                            <Text
+                                                                style={{
+                                                                    fontFamily: 'Inter-Regular',
+                                                                    fontSize: 14,
+                                                                    color: '#666',
+                                                                }}
+                                                            >
+                                                                Correct Answer: {String(q.ideal_answer)}
+                                                            </Text>
+                                                        </View>
+                                                    ))}
                                                 </View>
-                                            ))}
-                                        </View>
+                                            </>
+                                        )}
                                     </>
+
 
 
                                     {/* Status
@@ -889,7 +905,7 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
 
-shareView: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 14 },
+    shareView: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 14 },
 
     shareText: {
         fontSize: 14,

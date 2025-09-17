@@ -13,7 +13,7 @@ import {
   Linking
 } from "react-native";
 import { Feather, Ionicons, FontAwesome5, FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { getCandidateDetails, getUserDetails, sendInterestToCandicate, checkInterestStatus, getJobQuestionResponses } from "../../utils/api"; // Updated to include getJobQuestionResponses
+import { getCandidateDetails, getUserDetails, sendInterestToCandicate, checkInterestStatus, getJobQuestionResponses, getJobQuestions } from "../../utils/api"; // Updated to include getJobQuestionResponses
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.8;
@@ -32,6 +32,7 @@ const UserDetails = ({ route }) => {
   const experienceFlatListRef = useRef(null);
   const [questionResponses, setQuestionResponses] = useState([]);
   const [questionResponsesLoading, setQuestionResponsesLoading] = useState(false);
+  const [preferredSlot, setPreferredSlot] = useState([]); // To store preferred time slots
 
   useEffect(() => {
     fetchUserDetails();
@@ -216,15 +217,30 @@ const UserDetails = ({ route }) => {
   const fetchQuestionResponses = async () => {
     try {
       setQuestionResponsesLoading(true);
-      const response = await getJobQuestionResponses(jobId, candidateId);
-      console.log("User Response ", response.data)
-      if (response.data && Array.isArray(response.data.questions)) {
-        setQuestionResponses(response.data.questions);
+      const response = await getJobQuestions(jobId, candidateId);
+      console.log("User Response ", response.data);
+
+      if (response.data && response.data.job_questions) {
+        const { questions, candidate_answers, ideal_answers } = response.data.job_questions;
+
+        // Store all three in a single object
+        setQuestionResponses({
+          questions: Array.isArray(questions) ? questions : [],
+          candidateAnswers: Array.isArray(candidate_answers) ? candidate_answers : [],
+          idealAnswers: Array.isArray(ideal_answers) ? ideal_answers : [],
+        });
+
+        // Store preferred slot
+        setPreferredSlot(
+          Array.isArray(response.data.preferred_slot) ? response.data.preferred_slot : []
+        );
       } else {
-        setQuestionResponses([]);
+        setQuestionResponses({ questions: [], candidateAnswers: [], idealAnswers: [] });
+        setPreferredSlot([]);
       }
     } catch (err) {
-      setQuestionResponses([]);
+      setQuestionResponses({ questions: [], candidateAnswers: [], idealAnswers: [] });
+      setPreferredSlot([]);
       // Optionally log error
     } finally {
       setQuestionResponsesLoading(false);
@@ -430,8 +446,8 @@ const UserDetails = ({ route }) => {
                 {/* <Text style={styles.callButtonTextRedesigned}></Text> */}
               </TouchableOpacity>
               {/* </View> */}
-            {/* <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}> */}
-              <TouchableOpacity style={styles.whatsappButtonRedesigned} onPress={openWhatsApp}>
+              {/* <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}> */}
+              <TouchableOpacity style={contactDetailsRedesignedStyles.whatsappButtonRedesigned} onPress={openWhatsApp}>
                 <FontAwesome5 name="whatsapp" size={18} color="#fff" style={{ marginRight: 8 }} />
                 {/* <Text style={styles.whatsappButtonTextRedesigned}></Text> */}
               </TouchableOpacity>
@@ -493,8 +509,8 @@ const UserDetails = ({ route }) => {
       {/* {renderExperienceSection()} */}
 
 
-      {/* Q&A Section */}
-      <View style={styles.sectionCardRedesigned}>
+      {/* {/* Q&A Section */}
+      {/* <View style={styles.sectionCardRedesigned}>
         <Text style={styles.sectionTitleRedesigned}>Question & Answers</Text>
         {questionResponsesLoading ? (
           <ActivityIndicator size="small" color="#BE4145" />
@@ -508,7 +524,52 @@ const UserDetails = ({ route }) => {
             </View>
           ))
         )}
+      </View> */}
+
+      <View style={styles.sectionCardRedesigned}>
+        <Text style={styles.sectionTitleRedesigned}>Question & Answers</Text>
+
+        {questionResponsesLoading ? (
+          <ActivityIndicator size="small" color="#BE4145" />
+        ) : !questionResponses?.questions?.length ? (
+          <Text style={styles.sectionSubText}>No responses found.</Text>
+        ) : (
+          questionResponses.questions.map((q, idx) => (
+            <View key={idx} style={styles.qaCardRedesigned}>
+              {/* Question */}
+              <Text style={styles.qaQuestion}>Q{idx + 1}. {q}</Text>
+
+              {/* Candidate Answer */}
+              <Text style={styles.qaAnswer}>
+                Candidate Answer: {questionResponses.candidateAnswers?.[idx] ?? 'N/A'}
+              </Text>
+
+              {/* Ideal Answer */}
+              {/* <Text style={[styles.qaAnswer, { color: '#333', fontWeight: '500' }]}>
+                Ideal Answer: {questionResponses.idealAnswers?.[idx] ?? 'N/A'}
+              </Text> */}
+            </View>
+          ))
+        )}
       </View>
+
+
+
+      {/* Show Preferred Slot only if it exists */}
+      {Array.isArray(preferredSlot) && preferredSlot.length > 0 && (
+        <View style={styles.sectionCardRedesigned}>
+          <Text style={styles.sectionTitleRedesigned}>Preferred Time Slot</Text>
+
+          {preferredSlot.map((slot, index) => (
+            <View key={index} style={styles.qaCardRedesigned}>
+              <Text style={styles.qaQuestion}>Slot {index + 1}</Text>
+              <Text style={styles.qaAnswer}>{slot}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+
     </ScrollView>
   );
 };
@@ -1124,7 +1185,7 @@ const contactDetailsRedesignedStyles = {
     // backgroundColor: '#be4145',
     // marginBottom: 8,
     // marginTop: 8,
-    borderRadius: '80%', // 8->80%
+    borderRadius: 22, // 8->80%
     paddingHorizontal: 8,
     paddingVertical: 8,
     paddingLeft: 14,
@@ -1143,7 +1204,7 @@ const contactDetailsRedesignedStyles = {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#4CAF50',
-    borderRadius: '80%',
+    borderRadius: 22,
     marginTop: 2,
     paddingHorizontal: 8,
     paddingVertical: 8,
