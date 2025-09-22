@@ -470,52 +470,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
           </View>
           <Text style={styles.companyDescription2}>{job.company_description || 'No company description available.'}</Text>
         </View>
-
-        {/* <View style={styles.companyCard}>
-          <Text style={styles.companySectionTitle}>Job Questions</Text>
-
-          {Array.isArray(jobQuestions) && jobQuestions.length > 0 ? (
-            jobQuestions.map((q, index) => (
-              <View key={q.id} style={styles.companyMetaRow2}>
-                <View style={styles.companyMetaCol2}>
-                  <Text style={styles.companyMetaLabel2}>Q{index + 1}</Text>
-                  <Text style={styles.companyMetaValue2}>{q.question_text}</Text>
-                </View>
-                <View style={styles.companyMetaCol2}>
-                  <Text style={styles.companyMetaLabel2}>Candidate Answer</Text>
-                  <Text style={styles.companyMetaValue2}>{q.ideal_answer.toUpperCase()}</Text>
-                </View>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.companyDescription2}>No job questions available.</Text>
-          )}
-        </View> */}
-
-        {/* <View style={styles.companyCard}>
-          <Text style={styles.companySectionTitle}>Job Questions</Text>
-
-          {Array.isArray(jobQuestions) && jobQuestions.length > 0 ? (
-            jobQuestions.map((q, index) => (
-              <View key={index} style={styles.companyMetaRow2}>
-                <View style={styles.companyMetaCol2}>
-                  <Text style={styles.companyMetaLabel2}>Q{index + 1}</Text>
-                  <Text style={styles.companyMetaValue2}>{q.question_text}</Text>
-                </View>
-
-                <View style={styles.companyMetaCol2}>
-                  <Text style={styles.companyMetaLabel2}>Candidate Answer</Text>
-                  <Text style={styles.companyMetaValue2}>
-                    {q.candidate_answer?.toString() || "NOT ANSWERED"}
-                  </Text>
-                </View>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.companyDescription2}>No job questions available.</Text>
-          )}
-        </View>
-         */}
+        
         {/* Show Job Questions only if at least one candidate_answer exists */}
         {Array.isArray(jobQuestions) &&
           jobQuestions.some(q => q.candidate_answer) && (

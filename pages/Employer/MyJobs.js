@@ -310,7 +310,7 @@ const MyJobs = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.shareView}
                         onPress={() => {
-                            const jobUrl = "https://workezy.org/user_details/45";
+                            const jobUrl = `https://webapp-webezy.netlify.app/user_details/${item.id}`;
 
                             // Copy to clipboard
                             Clipboard.setStringAsync(jobUrl);

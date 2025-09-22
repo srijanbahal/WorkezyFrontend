@@ -213,11 +213,11 @@ const AppliedJobsScreen = ({ navigation }) => {
             ]}>{item.status || 'Applied'}</Text>
 
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.shareView}
             onPress={() => {
               const jobUrl = "https://workezy.org/user_details/45";
-
+  
               // Copy to clipboard
               Clipboard.setStringAsync(jobUrl);
               // Alert.alert("Link copied!", "You can now share it anywhere.");
@@ -231,7 +231,7 @@ const AppliedJobsScreen = ({ navigation }) => {
               color="#45a6be"
               style={styles.shareIcon}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       {/* Attributes Row */}

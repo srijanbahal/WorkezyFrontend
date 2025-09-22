@@ -89,7 +89,7 @@ const AppRouter = () => {
   }
 
   return (
-    <SafeAreaProvider>
+    // <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#be4145', top: 0 }}>
         {/* <StatusBar barStyle="light-content" backgroundColor="#be4145" /> */}
         <StatusBar barStyle="light-content" backgroundColor="#be4145" />
@@ -366,7 +366,7 @@ const AppRouter = () => {
           />
         </Stack.Navigator>
       </SafeAreaView>
-    </SafeAreaProvider>
+    // </SafeAreaProvider>
   );
 };
 

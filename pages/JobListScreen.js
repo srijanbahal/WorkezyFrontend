@@ -408,7 +408,7 @@ const JobListScreen = ({ navigation }) => {
 
           <View style={styles.titleRow}>
             <Text style={styles.jobTitle}>{item.title}</Text> 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.shareView}
               onPress={() => {
                 const jobUrl = "https://workezy.org/user_details/45";
@@ -426,7 +426,7 @@ const JobListScreen = ({ navigation }) => {
                 color="#45a6be"
                 style={styles.shareIcon}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <Text style={styles.company}>{item.company}</Text>
 
