@@ -84,7 +84,7 @@ const JobDetailsScreen = ({ route, navigation }) => {
         const response = await getJobQuestions(job.id, userId);
         console.log("Job Questions Response:", response.data);
 
-        // ✅ Stop silently if user hasn't applied
+        // Stop silently if user hasn't applied
         if (response?.data?.applied === false) return;
 
         if (response?.data?.job_questions) {
@@ -514,21 +514,21 @@ const JobDetailsScreen = ({ route, navigation }) => {
 
  */}
 
-        {/* Show Preferred Slot only if it exists */}
-        {Array.isArray(preferredSlot) && preferredSlot.length > 0 && (
-          <View style={styles.companyCard}>
-            <Text style={styles.companySectionTitle}>Preferred Time Slot</Text>
+          {/* Show Preferred Slot only if it exists */}
+          {Array.isArray(preferredSlot) && preferredSlot.length > 0 && (
+            <View style={styles.companyCard}>
+              <Text style={styles.companySectionTitle}>Preferred Time Slot</Text>
 
-            {preferredSlot.map((slot, index) => (
-              <View key={index} style={styles.companyMetaRow2}>
-                <View style={styles.companyMetaCol2}>
-                  <Text style={styles.companyMetaLabel2}>Slot {index + 1}</Text>
-                  <Text style={styles.companyMetaValue2}>{slot}</Text>
+              {preferredSlot.map((slot, index) => (
+                <View key={index} style={styles.companyMetaRow2}>
+                  <View style={styles.companyMetaCol2}>
+                    <Text style={styles.companyMetaLabel2}>Slot {index + 1}</Text>
+                    <Text style={styles.companyMetaValue2}>{slot}</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </View>
-        )}
+              ))}
+            </View>
+          )}
 
 
 

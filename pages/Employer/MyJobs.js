@@ -788,18 +788,7 @@ const MyJobs = ({ navigation }) => {
 
 
 
-                                    {/* Status
-                                    <View style={{
-                                        backgroundColor: '#f9f9f9',
-                                        borderRadius: 12,
-                                        padding: 16,
-                                        marginBottom: 16
-                                    }}>
-                                        <Text style={{ fontFamily: 'Inter-Regular', fontSize: 14, color: '#666', marginBottom: 8 }}>
-                                            <Text style={{ fontFamily: 'Inter-SemiBold', color: '#333' }}>Review Status:</Text> {selectedJob.review_status}
-                                        </Text>
-
-                                    </View> */}
+                                
                                 </>
                             )}
                         </ScrollView>
@@ -1024,22 +1013,6 @@ const styles = StyleSheet.create({
         marginLeft: 4,
         marginTop: 2,
     },
-    // viewDetailsText1: {
-    //     color: '#666666',
-    //     fontSize: 14,
-    //     fontFamily: 'Montserrat-SemiBold',
-    //     marginRight: 6,
-
-    // },
-    // hideButton: {
-    //     display: 'none'
-    // },
-    // viewDetailsButtonPopup: {
-    //     // Remove absolute positioning
-    //     backgroundColor: 'transparent',
-    //     marginRight: 8,
-    //     // minHeight: 44, // added
-    // },
     actionButtonsRow: {
         flexDirection: 'row',
         position: 'relative',
@@ -1249,18 +1222,6 @@ const styles = StyleSheet.create({
         // marginTop: 2,
     },
 
-    // salaryText: {
-    //     fontSize: 18,
-    //     fontFamily: 'Montserrat-SemiBold',
-    //     color: '#b44145',   // your primary color
-    //     // fontStyle: 'normal',
-    // },
-
-    // salaryUnit: {
-    //     fontSize: 12,
-    //     fontFamily: 'Inter-Regular',
-    //     color: '#666',      // subtle gray for "/month"
-    // },
 
     candidatesText: {
         fontSize: 14,
@@ -1285,41 +1246,6 @@ const styles = StyleSheet.create({
         marginLeft: 4,
     },
 
-
-    // salaryContainer: {
-    //     flex: 1,
-    // },
-
-    // salaryText: {
-    //     fontSize: 18,
-    //     fontFamily: 'Montserrat-SemiBold',
-    //     color: '#b44145',   // primary red
-    // },
-
-    // salaryUnit: {
-    //     fontSize: 12,
-    //     fontFamily: 'Inter-Regular',
-    //     color: '#666',
-    // },
-
-    // viewDetailsButton: {
-    //     paddingVertical: 6,
-    //     // paddingHorizontal: 10,
-    //     borderRadius: 8,
-    //     // marginLeft: 24,
-    //     // backgroundColor: '#333',
-    // },
-
-    // buttonContent: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    // },
-
-    // viewDetailsText: {
-    //     fontSize: 14,
-    //     color: '#45a6be',
-    //     marginRight: 4,
-    // },
 });
 
 export default MyJobs;
