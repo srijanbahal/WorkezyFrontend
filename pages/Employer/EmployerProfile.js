@@ -7,6 +7,8 @@ import { getProfileDetails } from '../../utils/api';
 import BottomNav from '../../component/BottomNav';
 import { useAuth } from '../../utils/AuthContext';
 import { BackHandler } from 'react-native';
+import { Platform } from 'react-native';
+import LeftNav from '../../component/LeftNav';
 
 const ButtonComponent = ({ name, icon, onPress }) => {
   return (
@@ -251,9 +253,12 @@ const EmployerProfile = () => {
     );
   }
 
+  // Determine if the LeftNav is active
+  const isWeb = Platform.OS === 'web';
   return (
     <>
-      <View style={styles.container}>
+      {/* <View style={styles.container}> */}
+      <View style={[styles.container, isWeb && styles.containerWeb]}>
         <View style={styles.topWhiteBackground}>
           <View style={styles.headerRow}>
             <Text style={styles.postedJobsTitle}></Text>
@@ -310,7 +315,14 @@ const EmployerProfile = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <BottomNav activeuser="employer" />
+      {/* <BottomNav activeuser="employer" /> */}
+
+      {/* Conditionally render LeftNav for web and BottomNav for others */}
+      {Platform.OS === 'web' ? (
+        <LeftNav activeuser={"employer"} />
+      ) : (
+        <BottomNav activeuser={"employer"} />
+      )}
     </>
   );
 };
@@ -323,6 +335,15 @@ const styles = StyleSheet.create({
     padding: 0,
     alignItems: 'center',
     marginBottom: 75,
+  },
+  containerWeb: {
+    flex: 1,
+    backgroundColor: '#f4f2ee',
+    // marginBottom: 72, // or 80 (nearest valid value) (Multiple of 8s)
+    padding: 0,
+    alignItems: 'center',
+    marginBottom: 75,
+    paddingLeft: 90, // This should match the width of your LeftNav.js
   },
   loadingContainer: {
     flex: 1,

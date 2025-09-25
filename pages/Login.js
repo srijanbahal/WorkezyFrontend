@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 4,
   },
   toggleIcon: {
     marginRight: 0,
@@ -256,13 +257,17 @@ const styles = StyleSheet.create({
   toggleButtonText: {
     fontSize: 14,
     fontFamily: 'Inter-Regular',
+    textAlign: 'center',
   },
   toggleButtonTextActive: {
     color: '#be4145',
     fontFamily: 'Montserrat-SemiBold',
+    textAlign: 'center',
   },
   toggleButtonTextInactive: {
     color: '#666666',
+    textAlign: 'center',
+
   },
   inputLabel: {
     fontSize: 12,
@@ -304,6 +309,7 @@ const styles = StyleSheet.create({
     color: '#333333',
     paddingHorizontal: 8,
     backgroundColor: 'transparent',
+    borderBlockColor: '#fff',
   },
   primaryButton: {
     width: '100%',
@@ -353,7 +359,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: '#333333',
     marginBottom: 8,
-    alignSelf: 'flex-start',
+    // alignSelf: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginLeft: 4,
   },
 });

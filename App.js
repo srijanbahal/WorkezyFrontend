@@ -64,6 +64,7 @@ import AppRouter from './AppRoutes';
 import { AuthProvider } from './utils/AuthContext';
 import { Text, TextInput, LogBox, PixelRatio } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import WebLayout from './WebLayout';
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -94,7 +95,9 @@ export default function App() {
     <SafeAreaProvider>
       <AuthProvider>
         <NavigationContainer>
-          <AppRouter />
+          <WebLayout>
+            <AppRouter />
+          </WebLayout>
         </NavigationContainer>
       </AuthProvider>
     </SafeAreaProvider>
