@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     padding: 0,
     alignItems: 'center',
     marginBottom: 75,
-    paddingLeft: 90, // This should match the width of your LeftNav.js
+    paddingLeft: 150, // This should match the width of your LeftNav.js
   },
   loadingContainer: {
     flex: 1,

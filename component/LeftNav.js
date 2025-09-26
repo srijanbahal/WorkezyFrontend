@@ -1,8 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+// Make sure to import the Image component
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAuth } from '../utils/AuthContext';
+
+// Import the logo image
+import WorkezyLogo from '../assets/workezyLogo.png';
 
 const LeftNav = ({ activeuser }) => {
     const navigation = useNavigation();
@@ -42,7 +46,7 @@ const LeftNav = ({ activeuser }) => {
                 navigation.navigate('EmployerReview');
                 return;
             }
-            
+
             if (route.name !== screenName) {
                 navigation.navigate(screenName);
             }
@@ -76,7 +80,12 @@ const LeftNav = ({ activeuser }) => {
     return (
         <View style={styles.container}>
             <View style={styles.leftNav}>
-                {tabs.map((tab, index) => renderTab(tab, index))}
+                {/* Logo added here, above the tabs */}
+                <Image source={WorkezyLogo} style={styles.logo} />
+                <View style={styles.tabsContainer}>
+                    {tabs.map((tab, index) => renderTab(tab, index))}
+                </View>
+                <View></View>
             </View>
         </View>
     );
@@ -88,33 +97,53 @@ const styles = StyleSheet.create({
         left: 0,
         top: 0,
         bottom: 0,
-        width: 90, // Width of the left navigation bar
-        zIndex: 10, // Ensure it's above other content
+        width: 150,
+        zIndex: 10,
+        // backgroundColor: "#fff",
     },
     leftNav: {
         flex: 1,
-        flexDirection: 'column', // Stack items vertically
-        justifyContent: 'center', // Center items vertically
-        alignItems: 'center', // Center items horizontally
         backgroundColor: '#ffffff',
         elevation: 8,
         shadowColor: '#000000',
         shadowOffset: { width: 2, height: 0 },
         shadowOpacity: 0.2,
         shadowRadius: 5,
+        alignItems: 'center',
+        // Use space-around to push logo to top and buttons to center/bottom
+        justifyContent: 'space-between',
         paddingVertical: 20,
     },
-    navButton: {
-        alignItems: 'center',
-        paddingVertical: 20, // Increased vertical padding for spacing
+    // New style for the logo
+    logo: {
+        width: '80%',
+        height: 50, // Adjust height as needed
+        resizeMode: 'contain',
+        // marginBottom: 20, // Space between logo and tabs
+        marginTop: 8,
+    },
+    // New container for the tabs to group them
+    tabsContainer: {
         width: '100%',
+        alignItems: 'center',
+        marginTop: -16,
+        paddingBottom: 56,
+    },
+    navButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 20,
+        paddingHorizontal: 15,
+        width: '100%',
+        justifyContent: 'flex-start', // Align icon and text to the left
     },
     postJobButton: {
         backgroundColor: '#BE4145',
         borderRadius: 12,
         marginVertical: 10,
         paddingVertical: 15,
-        width: 70,
+        width: '85%',
+        justifyContent: 'center', // Center content for this button
         elevation: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -122,10 +151,11 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
     },
     navText: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#444444',
-        marginTop: 6,
+        marginLeft: 12,
         fontFamily: 'Inter-Regular',
+        marginTop: 4,
     },
     postJobText: {
         color: '#FFFFFF',

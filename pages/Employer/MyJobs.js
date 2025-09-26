@@ -24,7 +24,7 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
     containerWeb: {
         flex: 1,
         backgroundColor: '#f4f2ee',
-        paddingLeft: 90, // This should match the width of your LeftNav.js
+        paddingLeft: 150, // This should match the width of your LeftNav.js
     },
     scrollContainer: {
         flex: 1,
