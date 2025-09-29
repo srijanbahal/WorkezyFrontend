@@ -317,12 +317,12 @@ const EmployerProfile = () => {
       </View>
       {/* <BottomNav activeuser="employer" /> */}
 
-      {/* Conditionally render LeftNav for web and BottomNav for others */}
+      {/* Conditionally render LeftNav for web and BottomNav for others
       {Platform.OS === 'web' ? (
         <LeftNav activeuser={"employer"} />
       ) : (
         <BottomNav activeuser={"employer"} />
-      )}
+      )} */}
     </>
   );
 };
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     padding: 0,
     alignItems: 'center',
     marginBottom: 75,
-    paddingLeft: 150, // This should match the width of your LeftNav.js
+    // paddingLeft: 150, // This should match the width of your LeftNav.js
   },
   loadingContainer: {
     flex: 1,

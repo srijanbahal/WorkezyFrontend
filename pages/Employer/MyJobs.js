@@ -24,7 +24,7 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
     containerWeb: {
         flex: 1,
         backgroundColor: '#f4f2ee',
-        paddingLeft: 150, // This should match the width of your LeftNav.js
+        // paddingLeft: 150, // This should match the width of your LeftNav.js
     },
     scrollContainer: {
         flex: 1,
@@ -331,25 +331,25 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
         fontFamily: 'Montserrat-SemiBold',
     },
     topWhiteBackground: {
-    backgroundColor: '#BE4145',
-    paddingTop: 16,
-    paddingBottom: 0,
-    paddingHorizontal: 16,
-    zIndex: 1000,
-    width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    // Add platform-specific styles using Platform.select
-    ...Platform.select({
-      web: {
-        paddingBottom: 28, // This effectively makes paddingVertical 16 for web
-      },
-      // You can add other platforms like 'android' or 'ios' here if needed
-      default: {
-        paddingBottom: 0, // Explicitly keep it 0 for other platforms
-      }
-    }),
-  },
+        backgroundColor: '#BE4145',
+        paddingTop: 16,
+        paddingBottom: 0,
+        paddingHorizontal: 16,
+        zIndex: 1000,
+        width: "100%",
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        // Add platform-specific styles using Platform.select
+        ...Platform.select({
+            web: {
+                paddingBottom: 28, // This effectively makes paddingVertical 16 for web
+            },
+            // You can add other platforms like 'android' or 'ios' here if needed
+            default: {
+                paddingBottom: 0, // Explicitly keep it 0 for other platforms
+            }
+        }),
+    },
     headerRow: {
         flexDirection: 'column', // changed from 'row' to 'column'
         alignItems: 'center',
@@ -542,7 +542,7 @@ const MyJobs = ({ navigation }) => {
         { label: 'Expired', value: 'expired' },
         { label: 'Rejected', value: 'rejected' },
     ]);
-     // Determine if the LeftNav is active
+    // Determine if the LeftNav is active
     const isWeb = Platform.OS === 'web';
 
     // We'll use the same width breakpoint to detect a tablet
@@ -1132,6 +1132,8 @@ const MyJobs = ({ navigation }) => {
 
     return (
         <>
+            {/* <LeftNav activeuser={"employer"} /> */}
+
             <View style={[styles.container, isWeb && styles.containerWeb]}>
                 {/* Sticky header container */}
                 <View style={styles.topWhiteBackground}>
@@ -1275,12 +1277,12 @@ const MyJobs = ({ navigation }) => {
             )}
 
 
-            {/* Conditionally render LeftNav for web and BottomNav for others */}
+            {/* Conditionally render LeftNav for web and BottomNav for others
             {Platform.OS === 'web' ? (
                 <LeftNav activeuser={"employer"} />
             ) : (
                 <BottomNav activeuser={"employer"} />
-            )}
+            )} */}
 
             {/* CustomAlert sticky at the bottom */}
             <CustomAlert
@@ -2043,7 +2045,7 @@ export default MyJobs;
 //     );
 // };
 
-// const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({ 
+// const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
 //     container: {
 //         flex: 1,
 //         backgroundColor: '#f4f2ee',

@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
+import LeftNav from "./component/LeftNav";
+
 
 const WebLayout = ({ children }) => {
   // We only want to apply this special layout on the web.
@@ -12,6 +14,7 @@ const WebLayout = ({ children }) => {
   // On web, we wrap the app in a centered, phone-sized container.
   return (
     <View style={styles.outerContainer}>
+      <LeftNav activeuser={"employer"} />
       <View style={styles.innerContainer}>
         {children}
       </View>
@@ -23,6 +26,7 @@ const styles = StyleSheet.create({
   // This is the gray background that fills the whole browser window
   outerContainer: {
     flex: 1,
+    // backgroundColor: '#000', // A light gray background color
     backgroundColor: '#f4f2ee', // A light gray background color
     justifyContent: 'center',
     alignItems: 'center',
@@ -30,14 +34,14 @@ const styles = StyleSheet.create({
   // This is the white, phone-like frame for your app content
   innerContainer: {
     width: '100%',
-    maxWidth: 650, // Sets a fixed max-width like a phone
+    maxWidth: 750, // Sets a fixed max-width like a phone
     height: '100%',
     maxHeight: 900, // Sets a fixed max-height
     backgroundColor: '#ffffff',
     // Adds a subtle shadow to lift the app off the background
-    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+    // boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
     overflow: 'hidden', // Ensures content doesn't spill out
-    borderRadius: 8, // Optional: for rounded corners
+    // borderRadius: 8, // Optional: for rounded corners
   },
 });
 

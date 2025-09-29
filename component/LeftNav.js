@@ -1,5 +1,4 @@
 import React from 'react';
-// Make sure to import the Image component
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -32,10 +31,11 @@ const LeftNav = ({ activeuser }) => {
         { name: 'Profile', screen: 'JobSeekerProfile', icon: 'person-outline' }
     ];
 
+    // Reordered to match the visual layout in the design: My Jobs, then Profile, then Post Job
     const employerTabs = [
         { name: 'My Jobs', screen: 'MyJobs', icon: 'briefcase-outline' },
-        { name: 'Post Job', screen: 'PostJobForm', icon: 'add-circle-outline' },
-        { name: 'Profile', screen: 'EmployerProfile', icon: 'person-outline' }
+        { name: 'Profile', screen: 'EmployerProfile', icon: 'person-outline' },
+        { name: 'Post Job', screen: 'PostJobForm', icon: 'add-circle-outline' }
     ];
 
     const tabs = userType === 'employer' ? employerTabs : jobSeekerTabs;
@@ -59,18 +59,29 @@ const LeftNav = ({ activeuser }) => {
         const isActive = activeTab === tab.screen;
         const isPostJob = userType === 'employer' && tab.screen === 'PostJobForm';
 
+        // Conditional styling for the "Post Job" button's icon and text
+        let iconColor = isActive ? '#BE4145' : '#444444';
+        let textColor = isActive ? '#BE4145' : '#444444';
+        let buttonStyle = styles.navButton;
+
+        if (isPostJob) {
+            iconColor = '#BE4145'; // White icon for Post Job button
+            textColor = '#BE4145'; // White text for Post Job button
+            buttonStyle = [styles.navButton, styles.postJobButton];
+        }
+
         return (
             <TouchableOpacity
                 key={index}
                 onPress={() => handleTabPress(tab.screen)}
-                style={[styles.navButton, isPostJob && styles.postJobButton]}
+                style={buttonStyle}
             >
                 <Ionicons
                     name={tab.icon}
-                    size={isPostJob ? 32 : 24}
-                    color={isActive ? '#BE4145' : (isPostJob ? '#FFFFFF' : '#444444')}
+                    size={isPostJob ? 24 : 24} // Adjusted icon size
+                    color={iconColor}
                 />
-                <Text style={[styles.navText, isActive && styles.activeText, isPostJob && styles.postJobText]}>
+                <Text style={[styles.navText, { color: textColor }, isActive && !isPostJob && styles.activeText]}>
                     {tab.name}
                 </Text>
             </TouchableOpacity>
@@ -80,12 +91,14 @@ const LeftNav = ({ activeuser }) => {
     return (
         <View style={styles.container}>
             <View style={styles.leftNav}>
-                {/* Logo added here, above the tabs */}
                 <Image source={WorkezyLogo} style={styles.logo} />
+                {/* Separator View re-added */}
+                <View style={styles.separator} />
                 <View style={styles.tabsContainer}>
                     {tabs.map((tab, index) => renderTab(tab, index))}
                 </View>
-                <View></View>
+                {/* This empty view ensures content is pushed to top/bottom with space-between */}
+                <View />
             </View>
         </View>
     );
@@ -93,13 +106,7 @@ const LeftNav = ({ activeuser }) => {
 
 const styles = StyleSheet.create({
     container: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: 150,
-        zIndex: 10,
-        // backgroundColor: "#fff",
+        width: 180,
     },
     leftNav: {
         flex: 1,
@@ -110,59 +117,56 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 5,
         alignItems: 'center',
-        // Use space-around to push logo to top and buttons to center/bottom
-        justifyContent: 'space-between',
-        paddingVertical: 20,
+        justifyContent: 'flex-start', // Distributes space between logo, tabs, and bottom empty view
+        paddingTop: 20, // Padding at the top
+        paddingBottom: 20, // Padding at the bottom
     },
-    // New style for the logo
     logo: {
         width: '80%',
-        height: 50, // Adjust height as needed
+        height: 30,
         resizeMode: 'contain',
-        // marginBottom: 20, // Space between logo and tabs
-        // marginTop: 8,
+        marginBottom: 16, // Space between logo and separator
     },
-    // New container for the tabs to group them
+    separator: {
+        height: 1,
+        width: '100%',
+        backgroundColor: '#e0e0e0', // Light gray color for the separator
+        marginBottom: 20, // Space between separator and first tab
+    },
     tabsContainer: {
         width: '100%',
         alignItems: 'center',
-        marginTop: -16,
-        paddingBottom: 56,
+        // No vertical margins here, let individual buttons control their spacing
     },
     navButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 20,
-        paddingHorizontal: 15,
+        paddingVertical: 8, // Adjusted vertical padding
+        paddingHorizontal: 12,
         width: '100%',
-        justifyContent: 'flex-start', // Align icon and text to the left
+        justifyContent: 'flex-start',
     },
     postJobButton: {
-        backgroundColor: '#BE4145',
+        backgroundColor: '#fff', // Solid red background
         borderRadius: 12,
-        marginVertical: 10,
+        marginVertical: 15, // Vertical space around the button
         paddingVertical: 15,
         width: '85%',
-        justifyContent: 'center', // Center content for this button
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
+        justifyContent: 'flex-start', // Center content horizontally
+        alignItems: 'center', // Center content vertically
+        elevation: 0, // No shadow for this button
+        flexDirection: 'row', // Ensure icon and text are in a row
+        borderColor : "#BE4145",
+        borderWidth: 1.5,
     },
     navText: {
         fontSize: 14,
-        color: '#444444',
+        // color is set dynamically in renderTab
         marginLeft: 12,
         fontFamily: 'Inter-Regular',
-        marginTop: 4,
-    },
-    postJobText: {
-        color: '#FFFFFF',
-        fontFamily: 'Montserrat-SemiBold',
     },
     activeText: {
-        color: '#BE4145',
+        color: '#BE4145', // Active tab text color
         fontFamily: 'Montserrat-SemiBold'
     }
 });

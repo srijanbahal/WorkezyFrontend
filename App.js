@@ -67,9 +67,9 @@ const AppContent = () => {
     if (isDesktop) {
       // On desktop, show the router inside the layout
       return (
-        <WebLayout>
+        // <WebLayout>
           <AppRouter />
-        </WebLayout>
+        // </WebLayout>
       );
     }
     if (isMobileOrTablet) {
