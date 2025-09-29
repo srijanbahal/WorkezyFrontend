@@ -331,15 +331,25 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
         fontFamily: 'Montserrat-SemiBold',
     },
     topWhiteBackground: {
-        backgroundColor: '#BE4145', // changed
-        paddingTop: 16, // from 58 to 24
-        paddingBottom: 0,
-        paddingHorizontal: 16,
-        zIndex: 1000,
-        width: "100%",
-        borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
-    },
+    backgroundColor: '#BE4145',
+    paddingTop: 16,
+    paddingBottom: 0,
+    paddingHorizontal: 16,
+    zIndex: 1000,
+    width: "100%",
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    // Add platform-specific styles using Platform.select
+    ...Platform.select({
+      web: {
+        paddingBottom: 28, // This effectively makes paddingVertical 16 for web
+      },
+      // You can add other platforms like 'android' or 'ios' here if needed
+      default: {
+        paddingBottom: 0, // Explicitly keep it 0 for other platforms
+      }
+    }),
+  },
     headerRow: {
         flexDirection: 'column', // changed from 'row' to 'column'
         alignItems: 'center',

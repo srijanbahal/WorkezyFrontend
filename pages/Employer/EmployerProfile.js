@@ -374,6 +374,15 @@ const styles = StyleSheet.create({
     width: "100%",
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    ...Platform.select({
+      web: {
+        paddingBottom: 28, // This effectively makes paddingVertical 16 for web
+      },
+      // You can add other platforms like 'android' or 'ios' here if needed
+      default: {
+        paddingBottom: 0, // Explicitly keep it 0 for other platforms
+      }
+    }),
   },
   headerRow: {
     flexDirection: 'column', // changed from 'row' to 'column'

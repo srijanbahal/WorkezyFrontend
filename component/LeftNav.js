@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         height: 50, // Adjust height as needed
         resizeMode: 'contain',
         // marginBottom: 20, // Space between logo and tabs
-        marginTop: 8,
+        // marginTop: 8,
     },
     // New container for the tabs to group them
     tabsContainer: {

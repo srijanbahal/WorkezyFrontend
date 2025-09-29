@@ -609,6 +609,9 @@ const EditEmployerProfile = ({ route }) => {
     }
   };
 
+  // 2. Choose the container component based on the platform
+    // const ContentContainer = Platform.OS === 'web' ? View : ScrollView;
+    
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <View style={{ flex: 1, position: 'relative' }}>

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler, ActivityIndicator
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler, ActivityIndicator, Platform
 } from 'react-native';
 import WorkezyLogo from '../assets/workezyLogo.png';
-import countries from '../utils/Countries';
+// countries import removed as it wasn't used
 import { requestOTP } from '../utils/api';
 import CustomAlert from '../components/CustomAlert';
 import { useAuth } from '../utils/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+// 1. Import the hook to detect device type
+import { useDeviceType } from '../utils/detectDeviceHook';
 
 const Login = ({ navigation, route }) => {
   const { activeProfile = true } = route.params || {};
@@ -24,13 +26,16 @@ const Login = ({ navigation, route }) => {
     type: 'info'
   });
   const { isLoggedIn, getUserType } = useAuth();
+  // 2. Use the hook and determine if it's desktop web
+  const { isDesktop } = useDeviceType();
+  const isDesktopWeb = Platform.OS === 'web' && isDesktop;
 
   // Check for existing login
   useEffect(() => {
     const checkAuth = async () => {
       if (isLoggedIn()) {
         const userType = getUserType();
-        
+
         // Navigate based on user type
         if (userType === 'employer') {
           navigation.reset({
@@ -45,9 +50,20 @@ const Login = ({ navigation, route }) => {
         }
       }
     };
-    
+
     checkAuth();
   }, [isLoggedIn, getUserType, navigation]);
+
+  // 3. Add a useEffect to default to 'employer' on desktop web
+  useEffect(() => {
+    if (isDesktopWeb) {
+      // Ensure the "Hire Candidates" toggle is active on desktop
+      if (activeProfile) { // only set params if it's not already correct
+        navigation.setParams({ activeProfile: false });
+      }
+    }
+  }, [isDesktopWeb, navigation, activeProfile]);
+
 
   // Helper functions for alert
   const showAlert = (message, type = 'info') => {
@@ -82,22 +98,25 @@ const Login = ({ navigation, route }) => {
       showAlert("Enter a valid 10-digit mobile number.", "error");
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     const payload = {
       mobile: mobile,
-      userType: activeProfile ? 'job_seeker' : 'employer'
+      // This is the fix: It now checks if it's desktop web and forces 'employer'.
+      // Otherwise, it uses the existing toggle logic.
+      userType: isDesktopWeb ? 'employer' : (activeProfile ? 'job_seeker' : 'employer')
     };
 
     try {
       const response = await requestOTP(payload);
       if (response.data && response.data.otpToken) {
-        navigation.navigate("ValidateLogin", { 
-          mobile: mobile, 
-          otpToken: response.data.otpToken, 
-          activeProfile, 
-          selectedCountry 
+        navigation.navigate("ValidateLogin", {
+          mobile: mobile,
+          otpToken: response.data.otpToken,
+          // We also ensure the correct state is passed to the next screen
+          activeProfile: isDesktopWeb ? false : activeProfile,
+          selectedCountry
         });
       } else {
         showAlert("Failed to send OTP. Please try again.", "error");
@@ -105,13 +124,13 @@ const Login = ({ navigation, route }) => {
     } catch (error) {
       console.log("Error requesting OTP:", error);
       showAlert(
-        error.response?.data?.message || 
-        "Please check your connection and try again.", 
+        error.response?.data?.message ||
+        "Please check your connection and try again.",
         "error"
       );
-      setTimeout(()=>{
+      setTimeout(() => {
         hideAlert()
-      },2000)
+      }, 2000)
     } finally {
       setIsLoading(false);
     }
@@ -119,33 +138,39 @@ const Login = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {/* Remove card background, just use a centered column */}
       <Image source={WorkezyLogo} style={styles.brandLogo} />
       <Text style={styles.title}>Verify Your Phone</Text>
       <Text style={styles.subtitle}>We will send a verification code to confirm your phone number</Text>
-      <Text style={styles.sectionLabel}>I want to</Text>
-      <View style={styles.toggleRow}>
-        <TouchableOpacity
-          style={[styles.toggleButton, activeProfile ? styles.toggleActive : styles.toggleInactive]}
-          onPress={() => navigation.setParams({ activeProfile: true })}
-        >
-          <View style={styles.toggleButtonContent}>
-            <Ionicons name="person-outline" size={18} color={activeProfile ? '#be4145' : '#666666'} style={styles.toggleIcon} />
-            <Text style={[styles.toggleButtonText, activeProfile ? styles.toggleButtonTextActive : styles.toggleButtonTextInactive]}>Find a Job</Text>
+
+      {/* This entire section is now conditional and will be hidden on desktop web */}
+      {!isDesktopWeb && (
+        <>
+          <Text style={styles.sectionLabel}>I want to</Text>
+          <View style={styles.toggleRow}>
+            <TouchableOpacity
+              style={[styles.toggleButton, activeProfile ? styles.toggleActive : styles.toggleInactive]}
+              onPress={() => navigation.setParams({ activeProfile: true })}
+            >
+              <View style={styles.toggleButtonContent}>
+                <Ionicons name="person-outline" size={18} color={activeProfile ? '#be4145' : '#666666'} style={styles.toggleIcon} />
+                <Text style={[styles.toggleButtonText, activeProfile ? styles.toggleButtonTextActive : styles.toggleButtonTextInactive]}>Find a Job</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.toggleButton, !activeProfile ? styles.toggleActive : styles.toggleInactive]}
+              onPress={() => navigation.setParams({ activeProfile: false })}
+            >
+              <View style={styles.toggleButtonContent}>
+                <MaterialCommunityIcons name="briefcase-outline" size={18} color={!activeProfile ? '#be4145' : '#666666'} style={styles.toggleIcon} />
+                <Text style={[styles.toggleButtonText, !activeProfile ? styles.toggleButtonTextActive : styles.toggleButtonTextInactive]}>Hire Candidates</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.toggleButton, !activeProfile ? styles.toggleActive : styles.toggleInactive]}
-          onPress={() => navigation.setParams({ activeProfile: false })}
-        >
-          <View style={styles.toggleButtonContent}>
-            <MaterialCommunityIcons name="briefcase-outline" size={18} color={!activeProfile ? '#be4145' : '#666666'} style={styles.toggleIcon} />
-            <Text style={[styles.toggleButtonText, !activeProfile ? styles.toggleButtonTextActive : styles.toggleButtonTextInactive]}>Hire Candidates</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      {/* <Text style={styles.inputLabel}>Enter your phone number</Text> */}
-      <View style={[styles.inputContainer, { borderColor: mobile.length === 10 ? '#BE4145' : '#e0e0e0' }]}> 
+        </>
+      )}
+
+      <View style={[styles.inputContainer, { borderColor: mobile.length === 10 ? '#BE4145' : '#e0e0e0' }]}>
         <Text style={styles.callingCodeText}>{selectedCountry.callingCode}</Text>
         <View style={styles.separator} />
         <TextInput
@@ -158,6 +183,7 @@ const Login = ({ navigation, route }) => {
           onChangeText={handleMobile}
         />
       </View>
+
       <TouchableOpacity
         style={[styles.primaryButton, (mobile.length !== 10 || isLoading) && styles.disabledButton]}
         activeOpacity={0.8}
@@ -167,15 +193,21 @@ const Login = ({ navigation, route }) => {
         {isLoading ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
-          <Text style={styles.primaryButtonText}>{activeProfile ? 'Continue as Job Seeker' : 'Continue as Employer'}</Text>
+          <Text style={styles.primaryButtonText}>
+            {isDesktopWeb
+              ? 'Continue as Employer'
+              : (activeProfile ? 'Continue as Job Seeker' : 'Continue as Employer')}
+          </Text>
         )}
       </TouchableOpacity>
+
       <Text style={styles.termsText}>By continuing, you agree to our</Text>
       <View style={styles.termsRow}>
         <TouchableOpacity><Text style={styles.termsLink}>Terms and Conditions</Text></TouchableOpacity>
         <Text style={styles.termsDivider}> & </Text>
         <TouchableOpacity><Text style={styles.termsLink}>Privacy Policy</Text></TouchableOpacity>
       </View>
+
       <CustomAlert
         visible={alertConfig.visible}
         message={alertConfig.message}
@@ -186,18 +218,15 @@ const Login = ({ navigation, route }) => {
   );
 };
 
-// Country Data File (utils/countries.js)
 
-// Update styles and structure to match design and guidelines
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f4f2ee', // base color // Changes from f9f9f9 to this FDF7F2 cuz of consistentcy
+    backgroundColor: '#f4f2ee',
     padding: 24,
   },
-  // Remove loginCard, use only container
   toggleButtonContent: {
     flexDirection: 'column',
     alignItems: 'center',
@@ -220,7 +249,6 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 8,
     textAlign: 'center',
-    fontWeight:'semi-bold',
   },
   subtitle: {
     fontSize: 14,
@@ -235,6 +263,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
     gap: 8,
+    width: '100%',
   },
   toggleButton: {
     flex: 1,
@@ -245,6 +274,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 4,
     backgroundColor: '#fff',
+  },
+  // 6. Add style for the single button on desktop
+  desktopToggleButton: {
+    flex: 0, // Remove flex so it doesn't expand
+    width: 'auto', // Give it a specific width
+    maxWidth: 300, // And a max width
+    paddingHorizontal: 46,
   },
   toggleActive: {
     borderColor: '#be4145',
@@ -267,7 +303,6 @@ const styles = StyleSheet.create({
   toggleButtonTextInactive: {
     color: '#666666',
     textAlign: 'center',
-
   },
   inputLabel: {
     fontSize: 12,
@@ -309,7 +344,8 @@ const styles = StyleSheet.create({
     color: '#333333',
     paddingHorizontal: 8,
     backgroundColor: 'transparent',
-    borderBlockColor: '#fff',
+    borderColor: "#fff",
+    borderWidth: 2
   },
   primaryButton: {
     width: '100%',
@@ -359,7 +395,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: '#333333',
     marginBottom: 8,
-    // alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 4,
@@ -367,3 +402,4 @@ const styles = StyleSheet.create({
 });
 
 export default Login;
+
