@@ -17,6 +17,12 @@ const { width } = Dimensions.get('window');
 
 
 const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
+    outerBox: {
+        flex: 1,
+        flexDirection: 'row', // This is the most important style
+        backgroundColor: '#f4f2ee',
+    },
+
     container: {
         flex: 1,
         backgroundColor: '#f4f2ee',
@@ -25,6 +31,9 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
         flex: 1,
         backgroundColor: '#f4f2ee',
         // paddingLeft: 150, // This should match the width of your LeftNav.js
+        marginHorizontal: 25,
+        borderColor: "#e0e0e0",
+        borderWidth: 1,
     },
     scrollContainer: {
         flex: 1,
@@ -331,7 +340,7 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
         fontFamily: 'Montserrat-SemiBold',
     },
     topWhiteBackground: {
-        backgroundColor: '#BE4145',
+        backgroundColor: '#fff',
         paddingTop: 16,
         paddingBottom: 0,
         paddingHorizontal: 16,
@@ -339,16 +348,17 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
         width: "100%",
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-        // Add platform-specific styles using Platform.select
-        ...Platform.select({
-            web: {
-                paddingBottom: 28, // This effectively makes paddingVertical 16 for web
-            },
-            // You can add other platforms like 'android' or 'ios' here if needed
-            default: {
-                paddingBottom: 0, // Explicitly keep it 0 for other platforms
-            }
-        }),
+        paddingBottom: 16,
+        // // Add platform-specific styles using Platform.select
+        // ...Platform.select({
+        //     web: {
+        //         paddingBottom: 28, // This effectively makes paddingVertical 16 for web
+        //     },
+        //     // You can add other platforms like 'android' or 'ios' here if needed
+        //     default: {
+        //         paddingBottom: 0, // Explicitly keep it 0 for other platforms
+        //     }
+        // }),
     },
     headerRow: {
         flexDirection: 'column', // changed from 'row' to 'column'
@@ -1131,18 +1141,43 @@ const MyJobs = ({ navigation }) => {
 
 
     return (
-        <>
-            {/* <LeftNav activeuser={"employer"} /> */}
+        <View style={styles.outerBox}>
+
+            <LeftNav activeuser={"employer"} />
 
             <View style={[styles.container, isWeb && styles.containerWeb]}>
                 {/* Sticky header container */}
                 <View style={styles.topWhiteBackground}>
-                    <View style={styles.headerRow}>
+                    {/* <View style={styles.headerRow}>
                         <Text style={styles.headerTitle}></Text>
-                    </View>
+                    </View> */}
+                    {/* <View style={styles.filterDropdownWrapper}> */}
+                        <DropDownPicker
+                            open={statusOpen}
+                            value={statusValue}
+                            items={statusItems}
+                            setOpen={setStatusOpen}
+                            setValue={setStatusValue}
+                            setItems={setStatusItems}
+                            placeholder="All Jobs"
+                            style={styles.filterDropdown}
+                            dropDownContainerStyle={styles.filterDropdownContainer}
+                            textStyle={styles.filterDropdownText}
+                            placeholderStyle={styles.filterDropdownPlaceholder}
+                            listMode="SCROLLVIEW"
+                            ArrowDownIconComponent={({ style }) => (
+                                <Ionicons name="chevron-down" size={18} color="#999" style={style} />
+                            )}
+                            ArrowUpIconComponent={({ style }) => (
+                                <Ionicons name="chevron-up" size={18} color="#999" style={style} />
+                            )}
+                            tickIconStyle={{ tintColor: "#BE4145" }}
+                            zIndex={1000}
+                        />
+                    {/* </View> */}
                 </View>
 
-                <View style={styles.filterDropdownWrapper}>
+                {/* <View style={styles.filterDropdownWrapper}>
                     <DropDownPicker
                         open={statusOpen}
                         value={statusValue}
@@ -1165,7 +1200,7 @@ const MyJobs = ({ navigation }) => {
                         tickIconStyle={{ tintColor: "#BE4145" }}
                         zIndex={1000}
                     />
-                </View>
+                </View> */}
 
                 <ScrollView
                     style={[styles.scrollContainer, { zIndex: 0, elevation: 0 }]} // 👈 keep low
@@ -1299,7 +1334,7 @@ const MyJobs = ({ navigation }) => {
                 }}
             />
 
-        </>
+        </View>
     );
 };
 

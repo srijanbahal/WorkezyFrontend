@@ -256,13 +256,30 @@ const EmployerProfile = () => {
   // Determine if the LeftNav is active
   const isWeb = Platform.OS === 'web';
   return (
-    <>
+    <View style={styles.outerBox}>
+      <LeftNav activeuser={"employer"} />
+
       {/* <View style={styles.container}> */}
       <View style={[styles.container, isWeb && styles.containerWeb]}>
         <View style={styles.topWhiteBackground}>
-          <View style={styles.headerRow}>
-            <Text style={styles.postedJobsTitle}></Text>
-          </View>
+           <Image
+              source={{
+                uri: userDetails?.profile_image || 'https://via.placeholder.com/150',
+              }}
+              style={styles.profileImage}
+            />
+            <View style={styles.profileTextContainer}>
+              <Text
+                style={styles.profileName}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {userDetails?.full_name?.split(' ')[0]}
+              </Text>
+              <Text style={styles.roleText}>
+                {formatRoleText(userDetails?.company_industry) || 'Employer'}
+              </Text>
+            </View>
         </View>
 
 
@@ -272,7 +289,7 @@ const EmployerProfile = () => {
             <Text style={styles.errorText}>{error}</Text>
           )}
           {/* Profile Section - horizontal layout */}
-          <View style={styles.profileSection}>
+          {/* <View style={styles.profileSection}>
             <Image
               source={{
                 uri: userDetails?.profile_image || 'https://via.placeholder.com/150',
@@ -291,7 +308,7 @@ const EmployerProfile = () => {
                 {formatRoleText(userDetails?.company_industry) || 'Employer'}
               </Text>
             </View>
-          </View>
+          </View> */}
 
 
           <View style={styles.card}>
@@ -315,19 +332,17 @@ const EmployerProfile = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {/* <BottomNav activeuser="employer" /> */}
 
-      {/* Conditionally render LeftNav for web and BottomNav for others
-      {Platform.OS === 'web' ? (
-        <LeftNav activeuser={"employer"} />
-      ) : (
-        <BottomNav activeuser={"employer"} />
-      )} */}
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  outerBox: {
+    flex: 1,
+    flexDirection: 'row', // This is the most important style
+    backgroundColor: '#f4f2ee',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f4f2ee',
@@ -343,7 +358,9 @@ const styles = StyleSheet.create({
     padding: 0,
     alignItems: 'center',
     marginBottom: 75,
-    // paddingLeft: 150, // This should match the width of your LeftNav.js
+    marginHorizontal: 25,
+    borderColor: "#e0e0e0",
+    borderWidth: 1,
   },
   loadingContainer: {
     flex: 1,
@@ -366,23 +383,34 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular'
   },
   topWhiteBackground: {
-    backgroundColor: '#BE4145', // changed
-    paddingTop: 20, // from 58 to 24
-    paddingBottom: 8,
-    paddingHorizontal: 16,
     zIndex: 1000,
     width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    ...Platform.select({
-      web: {
-        paddingBottom: 28, // This effectively makes paddingVertical 16 for web
-      },
-      // You can add other platforms like 'android' or 'ios' here if needed
-      default: {
-        paddingBottom: 0, // Explicitly keep it 0 for other platforms
-      }
-    }),
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    // borderRadius: 16,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    borderColor: '#e0e0e0',
+    borderWidth: 1,
+    paddingVertical: 32, // Increased vertical padding
+    paddingHorizontal: 32, // Increased horizontal padding,
+    marginBottom: 24,
+    alignSelf: 'center',
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    // ...Platform.select({
+    //   web: {
+    //     paddingBottom: 28, // This effectively makes paddingVertical 16 for web
+    //   },
+    //   // You can add other platforms like 'android' or 'ios' here if needed
+    //   default: {
+    //     paddingBottom: 0, // Explicitly keep it 0 for other platforms
+    //   }
+    // }),
   },
   headerRow: {
     flexDirection: 'column', // changed from 'row' to 'column'

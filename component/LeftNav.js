@@ -112,10 +112,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
         elevation: 8,
-        shadowColor: '#000000',
-        shadowOffset: { width: 2, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
+        // shadowColor: '#000000',
+        // shadowOffset: { width: 2, height: 0 },
+        // shadowOpacity: 0.2,
+        // shadowRadius: 5,
         alignItems: 'center',
         justifyContent: 'flex-start', // Distributes space between logo, tabs, and bottom empty view
         paddingTop: 20, // Padding at the top
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
     postJobButton: {
         backgroundColor: '#fff', // Solid red background
         borderRadius: 12,
-        marginVertical: 15, // Vertical space around the button
-        paddingVertical: 15,
+        marginVertical: 12, // Vertical space around the button
+        paddingVertical: 10,
         width: '85%',
         justifyContent: 'flex-start', // Center content horizontally
         alignItems: 'center', // Center content vertically

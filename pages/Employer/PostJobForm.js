@@ -9,7 +9,7 @@ import { useRoute } from '@react-navigation/native';
 import { updateJob } from '../../utils/api';
 import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../../component/CustomAlert';
-
+import LeftNav from '../../component/LeftNav';
 
 const PostJobForm = ({ navigation }) => {
     const route = useRoute();
@@ -35,11 +35,13 @@ const PostJobForm = ({ navigation }) => {
     const [jobCategoryOpen, setJobCategoryOpen] = useState(false);
 
     // Dropdown states
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const [jobTypeOpen, setJobTypeOpen] = useState(false);
     const [shiftOpen, setShiftOpen] = useState(false);
     const [salaryOpen, setSalaryOpen] = useState(false);
     const [locationTypeOpen, setLocationTypeOpen] = useState(false);
     const [experienceOpen, setExperienceOpen] = useState(false);
+
 
     const [industryOpen, setIndustryOpen] = useState(false);
     const [currencyOpen, setCurrencyOpen] = useState(false);
@@ -283,29 +285,29 @@ const PostJobForm = ({ navigation }) => {
         return () => backHandler.remove();
     }, []);
 
-    // Set up header navigation when component mounts
-    useEffect(() => {
-        navigation.setOptions({
-            headerLeft: () => (
-                <TouchableOpacity
-                    style={{ marginLeft: 16 }}
-                    onPress={handleBack}
-                >
-                    <Ionicons name="arrow-back" size={24} color="#ffffff" />
-                </TouchableOpacity>
-            ),
-            title: jobId ? 'Update Job' : 'Post a Job',
-            headerTitleStyle: {
-                fontFamily: 'Montserrat-SemiBold',
-                fontSize: 18,
-            },
-            headerStyle: {
-                backgroundColor: '#BE4145',
-                elevation: 0,
-                shadowOpacity: 0,
-            }
-        });
-    }, [navigation, jobId]);
+    // // Set up header navigation when component mounts
+    // useEffect(() => {
+    //     navigation.setOptions({
+    //         headerLeft: () => (
+    //             <TouchableOpacity
+    //                 style={{ marginLeft: 16 }}
+    //                 onPress={handleBack}
+    //             >
+    //                 <Ionicons name="arrow-back" size={24} color="#ffffff" />
+    //             </TouchableOpacity>
+    //         ),
+    //         title: jobId ? 'Update Job' : 'Post a Job',
+    //         headerTitleStyle: {
+    //             fontFamily: 'Montserrat-SemiBold',
+    //             fontSize: 18,
+    //         },
+    //         headerStyle: {
+    //             backgroundColor: '#BE4145',
+    //             elevation: 0,
+    //             shadowOpacity: 0,
+    //         }
+    //     });
+    // }, [navigation, jobId]);
 
 
     // Fetch employerId and company name from AsyncStorage
@@ -459,7 +461,7 @@ const PostJobForm = ({ navigation }) => {
                 question_text: q.question,
                 ideal_answer: q.correctAnswer.toLowerCase()
             }));
-            console.log("Job category on submit is" , jobCategory)
+        console.log("Job category on submit is", jobCategory)
         const jobData = {
             employerId,
             employer_id: employerId, // Adding alternative format for API compatibility
@@ -620,275 +622,834 @@ const PostJobForm = ({ navigation }) => {
     };
 
 
+    // return (
+    //     <View style={styles.outerBox}>
+    //         <LeftNav activeuser={"employer"} />
+    //         <View style={styles.containerWeb}>
+    //             {/* --- THIS IS YOUR NEW MANUAL HEADER --- */}
+    //             <View style={styles.manualHeader}>
+    //                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+    //                     <Ionicons name="arrow-back" size={24} color="#333" />
+    //                 </TouchableOpacity>
+    //                 <Text style={styles.headerTitle}>
+    //                     {jobId ? 'Update Job' : 'Post a Job'}
+    //                 </Text>
+    //             </View>
+    //             {/* --- END OF MANUAL HEADER --- */}
+
+    //             <ScrollView
+    //                 style={styles.container}
+    //                 contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
+    //                 keyboardShouldPersistTaps="handled"
+    //             >
+    //                 <View style={styles.cardContainer}>
+    //                     {currentPage === 1 ? (
+    //                         // Page 1 - Basic Job Details
+    //                         <>
+    //                             <View style={styles.inputContainer}>
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Job Title<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <TextInput
+    //                                         ref={(ref) => inputRefs.current.jobTitle = ref}
+    //                                         value={searchText}
+    //                                         onChangeText={(text) => {
+    //                                             handleSearch(text);
+    //                                             setFormErrors({ ...formErrors, jobTitle: '' });
+    //                                         }}
+    //                                         style={[
+    //                                             styles.input,
+    //                                             formErrors.jobTitle ? styles.inputError : null
+    //                                         ]}
+    //                                         mode="outlined"
+    //                                         outlineColor={formErrors.jobTitle ? "#BE4145" : "#e0e0e0"}
+    //                                         activeOutlineColor="#BE4145"
+    //                                         theme={{
+    //                                             roundness: 8,
+    //                                             colors: {
+    //                                                 primary: '#444444',
+    //                                                 onSurfaceVariant: '#666666'
+    //                                             },
+    //                                             fonts: {
+    //                                                 regular: {
+    //                                                     fontFamily: 'Inter-Regular'
+    //                                                 }
+    //                                             }
+    //                                         }}
+    //                                         placeholderTextColor="#b4b4b4"
+    //                                     />
+    //                                     {formErrors.jobTitle ? <Text style={styles.errorText}>{formErrors.jobTitle}</Text> : null}
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Job Category<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <DropDownPicker
+    //                                         open={jobCategoryOpen}
+    //                                         value={jobCategory}
+    //                                         items={industryItems}
+    //                                         setOpen={(open) => {
+    //                                             if (open) dismissDropdownsAndFocus();
+    //                                             setJobCategoryOpen(open);
+    //                                         }}
+    //                                         setValue={(callback) => {
+    //                                             const value = callback(jobCategory); // callback returns new value
+    //                                             setJobCategory(value);
+    //                                             console.log("Selected Job Category:", value);
+    //                                             if (value) {
+    //                                                 setFormErrors({ ...formErrors, jobCategory: '' });
+    //                                             }
+    //                                         }}
+    //                                         placeholder="Select Job Category"
+    //                                         style={[
+    //                                             styles.dropdown
+    //                                         ]}
+    //                                         dropDownContainerStyle={styles.dropdownList}
+    //                                         listMode="SCROLLVIEW"
+    //                                         zIndex={7000}
+    //                                         zIndexInverse={2000}
+    //                                         placeholderStyle={styles.dropdownPlaceholder}
+    //                                         textStyle={styles.dropdownText}
+    //                                         tickIconStyle={{ tintColor: "#BE4145" }}
+    //                                     />
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         City<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <TextInput
+    //                                         ref={(ref) => inputRefs.current.city = ref}
+    //                                         value={city}
+    //                                         onChangeText={text => {
+    //                                             setCity(text);
+    //                                             setFormErrors({ ...formErrors, city: '' });
+    //                                         }}
+    //                                         style={[
+    //                                             styles.input,
+    //                                             formErrors.city ? styles.inputError : null
+    //                                         ]}
+    //                                         mode="outlined"
+    //                                         outlineColor={formErrors.city ? "#BE4145" : "#e0e0e0"}
+    //                                         activeOutlineColor="#BE4145"
+    //                                         theme={{
+    //                                             roundness: 8,
+    //                                             colors: {
+    //                                                 primary: '#444444',
+    //                                                 onSurfaceVariant: '#b4b4b4'
+    //                                             },
+    //                                             fonts: {
+    //                                                 regular: {
+    //                                                     fontFamily: 'Inter-Regular'
+    //                                                 }
+    //                                             }
+    //                                         }}
+    //                                         placeholderTextColor="#666666"
+    //                                     />
+    //                                     {formErrors.city ? <Text style={styles.errorText}>{formErrors.city}</Text> : null}
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>Country</Text>
+    //                                     <TextInput
+    //                                         ref={(ref) => inputRefs.current.country = ref}
+    //                                         value={"India"}
+    //                                         onChangeText={setCountry}
+    //                                         style={[styles.input, styles.disabledInput]}
+    //                                         mode="outlined"
+    //                                         outlineColor="#e0e0e0"
+    //                                         activeOutlineColor="#BE4145"
+    //                                         theme={{
+    //                                             roundness: 8,
+    //                                             colors: {
+    //                                                 primary: '#444444',
+    //                                                 onSurfaceVariant: '#666666'
+    //                                             },
+    //                                             fonts: {
+    //                                                 regular: {
+    //                                                     fontFamily: 'Inter-Regular'
+    //                                                 }
+    //                                             }
+    //                                         }}
+    //                                         placeholderTextColor="#666666"
+    //                                         editable={false}
+    //                                         disabled={true}
+    //                                     />
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Job Type<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <DropDownPicker
+    //                                         open={jobTypeOpen}
+    //                                         value={jobType}
+    //                                         items={jobTypeItems}
+    //                                         setOpen={(open) => {
+    //                                             if (open) dismissDropdownsAndFocus();
+    //                                             setJobTypeOpen(open);
+    //                                             if (!open && !jobType) {
+    //                                                 setFormErrors({ ...formErrors, jobType: 'Job type is required' });
+    //                                             } else {
+    //                                                 setFormErrors({ ...formErrors, jobType: '' });
+    //                                             }
+    //                                         }}
+    //                                         setValue={(value) => {
+    //                                             setJobType(value);
+    //                                             if (value) {
+    //                                                 setFormErrors({ ...formErrors, jobType: '' });
+    //                                             }
+    //                                         }}
+    //                                         placeholder="Select job type"
+    //                                         style={[
+    //                                             styles.dropdown
+    //                                         ]}
+    //                                         dropDownContainerStyle={styles.dropdownList}
+    //                                         listMode="SCROLLVIEW"
+    //                                         zIndex={6000}
+    //                                         zIndexInverse={2000}
+    //                                         placeholderStyle={styles.dropdownPlaceholder}
+    //                                         textStyle={styles.dropdownText}
+    //                                         tickIconStyle={{ tintColor: "#BE4145" }}
+
+    //                                     />
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Shift<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <DropDownPicker
+    //                                         open={shiftOpen}
+    //                                         value={shift}
+    //                                         items={shiftItems}
+    //                                         setOpen={(open) => {
+    //                                             if (open) dismissDropdownsAndFocus();
+    //                                             setShiftOpen(open);
+    //                                             if (!open && !shift) {
+    //                                                 setFormErrors({ ...formErrors, shift: 'Shift is required' });
+    //                                             } else {
+    //                                                 setFormErrors({ ...formErrors, shift: '' });
+    //                                             }
+    //                                         }}
+    //                                         setValue={(value) => {
+    //                                             setShift(value);
+    //                                             if (value) {
+    //                                                 setFormErrors({ ...formErrors, shift: '' });
+    //                                             }
+    //                                         }}
+    //                                         placeholder="Select shift"
+    //                                         style={[
+    //                                             styles.dropdown
+    //                                         ]}
+    //                                         dropDownContainerStyle={styles.dropdownList}
+    //                                         listMode="SCROLLVIEW"
+    //                                         zIndex={5000}
+    //                                         zIndexInverse={3000}
+    //                                         placeholderStyle={styles.dropdownPlaceholder}
+    //                                         textStyle={styles.dropdownText}
+    //                                         tickIconStyle={{ tintColor: "#BE4145" }}
+
+    //                                     />
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Location Type<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <DropDownPicker
+    //                                         open={locationTypeOpen}
+    //                                         value={locationType}
+    //                                         items={locationItems}
+    //                                         setOpen={(open) => {
+    //                                             if (open) dismissDropdownsAndFocus();
+    //                                             setLocationTypeOpen(open);
+    //                                             if (!open && !locationType) {
+    //                                                 setFormErrors({ ...formErrors, locationType: 'Location type is required' });
+    //                                             } else {
+    //                                                 setFormErrors({ ...formErrors, locationType: '' });
+    //                                             }
+    //                                         }}
+    //                                         setValue={(value) => {
+    //                                             setLocationType(value);
+    //                                             if (value) {
+    //                                                 setFormErrors({ ...formErrors, locationType: '' });
+    //                                             }
+    //                                         }}
+    //                                         placeholder="Select location type"
+    //                                         style={[
+    //                                             styles.dropdown
+    //                                         ]}
+    //                                         dropDownContainerStyle={styles.dropdownList}
+    //                                         listMode="SCROLLVIEW"
+    //                                         zIndex={4000}
+    //                                         zIndexInverse={4000}
+    //                                         placeholderStyle={styles.dropdownPlaceholder}
+    //                                         textStyle={styles.dropdownText}
+    //                                         tickIconStyle={{ tintColor: "#BE4145" }}
+
+    //                                     />
+    //                                 </View>
+
+    //                                 {/* Salary Input with Currency Dropdown */}
+    //                                 <View style={[styles.salaryContainer, styles.fieldWrapper]}>
+    //                                     <View style={styles.dropdownWrapper}>
+    //                                         <TextInput
+    //                                             ref={(ref) => inputRefs.current.currency = ref}
+    //                                             label="Currency"
+    //                                             value={currencyItems.find(item => item.value === currency)?.label || currency}
+    //                                             style={[styles.input, styles.disabledInput]}
+    //                                             mode="outlined"
+    //                                             editable={false}
+    //                                             disabled={true}
+    //                                             outlineColor="#e0e0e0"
+    //                                             activeOutlineColor="#BE4145"
+    //                                             theme={{
+    //                                                 roundness: 8,
+    //                                                 colors: {
+    //                                                     primary: '#444444',
+    //                                                     onSurfaceVariant: '#666666'
+    //                                                 },
+    //                                                 fonts: {
+    //                                                     regular: {
+    //                                                         fontFamily: 'Inter-Regular'
+    //                                                     }
+    //                                                 }
+    //                                             }}
+    //                                             placeholderTextColor="#666666"
+    //                                         />
+    //                                     </View>
+    //                                     <View style={styles.salaryInputWrapper}>
+    //                                         <Text style={styles.label}>
+    //                                             Monthly Salary<Text style={styles.requiredStar}>*</Text>
+    //                                         </Text>
+    //                                         <TextInput
+    //                                             ref={(ref) => inputRefs.current.salary = ref}
+    //                                             value={salary}
+    //                                             onChangeText={text => {
+    //                                                 setSalary(text);
+    //                                                 setFormErrors({ ...formErrors, salary: '' });
+    //                                             }}
+    //                                             style={[
+    //                                                 styles.input,
+    //                                                 formErrors.salary ? styles.inputError : null
+    //                                             ]}
+    //                                             mode="outlined"
+    //                                             keyboardType="numeric"
+    //                                             outlineColor={formErrors.salary ? "#BE4145" : "#e0e0e0"}
+    //                                             activeOutlineColor="#BE4145"
+    //                                             theme={{
+    //                                                 roundness: 8,
+    //                                                 colors: {
+    //                                                     primary: '#444444',
+    //                                                     onSurfaceVariant: '#666666'
+    //                                                 },
+    //                                                 fonts: {
+    //                                                     regular: {
+    //                                                         fontFamily: 'Inter-Regular'
+    //                                                     }
+    //                                                 }
+    //                                             }}
+    //                                             placeholderTextColor="#666666"
+    //                                             maxLength={6}
+    //                                         />
+    //                                         {formErrors.salary ? <Text style={styles.errorText}>{formErrors.salary}</Text> : null}
+    //                                     </View>
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Minimum Experience<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <DropDownPicker
+    //                                         open={experienceOpen}
+    //                                         value={experience}
+    //                                         items={ExperienceItems}
+    //                                         setOpen={(open) => {
+    //                                             if (open) dismissDropdownsAndFocus();
+    //                                             setExperienceOpen(open);
+    //                                         }}
+    //                                         setValue={setExperience}
+    //                                         placeholder="Minimum Experience"
+    //                                         style={styles.dropdown}
+    //                                         dropDownContainerStyle={styles.dropdownContainer}
+    //                                         listMode="SCROLLVIEW"
+    //                                         zIndex={3000}
+    //                                         zIndexInverse={5000}
+    //                                         placeholderStyle={styles.dropdownPlaceholder}
+    //                                         textStyle={styles.dropdownText}
+    //                                         tickIconStyle={{ tintColor: "#BE4145" }}
+
+    //                                     />
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Job Description (JD)<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <TextInput
+    //                                         ref={(ref) => inputRefs.current.jd = ref}
+    //                                         value={jd}
+    //                                         onChangeText={(text) => {
+    //                                             setJd(text);
+    //                                             if (text) {
+    //                                                 setFormErrors({ ...formErrors, jd: '' });
+    //                                             }
+    //                                         }}
+    //                                         style={[
+    //                                             styles.input,
+    //                                             styles.textArea,
+    //                                             { paddingVertical: 0, padding: 0 },
+    //                                             formErrors.jd ? styles.inputError : null
+    //                                         ]}
+    //                                         mode="outlined"
+    //                                         multiline
+    //                                         contentStyle={{ paddingVertical: 0 }}
+    //                                         numberOfLines={4}
+    //                                         outlineColor={"#e0e0e0"}
+    //                                         activeOutlineColor="#BE4145"
+    //                                         theme={{
+    //                                             roundness: 8,
+    //                                             colors: {
+    //                                                 primary: '#444444',
+    //                                                 onSurfaceVariant: '#666666'
+    //                                             },
+    //                                             fonts: {
+    //                                                 regular: {
+    //                                                     fontFamily: 'Inter-Regular'
+    //                                                 }
+    //                                             }
+    //                                         }}
+    //                                         placeholderTextColor="#666666"
+    //                                         onBlur={() => {
+    //                                             if (!jd) {
+    //                                                 setFormErrors({ ...formErrors, jd: 'Job description is required' });
+    //                                             }
+    //                                         }}
+    //                                     />
+    //                                     {/* {formErrors.jd ? <Text style={styles.errorText}>{formErrors.jd}</Text> : null} */}
+    //                                 </View>
+
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <Text style={styles.label}>
+    //                                         Number of Employees<Text style={styles.requiredStar}>*</Text>
+    //                                     </Text>
+    //                                     <TextInput
+    //                                         ref={(ref) => inputRefs.current.numEmployees = ref}
+    //                                         value={numEmployees}
+    //                                         onChangeText={handleNumEmployeesChange}
+    //                                         style={[
+    //                                             styles.input,
+    //                                             formErrors.numEmployees || numEmployeesError ? styles.inputError : null
+    //                                         ]}
+    //                                         mode="outlined"
+    //                                         keyboardType="numeric"
+    //                                         outlineColor={formErrors.numEmployees || numEmployeesError ? "#BE4145" : "#e0e0e0"}
+    //                                         activeOutlineColor="#BE4145"
+    //                                         theme={{
+    //                                             roundness: 8,
+    //                                             colors: {
+    //                                                 primary: '#444444',
+    //                                                 onSurfaceVariant: '#666666'
+    //                                             },
+    //                                             fonts: {
+    //                                                 regular: {
+    //                                                     fontFamily: 'Inter-Regular'
+    //                                                 }
+    //                                             }
+    //                                         }}
+    //                                         placeholderTextColor="#666666"
+    //                                         onBlur={() => {
+    //                                             if (!numEmployees) {
+    //                                                 setFormErrors({ ...formErrors, numEmployees: 'Number of employees is required' });
+    //                                             } else {
+    //                                                 setFormErrors({ ...formErrors, numEmployees: '' });
+    //                                             }
+    //                                         }}
+    //                                     />
+    //                                     {formErrors.numEmployees ? (
+    //                                         <Text style={styles.errorText}>{formErrors.numEmployees}</Text>
+    //                                     ) : numEmployeesError ? (
+    //                                         <Text style={styles.errorText}>{numEmployeesError}</Text>
+    //                                     ) : null}
+    //                                 </View>
+    //                             </View>
+    //                         </>
+    //                     ) : (
+    //                         // Page 2 - Additional Details and Questions
+    //                         <>
+    //                             <View style={styles.inputContainer}>
+    //                                 {/* Age Range - Only Min Age, Max Age removed */}
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <View style={styles.rowContainer}>
+    //                                         <View style={styles.fullInputContainer}>
+    //                                             <TextInput
+    //                                                 ref={(ref) => inputRefs.current.minAge = ref}
+    //                                                 label="Minimum Age (Optional)"
+    //                                                 value={minAge}
+    //                                                 onChangeText={setMinAge}
+    //                                                 style={styles.input}
+    //                                                 mode="outlined"
+    //                                                 keyboardType="numeric"
+    //                                                 outlineColor="#e0e0e0"
+    //                                                 activeOutlineColor="#BE4145"
+    //                                                 maxLength={2}
+    //                                                 theme={{
+    //                                                     roundness: 8,
+    //                                                     colors: {
+    //                                                         primary: '#444444',
+    //                                                         onSurfaceVariant: '#666666'
+    //                                                     },
+    //                                                     fonts: {
+    //                                                         regular: {
+    //                                                             fontFamily: 'Inter-Regular'
+    //                                                         }
+    //                                                     }
+    //                                                 }}
+    //                                                 placeholderTextColor="#666666"
+    //                                             />
+    //                                         </View>
+    //                                     </View>
+    //                                 </View>
+
+    //                                 {/* Minimum Education */}
+    //                                 <Text style={{ ...styles.label, marginBottom: -4 }}>
+    //                                     Minimum Education (Optional)
+    //                                 </Text>
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <DropDownPicker
+    //                                         open={minEducationOpen}
+    //                                         value={minEducation}
+    //                                         items={minEducationItems}
+    //                                         setOpen={(open) => {
+    //                                             if (open) dismissDropdownsAndFocus();
+    //                                             setMinEducationOpen(open);
+    //                                         }}
+    //                                         setValue={setMinEducation}
+    //                                         placeholder="Minimum Education Required"
+    //                                         style={styles.dropdown}
+    //                                         dropDownContainerStyle={styles.dropdownContainer}
+    //                                         listMode="SCROLLVIEW"
+    //                                         zIndex={6000}
+    //                                         zIndexInverse={1000}
+    //                                         placeholderStyle={styles.dropdownPlaceholder}
+    //                                         textStyle={styles.dropdownText}
+    //                                         tickIconStyle={{ tintColor: "#BE4145" }}
+
+    //                                     />
+    //                                 </View>
+
+    //                                 {/* Preferred Gender */}
+    //                                 <Text style={{ ...styles.label, marginBottom: -4 }}>
+    //                                     Preferred Gender (Optional)
+    //                                 </Text>
+    //                                 <View style={styles.fieldWrapper}>
+    //                                     <DropDownPicker
+    //                                         open={prefGenderOpen}
+    //                                         value={prefGender}
+    //                                         items={genderItems}
+    //                                         setOpen={(open) => {
+    //                                             if (open) dismissDropdownsAndFocus();
+    //                                             setPrefGenderOpen(open);
+    //                                         }}
+    //                                         setValue={setPrefGender}
+    //                                         placeholder="Preferred Gender"
+    //                                         style={styles.dropdown}
+    //                                         dropDownContainerStyle={styles.dropdownContainer}
+    //                                         listMode="SCROLLVIEW"
+    //                                         zIndex={5000}
+    //                                         zIndexInverse={2000}
+    //                                         placeholderStyle={styles.dropdownPlaceholder}
+    //                                         textStyle={styles.dropdownText}
+    //                                         tickIconStyle={{ tintColor: "#BE4145" }}
+    //                                     />
+    //                                 </View>
+
+
+
+    //                                 {/* Screening Questions Section */}
+    //                                 <Text style={styles.sectionTitle}>Screening Questions (Optional)</Text>
+    //                                 <Text style={styles.sectionSubtitle}>Add up to 3 questions with Yes/No answers</Text>
+
+    //                                 {questions.map((question, index) => (
+    //                                     <View key={index} style={styles.questionContainer}>
+    //                                         <View style={styles.questionHeader}>
+    //                                             <Text style={styles.questionNumber}>Question {index + 1}</Text>
+    //                                             {questions.length > 1 && (
+    //                                                 <TouchableOpacity onPress={() => removeQuestion(index)} style={styles.removeButton}>
+    //                                                     <Ionicons name="close-circle" size={24} color="#BE4145" />
+    //                                                 </TouchableOpacity>
+    //                                             )}
+    //                                         </View>
+
+    //                                         <TextInput
+    //                                             ref={(ref) => inputRefs.current[`question_${index}`] = ref}
+    //                                             label="Question"
+    //                                             value={question.question}
+    //                                             onChangeText={(text) => updateQuestion(index, 'question', text)}
+    //                                             style={styles.input}
+    //                                             mode="outlined"
+    //                                             outlineColor="#e0e0e0"
+    //                                             activeOutlineColor="#BE4145"
+    //                                             theme={{
+    //                                                 roundness: 8,
+    //                                                 colors: {
+    //                                                     primary: '#444444',
+    //                                                     onSurfaceVariant: '#666666'
+    //                                                 },
+    //                                                 fonts: {
+    //                                                     regular: {
+    //                                                         fontFamily: 'Inter-Regular'
+    //                                                     }
+    //                                                 }
+    //                                             }}
+    //                                             placeholderTextColor="#666666"
+    //                                         />
+
+    //                                         <View style={styles.answerContainer}>
+    //                                             <Text style={styles.answerLabel}>Expected Answer</Text>
+    //                                             <View style={styles.answerButtons}>
+    //                                                 <TouchableOpacity
+    //                                                     style={[
+    //                                                         styles.answerButton,
+    //                                                         question.correctAnswer === 'Yes' && styles.selectedAnswerButton
+    //                                                     ]}
+    //                                                     onPress={() => {
+    //                                                         dismissDropdownsAndFocus();
+    //                                                         updateQuestion(index, 'correctAnswer', 'Yes');
+    //                                                     }}
+    //                                                 >
+    //                                                     <Text style={[
+    //                                                         styles.answerButtonText,
+    //                                                         question.correctAnswer === 'Yes' && styles.selectedAnswerText
+    //                                                     ]}>Yes</Text>
+    //                                                 </TouchableOpacity>
+    //                                                 <TouchableOpacity
+    //                                                     style={[
+    //                                                         styles.answerButton,
+    //                                                         question.correctAnswer === 'No' && styles.selectedAnswerButton
+    //                                                     ]}
+    //                                                     onPress={() => {
+    //                                                         dismissDropdownsAndFocus();
+    //                                                         updateQuestion(index, 'correctAnswer', 'No');
+    //                                                     }}
+    //                                                 >
+    //                                                     <Text style={[
+    //                                                         styles.answerButtonText,
+    //                                                         question.correctAnswer === 'No' && styles.selectedAnswerText
+    //                                                     ]}>No</Text>
+    //                                                 </TouchableOpacity>
+    //                                             </View>
+    //                                         </View>
+    //                                     </View>
+    //                                 ))}
+
+    //                                 {questions.length < 3 && (
+    //                                     <TouchableOpacity
+    //                                         style={styles.addQuestionButton}
+    //                                         onPress={() => {
+    //                                             dismissDropdownsAndFocus();
+    //                                             addQuestion();
+    //                                         }}
+    //                                     >
+    //                                         <Ionicons name="add-circle-outline" size={20} color="#BE4145" />
+    //                                         <Text style={styles.addQuestionText}>Add Another Question</Text>
+    //                                     </TouchableOpacity>
+    //                                 )}
+    //                             </View>
+    //                         </>
+    //                     )}
+    //                 </View>
+    //             </ScrollView>
+    //             {/* Sticky Button Container */}
+    //             <View style={styles.stickyButtonContainer}>
+    //                 {currentPage === 1 ? (
+    //                     <TouchableOpacity
+    //                         style={[styles.saveButton, !isPageOneValid() && styles.saveButtonDisabled]}
+    //                         onPress={handleNext}
+    //                         disabled={!isPageOneValid()}
+    //                     >
+    //                         {
+    //                             // console.log("Current Page after next :", currentPage)
+
+    //                         }
+    //                         <Text style={styles.saveButtonText}>Next</Text>
+    //                     </TouchableOpacity>
+    //                 ) : (
+    //                     <View style={{ flexDirection: 'row', gap: 8 }}>
+    //                         {/* <TouchableOpacity
+    //                         style={[styles.backButton, { flex: 1 }]}
+    //                         onPress={() => {
+    //                             dismissDropdownsAndFocus();
+    //                             handleBack();
+    //                         }}
+    //                     >
+    //                         <Text style={styles.backButtonText}>Back</Text>
+    //                     </TouchableOpacity> */}
+    //                         <TouchableOpacity
+    //                             style={[styles.saveButton, { flex: 2 }]}
+    //                             onPress={() => {
+    //                                 dismissDropdownsAndFocus();
+    //                                 handlepostJob();
+    //                             }}
+    //                         >
+    //                             <Text style={styles.saveButtonText}>{jobId ? 'Update Job' : 'Post Job'}</Text>
+    //                         </TouchableOpacity>
+    //                     </View>
+    //                 )}
+    //             </View>
+    //             <CustomAlert
+    //                 visible={alertVisible}
+    //                 title={alertTitle}
+    //                 message={alertMessage}
+    //                 type={alertType}
+    //                 onClose={() => setAlertVisible(false)}
+    //                 onConfirm={alertOnConfirm ? () => { setAlertVisible(false); alertOnConfirm(); } : () => setAlertVisible(false)}
+    //                 showCancel={alertShowCancel}
+    //             // showButton={alertTitle !== 'Success'}
+    //             />
+    //         </View>
+    //     </View>
+    // );
+
     return (
-        <>
-            <ScrollView
-                style={styles.container}
-                contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
-                keyboardShouldPersistTaps="handled"
-            >
-                <View style={styles.cardContainer}>
-                    {currentPage === 1 ? (
-                        // Page 1 - Basic Job Details
-                        <>
-                            <View style={styles.inputContainer}>
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Job Title<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <TextInput
-                                        ref={(ref) => inputRefs.current.jobTitle = ref}
-                                        value={searchText}
-                                        onChangeText={(text) => {
-                                            handleSearch(text);
-                                            setFormErrors({ ...formErrors, jobTitle: '' });
-                                        }}
-                                        style={[
-                                            styles.input,
-                                            formErrors.jobTitle ? styles.inputError : null
-                                        ]}
-                                        mode="outlined"
-                                        outlineColor={formErrors.jobTitle ? "#BE4145" : "#e0e0e0"}
-                                        activeOutlineColor="#BE4145"
-                                        theme={{
-                                            roundness: 8,
-                                            colors: {
-                                                primary: '#444444',
-                                                onSurfaceVariant: '#666666'
-                                            },
-                                            fonts: {
-                                                regular: {
-                                                    fontFamily: 'Inter-Regular'
-                                                }
-                                            }
-                                        }}
-                                        placeholderTextColor="#b4b4b4"
-                                    />
-                                    {formErrors.jobTitle ? <Text style={styles.errorText}>{formErrors.jobTitle}</Text> : null}
-                                </View>
+        <View style={styles.outerBox}>
+            <LeftNav activeuser={"employer"} />
+            <View style={styles.containerWeb}>
 
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Job Category<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <DropDownPicker
-                                        open={jobCategoryOpen}
-                                        value={jobCategory}
-                                        items={industryItems}
-                                        setOpen={(open) => {
-                                            if (open) dismissDropdownsAndFocus();
-                                            setJobCategoryOpen(open);
-                                        }}
-                                        setValue={(callback) => {
-                                            const value = callback(jobCategory); // callback returns new value
-                                            setJobCategory(value);
-                                            console.log("Selected Job Category:", value);
-                                            if (value) {
-                                                setFormErrors({ ...formErrors, jobCategory: '' });
-                                            }
-                                        }}
-                                        placeholder="Select Job Category"
-                                        style={[
-                                            styles.dropdown
-                                        ]}
-                                        dropDownContainerStyle={styles.dropdownList}
-                                        listMode="SCROLLVIEW"
-                                        zIndex={7000}
-                                        zIndexInverse={1000}
-                                        placeholderStyle={styles.dropdownPlaceholder}
-                                        textStyle={styles.dropdownText}
-                                        tickIconStyle={{ tintColor: "#BE4145" }}
-                                    />
-                                </View>
+                {/* Manual Header */}
+                <View style={styles.manualHeader}>
+                    <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                        <Ionicons name="arrow-back" size={24} color="#333333" />
+                    </TouchableOpacity>
+                    <View style={styles.headerTitleContainer}>
+                        <Text style={styles.headerTitle}>
+                            {jobId ? 'Update Job' : 'Post a Job'}
+                        </Text>
+                    </View>
+                </View>
 
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        City<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <TextInput
-                                        ref={(ref) => inputRefs.current.city = ref}
-                                        value={city}
-                                        onChangeText={text => {
-                                            setCity(text);
-                                            setFormErrors({ ...formErrors, city: '' });
-                                        }}
-                                        style={[
-                                            styles.input,
-                                            formErrors.city ? styles.inputError : null
-                                        ]}
-                                        mode="outlined"
-                                        outlineColor={formErrors.city ? "#BE4145" : "#e0e0e0"}
-                                        activeOutlineColor="#BE4145"
-                                        theme={{
-                                            roundness: 8,
-                                            colors: {
-                                                primary: '#444444',
-                                                onSurfaceVariant: '#b4b4b4'
-                                            },
-                                            fonts: {
-                                                regular: {
-                                                    fontFamily: 'Inter-Regular'
-                                                }
-                                            }
-                                        }}
-                                        placeholderTextColor="#666666"
-                                    />
-                                    {formErrors.city ? <Text style={styles.errorText}>{formErrors.city}</Text> : null}
-                                </View>
-
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>Country</Text>
-                                    <TextInput
-                                        ref={(ref) => inputRefs.current.country = ref}
-                                        value={"India"}
-                                        onChangeText={setCountry}
-                                        style={[styles.input, styles.disabledInput]}
-                                        mode="outlined"
-                                        outlineColor="#e0e0e0"
-                                        activeOutlineColor="#BE4145"
-                                        theme={{
-                                            roundness: 8,
-                                            colors: {
-                                                primary: '#444444',
-                                                onSurfaceVariant: '#666666'
-                                            },
-                                            fonts: {
-                                                regular: {
-                                                    fontFamily: 'Inter-Regular'
-                                                }
-                                            }
-                                        }}
-                                        placeholderTextColor="#666666"
-                                        editable={false}
-                                        disabled={true}
-                                    />
-                                </View>
-
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Job Type<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <DropDownPicker
-                                        open={jobTypeOpen}
-                                        value={jobType}
-                                        items={jobTypeItems}
-                                        setOpen={(open) => {
-                                            if (open) dismissDropdownsAndFocus();
-                                            setJobTypeOpen(open);
-                                            if (!open && !jobType) {
-                                                setFormErrors({ ...formErrors, jobType: 'Job type is required' });
-                                            } else {
-                                                setFormErrors({ ...formErrors, jobType: '' });
-                                            }
-                                        }}
-                                        setValue={(value) => {
-                                            setJobType(value);
-                                            if (value) {
-                                                setFormErrors({ ...formErrors, jobType: '' });
-                                            }
-                                        }}
-                                        placeholder="Select job type"
-                                        style={[
-                                            styles.dropdown
-                                        ]}
-                                        dropDownContainerStyle={styles.dropdownList}
-                                        listMode="SCROLLVIEW"
-                                        zIndex={6000}
-                                        zIndexInverse={2000}
-                                        placeholderStyle={styles.dropdownPlaceholder}
-                                        textStyle={styles.dropdownText}
-                                        tickIconStyle={{ tintColor: "#BE4145" }}
-
-                                    />
-                                </View>
-
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Shift<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <DropDownPicker
-                                        open={shiftOpen}
-                                        value={shift}
-                                        items={shiftItems}
-                                        setOpen={(open) => {
-                                            if (open) dismissDropdownsAndFocus();
-                                            setShiftOpen(open);
-                                            if (!open && !shift) {
-                                                setFormErrors({ ...formErrors, shift: 'Shift is required' });
-                                            } else {
-                                                setFormErrors({ ...formErrors, shift: '' });
-                                            }
-                                        }}
-                                        setValue={(value) => {
-                                            setShift(value);
-                                            if (value) {
-                                                setFormErrors({ ...formErrors, shift: '' });
-                                            }
-                                        }}
-                                        placeholder="Select shift"
-                                        style={[
-                                            styles.dropdown
-                                        ]}
-                                        dropDownContainerStyle={styles.dropdownList}
-                                        listMode="SCROLLVIEW"
-                                        zIndex={5000}
-                                        zIndexInverse={3000}
-                                        placeholderStyle={styles.dropdownPlaceholder}
-                                        textStyle={styles.dropdownText}
-                                        tickIconStyle={{ tintColor: "#BE4145" }}
-
-                                    />
-                                </View>
-
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Location Type<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <DropDownPicker
-                                        open={locationTypeOpen}
-                                        value={locationType}
-                                        items={locationItems}
-                                        setOpen={(open) => {
-                                            if (open) dismissDropdownsAndFocus();
-                                            setLocationTypeOpen(open);
-                                            if (!open && !locationType) {
-                                                setFormErrors({ ...formErrors, locationType: 'Location type is required' });
-                                            } else {
-                                                setFormErrors({ ...formErrors, locationType: '' });
-                                            }
-                                        }}
-                                        setValue={(value) => {
-                                            setLocationType(value);
-                                            if (value) {
-                                                setFormErrors({ ...formErrors, locationType: '' });
-                                            }
-                                        }}
-                                        placeholder="Select location type"
-                                        style={[
-                                            styles.dropdown
-                                        ]}
-                                        dropDownContainerStyle={styles.dropdownList}
-                                        listMode="SCROLLVIEW"
-                                        zIndex={4000}
-                                        zIndexInverse={4000}
-                                        placeholderStyle={styles.dropdownPlaceholder}
-                                        textStyle={styles.dropdownText}
-                                        tickIconStyle={{ tintColor: "#BE4145" }}
-
-                                    />
-                                </View>
-
-                                {/* Salary Input with Currency Dropdown */}
-                                <View style={[styles.salaryContainer, styles.fieldWrapper]}>
-                                    <View style={styles.dropdownWrapper}>
+                <ScrollView
+                    style={styles.container}
+                    contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <View style={styles.cardContainer}>
+                        {currentPage === 1 ? (
+                            // Page 1 - Basic Job Details
+                            <>
+                                <View style={styles.inputContainer}>
+                                    <View style={styles.fieldWrapper}>
+                                        <Text style={styles.label}>
+                                            Job Title<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
                                         <TextInput
-                                            ref={(ref) => inputRefs.current.currency = ref}
-                                            label="Currency"
-                                            value={currencyItems.find(item => item.value === currency)?.label || currency}
+                                            ref={(ref) => inputRefs.current.jobTitle = ref}
+                                            value={searchText}
+                                            onChangeText={(text) => {
+                                                handleSearch(text);
+                                                setFormErrors({ ...formErrors, jobTitle: '' });
+                                            }}
+                                            style={[
+                                                styles.input,
+                                                formErrors.jobTitle ? styles.inputError : null
+                                            ]}
+                                            mode="outlined"
+                                            outlineColor={formErrors.jobTitle ? "#BE4145" : "#e0e0e0"}
+                                            activeOutlineColor="#BE4145"
+                                            theme={{
+                                                roundness: 8,
+                                                colors: {
+                                                    primary: '#444444',
+                                                    onSurfaceVariant: '#666666'
+                                                },
+                                                fonts: {
+                                                    regular: {
+                                                        fontFamily: 'Inter-Regular'
+                                                    }
+                                                }
+                                            }}
+                                            placeholderTextColor="#b4b4b4"
+                                        />
+                                        {formErrors.jobTitle ? <Text style={styles.errorText}>{formErrors.jobTitle}</Text> : null}
+                                    </View>
+
+                                    <View style={[styles.fieldWrapper, activeDropdown === 'jobCategory' && { zIndex: 100 }]}>
+                                        <Text style={styles.label}>
+                                            Job Category<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
+                                        <DropDownPicker
+                                            open={jobCategoryOpen}
+                                            value={jobCategory}
+                                            items={industryItems}
+                                            onOpen={() => setActiveDropdown('jobCategory')}
+                                            onClose={() => setActiveDropdown(null)}
+                                            setOpen={(open) => {
+                                                if (open) dismissDropdownsAndFocus();
+                                                setJobCategoryOpen(open);
+                                            }}
+                                            setValue={(callback) => {
+                                                const value = callback(jobCategory);
+                                                setJobCategory(value);
+                                                if (value) {
+                                                    setFormErrors({ ...formErrors, jobCategory: '' });
+                                                }
+                                            }}
+                                            placeholder="Select Job Category"
+                                            style={styles.dropdown}
+                                            dropDownContainerStyle={styles.dropdownList}
+                                            listMode="SCROLLVIEW"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                            textStyle={styles.dropdownText}
+                                            tickIconStyle={{ tintColor: "#BE4145" }}
+                                        />
+                                    </View>
+
+                                    <View style={styles.fieldWrapper}>
+                                        <Text style={styles.label}>
+                                            City<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
+                                        <TextInput
+                                            ref={(ref) => inputRefs.current.city = ref}
+                                            value={city}
+                                            onChangeText={text => {
+                                                setCity(text);
+                                                setFormErrors({ ...formErrors, city: '' });
+                                            }}
+                                            style={[
+                                                styles.input,
+                                                formErrors.city ? styles.inputError : null
+                                            ]}
+                                            mode="outlined"
+                                            outlineColor={formErrors.city ? "#BE4145" : "#e0e0e0"}
+                                            activeOutlineColor="#BE4145"
+                                            theme={{
+                                                roundness: 8,
+                                                colors: {
+                                                    primary: '#444444',
+                                                    onSurfaceVariant: '#b4b4b4'
+                                                },
+                                                fonts: {
+                                                    regular: {
+                                                        fontFamily: 'Inter-Regular'
+                                                    }
+                                                }
+                                            }}
+                                            placeholderTextColor="#666666"
+                                        />
+                                        {formErrors.city ? <Text style={styles.errorText}>{formErrors.city}</Text> : null}
+                                    </View>
+
+                                    <View style={styles.fieldWrapper}>
+                                        <Text style={styles.label}>Country</Text>
+                                        <TextInput
+                                            ref={(ref) => inputRefs.current.country = ref}
+                                            value={"India"}
+                                            onChangeText={setCountry}
                                             style={[styles.input, styles.disabledInput]}
                                             mode="outlined"
-                                            editable={false}
-                                            disabled={true}
                                             outlineColor="#e0e0e0"
                                             activeOutlineColor="#BE4145"
                                             theme={{
@@ -904,183 +1465,116 @@ const PostJobForm = ({ navigation }) => {
                                                 }
                                             }}
                                             placeholderTextColor="#666666"
+                                            editable={false}
+                                            disabled={true}
                                         />
                                     </View>
-                                    <View style={styles.salaryInputWrapper}>
+
+                                    <View style={[styles.fieldWrapper, activeDropdown === 'jobType' && { zIndex: 90 }]}>
                                         <Text style={styles.label}>
-                                            Monthly Salary<Text style={styles.requiredStar}>*</Text>
+                                            Job Type<Text style={styles.requiredStar}>*</Text>
                                         </Text>
-                                        <TextInput
-                                            ref={(ref) => inputRefs.current.salary = ref}
-                                            value={salary}
-                                            onChangeText={text => {
-                                                setSalary(text);
-                                                setFormErrors({ ...formErrors, salary: '' });
+                                        <DropDownPicker
+                                            open={jobTypeOpen}
+                                            value={jobType}
+                                            items={jobTypeItems}
+                                            onOpen={() => setActiveDropdown('jobType')}
+                                            onClose={() => setActiveDropdown(null)}
+                                            setOpen={(open) => {
+                                                if (open) dismissDropdownsAndFocus();
+                                                setJobTypeOpen(open);
                                             }}
-                                            style={[
-                                                styles.input,
-                                                formErrors.salary ? styles.inputError : null
-                                            ]}
-                                            mode="outlined"
-                                            keyboardType="numeric"
-                                            outlineColor={formErrors.salary ? "#BE4145" : "#e0e0e0"}
-                                            activeOutlineColor="#BE4145"
-                                            theme={{
-                                                roundness: 8,
-                                                colors: {
-                                                    primary: '#444444',
-                                                    onSurfaceVariant: '#666666'
-                                                },
-                                                fonts: {
-                                                    regular: {
-                                                        fontFamily: 'Inter-Regular'
-                                                    }
+                                            setValue={(callback) => {
+                                                const value = callback(jobType);
+                                                setJobType(value);
+                                                if (value) {
+                                                    setFormErrors({ ...formErrors, jobType: '' });
                                                 }
                                             }}
-                                            placeholderTextColor="#666666"
-                                            maxLength={6}
+                                            placeholder="Select job type"
+                                            style={styles.dropdown}
+                                            dropDownContainerStyle={styles.dropdownList}
+                                            listMode="SCROLLVIEW"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                            textStyle={styles.dropdownText}
+                                            tickIconStyle={{ tintColor: "#BE4145" }}
                                         />
-                                        {formErrors.salary ? <Text style={styles.errorText}>{formErrors.salary}</Text> : null}
                                     </View>
-                                </View>
 
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Minimum Experience<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <DropDownPicker
-                                        open={experienceOpen}
-                                        value={experience}
-                                        items={ExperienceItems}
-                                        setOpen={(open) => {
-                                            if (open) dismissDropdownsAndFocus();
-                                            setExperienceOpen(open);
-                                        }}
-                                        setValue={setExperience}
-                                        placeholder="Minimum Experience"
-                                        style={styles.dropdown}
-                                        dropDownContainerStyle={styles.dropdownContainer}
-                                        listMode="SCROLLVIEW"
-                                        zIndex={3000}
-                                        zIndexInverse={5000}
-                                        placeholderStyle={styles.dropdownPlaceholder}
-                                        textStyle={styles.dropdownText}
-                                        tickIconStyle={{ tintColor: "#BE4145" }}
-
-                                    />
-                                </View>
-
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Job Description (JD)<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <TextInput
-                                        ref={(ref) => inputRefs.current.jd = ref}
-                                        value={jd}
-                                        onChangeText={(text) => {
-                                            setJd(text);
-                                            if (text) {
-                                                setFormErrors({ ...formErrors, jd: '' });
-                                            }
-                                        }}
-                                        style={[
-                                            styles.input,
-                                            styles.textArea,
-                                            { paddingVertical: 0, padding: 0 },
-                                            formErrors.jd ? styles.inputError : null
-                                        ]}
-                                        mode="outlined"
-                                        multiline
-                                        contentStyle={{ paddingVertical: 0 }}
-                                        numberOfLines={4}
-                                        outlineColor={"#e0e0e0"}
-                                        activeOutlineColor="#BE4145"
-                                        theme={{
-                                            roundness: 8,
-                                            colors: {
-                                                primary: '#444444',
-                                                onSurfaceVariant: '#666666'
-                                            },
-                                            fonts: {
-                                                regular: {
-                                                    fontFamily: 'Inter-Regular'
+                                    <View style={[styles.fieldWrapper, activeDropdown === 'shift' && { zIndex: 80 }]}>
+                                        <Text style={styles.label}>
+                                            Shift<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
+                                        <DropDownPicker
+                                            open={shiftOpen}
+                                            value={shift}
+                                            items={shiftItems}
+                                            onOpen={() => setActiveDropdown('shift')}
+                                            onClose={() => setActiveDropdown(null)}
+                                            setOpen={(open) => {
+                                                if (open) dismissDropdownsAndFocus();
+                                                setShiftOpen(open);
+                                            }}
+                                            setValue={(callback) => {
+                                                const value = callback(shift);
+                                                setShift(value);
+                                                if (value) {
+                                                    setFormErrors({ ...formErrors, shift: '' });
                                                 }
-                                            }
-                                        }}
-                                        placeholderTextColor="#666666"
-                                        onBlur={() => {
-                                            if (!jd) {
-                                                setFormErrors({ ...formErrors, jd: 'Job description is required' });
-                                            }
-                                        }}
-                                    />
-                                    {/* {formErrors.jd ? <Text style={styles.errorText}>{formErrors.jd}</Text> : null} */}
-                                </View>
+                                            }}
+                                            placeholder="Select shift"
+                                            style={styles.dropdown}
+                                            dropDownContainerStyle={styles.dropdownList}
+                                            listMode="SCROLLVIEW"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                            textStyle={styles.dropdownText}
+                                            tickIconStyle={{ tintColor: "#BE4145" }}
+                                        />
+                                    </View>
 
-                                <View style={styles.fieldWrapper}>
-                                    <Text style={styles.label}>
-                                        Number of Employees<Text style={styles.requiredStar}>*</Text>
-                                    </Text>
-                                    <TextInput
-                                        ref={(ref) => inputRefs.current.numEmployees = ref}
-                                        value={numEmployees}
-                                        onChangeText={handleNumEmployeesChange}
-                                        style={[
-                                            styles.input,
-                                            formErrors.numEmployees || numEmployeesError ? styles.inputError : null
-                                        ]}
-                                        mode="outlined"
-                                        keyboardType="numeric"
-                                        outlineColor={formErrors.numEmployees || numEmployeesError ? "#BE4145" : "#e0e0e0"}
-                                        activeOutlineColor="#BE4145"
-                                        theme={{
-                                            roundness: 8,
-                                            colors: {
-                                                primary: '#444444',
-                                                onSurfaceVariant: '#666666'
-                                            },
-                                            fonts: {
-                                                regular: {
-                                                    fontFamily: 'Inter-Regular'
+                                    <View style={[styles.fieldWrapper, activeDropdown === 'locationType' && { zIndex: 70 }]}>
+                                        <Text style={styles.label}>
+                                            Location Type<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
+                                        <DropDownPicker
+                                            open={locationTypeOpen}
+                                            value={locationType}
+                                            items={locationItems}
+                                            onOpen={() => setActiveDropdown('locationType')}
+                                            onClose={() => setActiveDropdown(null)}
+                                            setOpen={(open) => {
+                                                if (open) dismissDropdownsAndFocus();
+                                                setLocationTypeOpen(open);
+                                            }}
+                                            setValue={(callback) => {
+                                                const value = callback(locationType);
+                                                setLocationType(value);
+                                                if (value) {
+                                                    setFormErrors({ ...formErrors, locationType: '' });
                                                 }
-                                            }
-                                        }}
-                                        placeholderTextColor="#666666"
-                                        onBlur={() => {
-                                            if (!numEmployees) {
-                                                setFormErrors({ ...formErrors, numEmployees: 'Number of employees is required' });
-                                            } else {
-                                                setFormErrors({ ...formErrors, numEmployees: '' });
-                                            }
-                                        }}
-                                    />
-                                    {formErrors.numEmployees ? (
-                                        <Text style={styles.errorText}>{formErrors.numEmployees}</Text>
-                                    ) : numEmployeesError ? (
-                                        <Text style={styles.errorText}>{numEmployeesError}</Text>
-                                    ) : null}
-                                </View>
-                            </View>
-                        </>
-                    ) : (
-                        // Page 2 - Additional Details and Questions
-                        <>
-                            <View style={styles.inputContainer}>
-                                {/* Age Range - Only Min Age, Max Age removed */}
-                                <View style={styles.fieldWrapper}>
-                                    <View style={styles.rowContainer}>
-                                        <View style={styles.fullInputContainer}>
+                                            }}
+                                            placeholder="Select location type"
+                                            style={styles.dropdown}
+                                            dropDownContainerStyle={styles.dropdownList}
+                                            listMode="SCROLLVIEW"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                            textStyle={styles.dropdownText}
+                                            tickIconStyle={{ tintColor: "#BE4145" }}
+                                        />
+                                    </View>
+
+                                    <View style={[styles.salaryContainer, styles.fieldWrapper]}>
+                                        <View style={styles.dropdownWrapper}>
                                             <TextInput
-                                                ref={(ref) => inputRefs.current.minAge = ref}
-                                                label="Minimum Age (Optional)"
-                                                value={minAge}
-                                                onChangeText={setMinAge}
-                                                style={styles.input}
+                                                ref={(ref) => inputRefs.current.currency = ref}
+                                                label="Currency"
+                                                value={currencyItems.find(item => item.value === currency)?.label || currency}
+                                                style={[styles.input, styles.disabledInput]}
                                                 mode="outlined"
-                                                keyboardType="numeric"
+                                                editable={false}
+                                                disabled={true}
                                                 outlineColor="#e0e0e0"
                                                 activeOutlineColor="#BE4145"
-                                                maxLength={2}
                                                 theme={{
                                                     roundness: 8,
                                                     colors: {
@@ -1096,87 +1590,93 @@ const PostJobForm = ({ navigation }) => {
                                                 placeholderTextColor="#666666"
                                             />
                                         </View>
-                                    </View>
-                                </View>
-
-                                {/* Minimum Education */}
-                                <Text style={{ ...styles.label, marginBottom: -4 }}>
-                                    Minimum Education (Optional)
-                                </Text>
-                                <View style={styles.fieldWrapper}>
-                                    <DropDownPicker
-                                        open={minEducationOpen}
-                                        value={minEducation}
-                                        items={minEducationItems}
-                                        setOpen={(open) => {
-                                            if (open) dismissDropdownsAndFocus();
-                                            setMinEducationOpen(open);
-                                        }}
-                                        setValue={setMinEducation}
-                                        placeholder="Minimum Education Required"
-                                        style={styles.dropdown}
-                                        dropDownContainerStyle={styles.dropdownContainer}
-                                        listMode="SCROLLVIEW"
-                                        zIndex={6000}
-                                        zIndexInverse={1000}
-                                        placeholderStyle={styles.dropdownPlaceholder}
-                                        textStyle={styles.dropdownText}
-                                        tickIconStyle={{ tintColor: "#BE4145" }}
-
-                                    />
-                                </View>
-
-                                {/* Preferred Gender */}
-                                <Text style={{ ...styles.label, marginBottom: -4 }}>
-                                    Preferred Gender (Optional)
-                                </Text>
-                                <View style={styles.fieldWrapper}>
-                                    <DropDownPicker
-                                        open={prefGenderOpen}
-                                        value={prefGender}
-                                        items={genderItems}
-                                        setOpen={(open) => {
-                                            if (open) dismissDropdownsAndFocus();
-                                            setPrefGenderOpen(open);
-                                        }}
-                                        setValue={setPrefGender}
-                                        placeholder="Preferred Gender"
-                                        style={styles.dropdown}
-                                        dropDownContainerStyle={styles.dropdownContainer}
-                                        listMode="SCROLLVIEW"
-                                        zIndex={5000}
-                                        zIndexInverse={2000}
-                                        placeholderStyle={styles.dropdownPlaceholder}
-                                        textStyle={styles.dropdownText}
-                                        tickIconStyle={{ tintColor: "#BE4145" }}
-                                    />
-                                </View>
-
-
-
-                                {/* Screening Questions Section */}
-                                <Text style={styles.sectionTitle}>Screening Questions (Optional)</Text>
-                                <Text style={styles.sectionSubtitle}>Add up to 3 questions with Yes/No answers</Text>
-
-                                {questions.map((question, index) => (
-                                    <View key={index} style={styles.questionContainer}>
-                                        <View style={styles.questionHeader}>
-                                            <Text style={styles.questionNumber}>Question {index + 1}</Text>
-                                            {questions.length > 1 && (
-                                                <TouchableOpacity onPress={() => removeQuestion(index)} style={styles.removeButton}>
-                                                    <Ionicons name="close-circle" size={24} color="#BE4145" />
-                                                </TouchableOpacity>
-                                            )}
+                                        <View style={styles.salaryInputWrapper}>
+                                            <Text style={styles.label}>
+                                                Monthly Salary<Text style={styles.requiredStar}>*</Text>
+                                            </Text>
+                                            <TextInput
+                                                ref={(ref) => inputRefs.current.salary = ref}
+                                                value={salary}
+                                                onChangeText={text => {
+                                                    setSalary(text);
+                                                    setFormErrors({ ...formErrors, salary: '' });
+                                                }}
+                                                style={[
+                                                    styles.input,
+                                                    formErrors.salary ? styles.inputError : null
+                                                ]}
+                                                mode="outlined"
+                                                keyboardType="numeric"
+                                                outlineColor={formErrors.salary ? "#BE4145" : "#e0e0e0"}
+                                                activeOutlineColor="#BE4145"
+                                                theme={{
+                                                    roundness: 8,
+                                                    colors: {
+                                                        primary: '#444444',
+                                                        onSurfaceVariant: '#666666'
+                                                    },
+                                                    fonts: {
+                                                        regular: {
+                                                            fontFamily: 'Inter-Regular'
+                                                        }
+                                                    }
+                                                }}
+                                                placeholderTextColor="#666666"
+                                                maxLength={6}
+                                            />
+                                            {formErrors.salary ? <Text style={styles.errorText}>{formErrors.salary}</Text> : null}
                                         </View>
+                                    </View>
 
+                                    <View style={[styles.fieldWrapper, activeDropdown === 'experience' && { zIndex: 60 }]}>
+                                        <Text style={styles.label}>
+                                            Minimum Experience<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
+                                        <DropDownPicker
+                                            open={experienceOpen}
+                                            value={experience}
+                                            items={ExperienceItems}
+                                            onOpen={() => setActiveDropdown('experience')}
+                                            onClose={() => setActiveDropdown(null)}
+                                            setOpen={(open) => {
+                                                if (open) dismissDropdownsAndFocus();
+                                                setExperienceOpen(open);
+                                            }}
+                                            setValue={setExperience}
+                                            placeholder="Minimum Experience"
+                                            style={styles.dropdown}
+                                            dropDownContainerStyle={styles.dropdownContainer}
+                                            listMode="SCROLLVIEW"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                            textStyle={styles.dropdownText}
+                                            tickIconStyle={{ tintColor: "#BE4145" }}
+                                        />
+                                    </View>
+
+                                    <View style={styles.fieldWrapper}>
+                                        <Text style={styles.label}>
+                                            Job Description (JD)<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
                                         <TextInput
-                                            ref={(ref) => inputRefs.current[`question_${index}`] = ref}
-                                            label="Question"
-                                            value={question.question}
-                                            onChangeText={(text) => updateQuestion(index, 'question', text)}
-                                            style={styles.input}
+                                            ref={(ref) => inputRefs.current.jd = ref}
+                                            value={jd}
+                                            onChangeText={(text) => {
+                                                setJd(text);
+                                                if (text) {
+                                                    setFormErrors({ ...formErrors, jd: '' });
+                                                }
+                                            }}
+                                            style={[
+                                                styles.input,
+                                                styles.textArea,
+                                                { paddingVertical: 0, padding: 0 },
+                                                formErrors.jd ? styles.inputError : null
+                                            ]}
                                             mode="outlined"
-                                            outlineColor="#e0e0e0"
+                                            multiline
+                                            contentStyle={{ paddingVertical: 0 }}
+                                            numberOfLines={4}
+                                            outlineColor={"#e0e0e0"}
                                             activeOutlineColor="#BE4145"
                                             theme={{
                                                 roundness: 8,
@@ -1192,118 +1692,310 @@ const PostJobForm = ({ navigation }) => {
                                             }}
                                             placeholderTextColor="#666666"
                                         />
+                                    </View>
 
-                                        <View style={styles.answerContainer}>
-                                            <Text style={styles.answerLabel}>Expected Answer</Text>
-                                            <View style={styles.answerButtons}>
-                                                <TouchableOpacity
-                                                    style={[
-                                                        styles.answerButton,
-                                                        question.correctAnswer === 'Yes' && styles.selectedAnswerButton
-                                                    ]}
-                                                    onPress={() => {
-                                                        dismissDropdownsAndFocus();
-                                                        updateQuestion(index, 'correctAnswer', 'Yes');
+                                    <View style={styles.fieldWrapper}>
+                                        <Text style={styles.label}>
+                                            Number of Employees<Text style={styles.requiredStar}>*</Text>
+                                        </Text>
+                                        <TextInput
+                                            ref={(ref) => inputRefs.current.numEmployees = ref}
+                                            value={numEmployees}
+                                            onChangeText={handleNumEmployeesChange}
+                                            style={[
+                                                styles.input,
+                                                formErrors.numEmployees || numEmployeesError ? styles.inputError : null
+                                            ]}
+                                            mode="outlined"
+                                            keyboardType="numeric"
+                                            outlineColor={formErrors.numEmployees || numEmployeesError ? "#BE4145" : "#e0e0e0"}
+                                            activeOutlineColor="#BE4145"
+                                            theme={{
+                                                roundness: 8,
+                                                colors: {
+                                                    primary: '#444444',
+                                                    onSurfaceVariant: '#666666'
+                                                },
+                                                fonts: {
+                                                    regular: {
+                                                        fontFamily: 'Inter-Regular'
+                                                    }
+                                                }
+                                            }}
+                                            placeholderTextColor="#666666"
+                                        />
+                                        {formErrors.numEmployees ? (
+                                            <Text style={styles.errorText}>{formErrors.numEmployees}</Text>
+                                        ) : numEmployeesError ? (
+                                            <Text style={styles.errorText}>{numEmployeesError}</Text>
+                                        ) : null}
+                                    </View>
+                                </View>
+                            </>
+                        ) : (
+                            // Page 2 - Additional Details and Questions
+                            <>
+                                <View style={styles.inputContainer}>
+                                    <View style={styles.fieldWrapper}>
+                                        <View style={styles.rowContainer}>
+                                            <View style={styles.fullInputContainer}>
+                                                <TextInput
+                                                    ref={(ref) => inputRefs.current.minAge = ref}
+                                                    label="Minimum Age (Optional)"
+                                                    value={minAge}
+                                                    onChangeText={setMinAge}
+                                                    style={styles.input}
+                                                    mode="outlined"
+                                                    keyboardType="numeric"
+                                                    outlineColor="#e0e0e0"
+                                                    activeOutlineColor="#BE4145"
+                                                    maxLength={2}
+                                                    theme={{
+                                                        roundness: 8,
+                                                        colors: {
+                                                            primary: '#444444',
+                                                            onSurfaceVariant: '#666666'
+                                                        },
+                                                        fonts: {
+                                                            regular: {
+                                                                fontFamily: 'Inter-Regular'
+                                                            }
+                                                        }
                                                     }}
-                                                >
-                                                    <Text style={[
-                                                        styles.answerButtonText,
-                                                        question.correctAnswer === 'Yes' && styles.selectedAnswerText
-                                                    ]}>Yes</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity
-                                                    style={[
-                                                        styles.answerButton,
-                                                        question.correctAnswer === 'No' && styles.selectedAnswerButton
-                                                    ]}
-                                                    onPress={() => {
-                                                        dismissDropdownsAndFocus();
-                                                        updateQuestion(index, 'correctAnswer', 'No');
-                                                    }}
-                                                >
-                                                    <Text style={[
-                                                        styles.answerButtonText,
-                                                        question.correctAnswer === 'No' && styles.selectedAnswerText
-                                                    ]}>No</Text>
-                                                </TouchableOpacity>
+                                                    placeholderTextColor="#666666"
+                                                />
                                             </View>
                                         </View>
                                     </View>
-                                ))}
 
-                                {questions.length < 3 && (
-                                    <TouchableOpacity
-                                        style={styles.addQuestionButton}
-                                        onPress={() => {
-                                            dismissDropdownsAndFocus();
-                                            addQuestion();
-                                        }}
-                                    >
-                                        <Ionicons name="add-circle-outline" size={20} color="#BE4145" />
-                                        <Text style={styles.addQuestionText}>Add Another Question</Text>
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-                        </>
+                                    <View style={[styles.fieldWrapper, activeDropdown === 'minEducation' && { zIndex: 100 }]}>
+                                        <Text style={{ ...styles.label, marginBottom: -4 }}>
+                                            Minimum Education (Optional)
+                                        </Text>
+                                        <DropDownPicker
+                                            open={minEducationOpen}
+                                            value={minEducation}
+                                            items={minEducationItems}
+                                            onOpen={() => setActiveDropdown('minEducation')}
+                                            onClose={() => setActiveDropdown(null)}
+                                            setOpen={(open) => {
+                                                if (open) dismissDropdownsAndFocus();
+                                                setMinEducationOpen(open);
+                                            }}
+                                            setValue={setMinEducation}
+                                            placeholder="Minimum Education Required"
+                                            style={styles.dropdown}
+                                            dropDownContainerStyle={styles.dropdownContainer}
+                                            listMode="SCROLLVIEW"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                            textStyle={styles.dropdownText}
+                                            tickIconStyle={{ tintColor: "#BE4145" }}
+                                        />
+                                    </View>
+
+                                    <View style={[styles.fieldWrapper, activeDropdown === 'prefGender' && { zIndex: 90 }]}>
+                                        <Text style={{ ...styles.label, marginBottom: -4 }}>
+                                            Preferred Gender (Optional)
+                                        </Text>
+                                        <DropDownPicker
+                                            open={prefGenderOpen}
+                                            value={prefGender}
+                                            items={genderItems}
+                                            onOpen={() => setActiveDropdown('prefGender')}
+                                            onClose={() => setActiveDropdown(null)}
+                                            setOpen={(open) => {
+                                                if (open) dismissDropdownsAndFocus();
+                                                setPrefGenderOpen(open);
+                                            }}
+                                            setValue={setPrefGender}
+                                            placeholder="Preferred Gender"
+                                            style={styles.dropdown}
+                                            dropDownContainerStyle={styles.dropdownContainer}
+                                            listMode="SCROLLVIEW"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                            textStyle={styles.dropdownText}
+                                            tickIconStyle={{ tintColor: "#BE4145" }}
+                                        />
+                                    </View>
+
+                                    <Text style={styles.sectionTitle}>Screening Questions (Optional)</Text>
+                                    <Text style={styles.sectionSubtitle}>Add up to 3 questions with Yes/No answers</Text>
+
+                                    {questions.map((question, index) => (
+                                        <View key={index} style={styles.questionContainer}>
+                                            <View style={styles.questionHeader}>
+                                                <Text style={styles.questionNumber}>Question {index + 1}</Text>
+                                                {questions.length > 1 && (
+                                                    <TouchableOpacity onPress={() => removeQuestion(index)} style={styles.removeButton}>
+                                                        <Ionicons name="close-circle" size={24} color="#BE4145" />
+                                                    </TouchableOpacity>
+                                                )}
+                                            </View>
+
+                                            <TextInput
+                                                ref={(ref) => inputRefs.current[`question_${index}`] = ref}
+                                                label="Question"
+                                                value={question.question}
+                                                onChangeText={(text) => updateQuestion(index, 'question', text)}
+                                                style={styles.input}
+                                                mode="outlined"
+                                                outlineColor="#e0e0e0"
+                                                activeOutlineColor="#BE4145"
+                                                theme={{
+                                                    roundness: 8,
+                                                    colors: {
+                                                        primary: '#444444',
+                                                        onSurfaceVariant: '#666666'
+                                                    },
+                                                    fonts: {
+                                                        regular: {
+                                                            fontFamily: 'Inter-Regular'
+                                                        }
+                                                    }
+                                                }}
+                                                placeholderTextColor="#666666"
+                                            />
+
+                                            <View style={styles.answerContainer}>
+                                                <Text style={styles.answerLabel}>Expected Answer</Text>
+                                                <View style={styles.answerButtons}>
+                                                    <TouchableOpacity
+                                                        style={[
+                                                            styles.answerButton,
+                                                            question.correctAnswer === 'Yes' && styles.selectedAnswerButton
+                                                        ]}
+                                                        onPress={() => {
+                                                            dismissDropdownsAndFocus();
+                                                            updateQuestion(index, 'correctAnswer', 'Yes');
+                                                        }}
+                                                    >
+                                                        <Text style={[
+                                                            styles.answerButtonText,
+                                                            question.correctAnswer === 'Yes' && styles.selectedAnswerText
+                                                        ]}>Yes</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        style={[
+                                                            styles.answerButton,
+                                                            question.correctAnswer === 'No' && styles.selectedAnswerButton
+                                                        ]}
+                                                        onPress={() => {
+                                                            dismissDropdownsAndFocus();
+                                                            updateQuestion(index, 'correctAnswer', 'No');
+                                                        }}
+                                                    >
+                                                        <Text style={[
+                                                            styles.answerButtonText,
+                                                            question.correctAnswer === 'No' && styles.selectedAnswerText
+                                                        ]}>No</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    ))}
+
+                                    {questions.length < 3 && (
+                                        <TouchableOpacity
+                                            style={styles.addQuestionButton}
+                                            onPress={() => {
+                                                dismissDropdownsAndFocus();
+                                                addQuestion();
+                                            }}
+                                        >
+                                            <Ionicons name="add-circle-outline" size={20} color="#BE4145" />
+                                            <Text style={styles.addQuestionText}>Add Another Question</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                            </>
+                        )}
+                    </View>
+                </ScrollView>
+
+                <View style={styles.stickyButtonContainer}>
+                    {currentPage === 1 ? (
+                        <TouchableOpacity
+                            style={[styles.saveButton, !isPageOneValid() && styles.saveButtonDisabled]}
+                            onPress={handleNext}
+                            disabled={!isPageOneValid()}
+                        >
+                            <Text style={styles.saveButtonText}>Next</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={{ flexDirection: 'row', gap: 8 }}>
+                            <TouchableOpacity
+                                style={[styles.saveButton, { flex: 2 }]}
+                                onPress={() => {
+                                    dismissDropdownsAndFocus();
+                                    handlepostJob();
+                                }}
+                            >
+                                <Text style={styles.saveButtonText}>{jobId ? 'Update Job' : 'Post Job'}</Text>
+                            </TouchableOpacity>
+                        </View>
                     )}
                 </View>
-            </ScrollView>
-            {/* Sticky Button Container */}
-            <View style={styles.stickyButtonContainer}>
-                {currentPage === 1 ? (
-                    <TouchableOpacity
-                        style={[styles.saveButton, !isPageOneValid() && styles.saveButtonDisabled]}
-                        onPress={handleNext}
-                        disabled={!isPageOneValid()}
-                    >
-                        {
-                            // console.log("Current Page after next :", currentPage)
 
-                        }
-                        <Text style={styles.saveButtonText}>Next</Text>
-                    </TouchableOpacity>
-                ) : (
-                    <View style={{ flexDirection: 'row', gap: 8 }}>
-                        {/* <TouchableOpacity
-                            style={[styles.backButton, { flex: 1 }]}
-                            onPress={() => {
-                                dismissDropdownsAndFocus();
-                                handleBack();
-                            }}
-                        >
-                            <Text style={styles.backButtonText}>Back</Text>
-                        </TouchableOpacity> */}
-                        <TouchableOpacity
-                            style={[styles.saveButton, { flex: 2 }]}
-                            onPress={() => {
-                                dismissDropdownsAndFocus();
-                                handlepostJob();
-                            }}
-                        >
-                            <Text style={styles.saveButtonText}>{jobId ? 'Update Job' : 'Post Job'}</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+                <CustomAlert
+                    visible={alertVisible}
+                    title={alertTitle}
+                    message={alertMessage}
+                    type={alertType}
+                    onClose={() => setAlertVisible(false)}
+                    onConfirm={alertOnConfirm ? () => { setAlertVisible(false); alertOnConfirm(); } : () => setAlertVisible(false)}
+                    showCancel={alertShowCancel}
+                />
             </View>
-            <CustomAlert
-                visible={alertVisible}
-                title={alertTitle}
-                message={alertMessage}
-                type={alertType}
-                onClose={() => setAlertVisible(false)}
-                onConfirm={alertOnConfirm ? () => { setAlertVisible(false); alertOnConfirm(); } : () => setAlertVisible(false)}
-                showCancel={alertShowCancel}
-            // showButton={alertTitle !== 'Success'}
-            />
-        </>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    outerBox: {
+        flex: 1,
+        flexDirection: 'row', // This is the most important style
+        backgroundColor: '#f4f2ee',
+    },
+    containerWeb: {
+        flex: 1,
+        backgroundColor: '#f4f2ee',
+        // paddingLeft: 150, // This should match the width of your LeftNav.js
+        marginHorizontal: 25,
+        borderColor: "#e0e0e0",
+        borderWidth: 1,
+    },
+    manualHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center', // This centers the title container
+        backgroundColor: '#ffffff', // White background
+        height: 56, // A standard header height
+        paddingHorizontal: 16,
+        borderBottomWidth: 1, // Creates the subtle separator line
+        borderBottomColor: '#e0e0e0', // Light gray color for the line
+    },
+    backButton: {
+        position: 'absolute', // Position it independently of the title
+        left: 16,
+        top: 0,
+        bottom: 0,
+        justifyContent: 'center', // Center the icon vertically
+    },
+    headerTitleContainer: {
+        flex: 1,
+        alignItems: 'center', // Center title horizontally
+        justifyContent: 'center',
+    },
+    headerTitle: {
+        color: '#333333', // Dark text color
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 18,
+    },
     container: {
         flex: 1,
-        backgroundColor: '#faf7f2',
-        marginTop: 0
+        backgroundColor: '#f4f2ee',
+        marginTop: 0,
+        zIndex: undefined,
     },
     contentContainer: {
         padding: 24,
@@ -1375,7 +2067,7 @@ const styles = StyleSheet.create({
         borderColor: '#e4e4e4',
         // marginTop: 4,.
         marginBottom: -2,
-        zIndex: 10000, // Ensure dropdown appears above other elements
+        // zIndex: 10000, // Ensure dropdown appears above other elements
     },
     dropdownList: {
         borderColor: '#e0e0e0',
@@ -1384,7 +2076,7 @@ const styles = StyleSheet.create({
 
         // marginTop: 4,.
         marginBottom: -2,
-        zIndex: 10000, // Ensure dropdown appears above other elements
+        // zIndex: 10000, // Ensure dropdown appears above other elements
     },
     dropdownPlaceholder: {
         color: '#b4b4b4',
@@ -1576,16 +2268,16 @@ const styles = StyleSheet.create({
         marginTop: 24,
         marginBottom: 12,
     },
-    backButton: {
-        flex: 1,
-        backgroundColor: '#ffffff',
-        borderWidth: 1,
-        borderColor: '#BE4145',
-        borderRadius: 8,
-        paddingVertical: 16,
-        alignItems: 'center',
-        marginRight: 8,
-    },
+    // backButton: {
+    //     flex: 1,
+    //     backgroundColor: '#ffffff',
+    //     borderWidth: 1,
+    //     borderColor: '#BE4145',
+    //     borderRadius: 8,
+    //     paddingVertical: 16,
+    //     alignItems: 'center',
+    //     marginRight: 8,
+    // },
     backButtonText: {
         color: '#BE4145',
         fontSize: 16,
@@ -1609,7 +2301,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         marginTop: 0,
         // padding: ,
-        // zIndex: 1, // Ensure dropdowns appear above other elements
+        zIndex: undefined, // Ensure dropdowns appear above other elements
     },
     stickyButtonContainer: {
         position: 'absolute',

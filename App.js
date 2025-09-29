@@ -1,93 +1,72 @@
-// import React from 'react';
-// import { useFonts } from 'expo-font';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { Roboto_500Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
-// import { Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
-// import AppRouter from './AppRoutes';
-// import { AuthProvider } from './utils/AuthContext';
-// import { Text, TextInput, LogBox, PixelRatio } from 'react-native';
-// import { SafeAreaProvider } from 'react-native-safe-area-context';
-// import WebLayout from './WebLayout';
-
-// export default function App() {
-//   let [fontsLoaded] = useFonts({
-//     RobotoRegular: Roboto_500Regular,
-//     RobotoBold: Roboto_700Bold,
-//     PoppinsRegular: Poppins_400Regular,
-//     PoppinsBold: Poppins_700Bold,
-//   });
-
-//   if (Text.defaultProps == null) Text.defaultProps = {};
-//   Text.defaultProps.allowFontScaling = false;
-
-//   if (TextInput.defaultProps == null) TextInput.defaultProps = {};
-//   TextInput.defaultProps.allowFontScaling = false;
-
-//   LogBox.ignoreLogs(['Warning:']);
-
-//   if (__DEV__) {
-//     console.log('Pixel Ratio:', PixelRatio.get());
-//     console.log('Font Scale:', PixelRatio.getFontScale());
-//   }
-
-//   if (!__DEV__) {
-//     Math.random = () => 0.5;
-//   }
-
-//   return (
-//     <SafeAreaProvider>
-//       <AuthProvider>
-//         <NavigationContainer>
-//           <WebLayout>
-//             <AppRouter />
-//           </WebLayout>
-//         </NavigationContainer>
-//       </AuthProvider>
-//     </SafeAreaProvider>
-//   );
-// }
-
-
-
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Text, TextInput, LogBox } from 'react-native';
 import { AuthProvider } from './utils/AuthContext';
 import AppRouter from './AppRoutes';
 import { useDeviceType } from './utils/detectDeviceHook';
 import UnsupportedDeviceScreen from './pages/unsupportedDevice';
-import WebLayout from './WebLayout'; // Import your modified WebLayout
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-// Import NavigationContainer here
 import { NavigationContainer } from '@react-navigation/native';
+
+// --- FONT IMPORTS ---
+import { useFonts } from 'expo-font';
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import { Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+
 
 const AppContent = () => {
   const { isDesktop, isMobileOrTablet } = useDeviceType();
 
   if (Platform.OS === 'web') {
     if (isDesktop) {
-      // On desktop, show the router inside the layout
-      return (
-        // <WebLayout>
-          <AppRouter />
-        // </WebLayout>
-      );
+      return <AppRouter />;
     }
     if (isMobileOrTablet) {
-      // On mobile/tablet web, show the unsupported screen
       return <UnsupportedDeviceScreen />;
     }
   }
 
-  // For native platforms, just show the router
   return <AppRouter />;
 };
 
 export default function App() {
+  // --- LOAD FONTS ---
+  const [fontsLoaded] = useFonts({
+    'Inter-Regular': Inter_400Regular,
+    'Inter-Medium': Inter_500Medium,
+    'Inter-SemiBold': Inter_600SemiBold,
+    'Montserrat-Regular': Montserrat_400Regular,
+    'Montserrat-SemiBold': Montserrat_600SemiBold,
+    'Montserrat-Bold': Montserrat_700Bold,
+  });
+
+  // Return null or a loading screen until fonts are loaded
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  // --- IGNORE LOGS & SET DEFAULTS (Optional but good practice) ---
+  if (Text.defaultProps == null) Text.defaultProps = {};
+  Text.defaultProps.allowFontScaling = false;
+  if (TextInput.defaultProps == null) TextInput.defaultProps = {};
+  TextInput.defaultProps.allowFontScaling = false;
+  LogBox.ignoreLogs(['Warning:']);
+
+  // --- ADD THIS BLOCK ---
+  // This injects a global CSS style on the web to remove the focus outline.
+  if (Platform.OS === 'web') {
+    const style = document.createElement('style');
+    style.textContent = `
+    *:focus {
+      outline: none !important;
+    }
+  `;
+    document.head.append(style);
+  }
+  // --- END OF BLOCK ---
+
   return (
-    // SafeAreaProvider should be at the very top
     <SafeAreaProvider>
       <AuthProvider>
-        {/* NavigationContainer wraps everything */}
         <NavigationContainer>
           <AppContent />
         </NavigationContainer>
@@ -95,4 +74,3 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
-

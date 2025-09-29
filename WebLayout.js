@@ -14,7 +14,6 @@ const WebLayout = ({ children }) => {
   // On web, we wrap the app in a centered, phone-sized container.
   return (
     <View style={styles.outerContainer}>
-      <LeftNav activeuser={"employer"} />
       <View style={styles.innerContainer}>
         {children}
       </View>

@@ -318,6 +318,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     backgroundColor: '#f4f2ee', // base color change from f9f9f9 to FDF7F2 for consistency
+    borderColor: "#e0e0e0",
+    borderWidth: 1,
   },
   topContainer: {
     marginTop: 120,

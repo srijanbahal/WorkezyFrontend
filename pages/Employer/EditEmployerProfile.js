@@ -8,6 +8,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { getProfileDetails, updateProfile, uploadImage, uploadDocument, requestOTP, verifyOTP, checkMobileExists } from '../../utils/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomAlert from '../../components/CustomAlert';
+import LeftNav from '../../component/LeftNav';
 
 const EditEmployerProfile = ({ route }) => {
   // ...existing code...
@@ -514,7 +515,7 @@ const EditEmployerProfile = ({ route }) => {
 
     console.log("Verifying OTP:", enteredOTP);
     setIsLoading(true);
-    
+
     try {
       const response = await verifyOTP({
         mobile: newPhoneNumber,
@@ -532,7 +533,7 @@ const EditEmployerProfile = ({ route }) => {
         showAlert('Success', 'Phone number verified successfully', 'success');
         setTimeout(() => hideAlert(), 1000);
       } else {
-        showAlert('Error','Invalid OTP. Please try again.', 'error');
+        showAlert('Error', 'Invalid OTP. Please try again.', 'error');
         setTimeout(() => hideAlert(), 1000);
       }
     } catch (error) {
@@ -545,7 +546,7 @@ const EditEmployerProfile = ({ route }) => {
     }
 
   };
-  
+
   // Handle Form Submission
   const handleSubmit = async () => {
     if (!isPhoneVerified && isEditingPhone) {
@@ -610,11 +611,30 @@ const EditEmployerProfile = ({ route }) => {
   };
 
   // 2. Choose the container component based on the platform
-    // const ContentContainer = Platform.OS === 'web' ? View : ScrollView;
-    
+  // const ContentContainer = Platform.OS === 'web' ? View : ScrollView;
+
+
+  const handleBack = () => {
+    navigation.goBack();
+  }
   return (
-    <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <View style={{ flex: 1, position: 'relative' }}>
+    // <TouchableWithoutFeedback onPress={handleOutsidePress}>
+    <View style={styles.outerBox}>
+      <LeftNav activeuser={"employer"} />
+
+      <View style={styles.containerWeb}>
+        {/* --- THIS IS YOUR NEW MANUAL HEADER --- */}
+        <View style={styles.manualHeader}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#333" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>
+            Edit Employer Profile
+          </Text>
+        </View>
+        {/* --- END OF MANUAL HEADER --- */}
+
+
         <ScrollView
           style={styles.container}
           contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
@@ -629,7 +649,10 @@ const EditEmployerProfile = ({ route }) => {
           </View>
 
           {/* Personal Details Section */}
-          <View style={styles.sectionContainer}>
+          <View style={[
+            styles.sectionContainer,
+            (activeDropdown === 'gender' || activeDropdown === 'designation') && { zIndex: 100 }
+          ]}>
             <Text style={styles.sectionTitle1}>Personal Details</Text>
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Full Name</Text>
@@ -688,7 +711,7 @@ const EditEmployerProfile = ({ route }) => {
               <TextInput
                 style={[
                   styles.input,
-                  { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40 , color: isEditingPhone && !showOtpInput ? '#333333' : '#999999' },
+                  { backgroundColor: isEditingPhone && !showOtpInput ? '#ffffff' : '#f5f5f5', paddingRight: 40, color: isEditingPhone && !showOtpInput ? '#333333' : '#999999' },
                   // Add error style if needed
                   // (add error state if you want)
                   // { paddingRight: 40 }
@@ -775,50 +798,61 @@ const EditEmployerProfile = ({ route }) => {
               </View>
             )}
 
-            {/* Gender Dropdown */}
+
+            {/* // Gender Dropdown */}
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Gender</Text>
               <Text style={styles.requiredStar}>*</Text>
             </View>
-            <View >
+            {/* Add the dynamic style to this View */}
+            <View style={activeDropdown === 'gender' && { zIndex: 100 }}>
               <DropDownPicker
                 open={activeDropdown === 'gender'}
                 value={formData.gender}
                 items={genderItems}
-                setOpen={(isOpen) => { setOpenGender(isOpen); setActiveDropdown(isOpen ? 'gender' : null); }}
+                setOpen={(isOpen) => {
+                  setOpenGender(isOpen);
+                  setActiveDropdown(isOpen ? 'gender' : null);
+                }}
                 setValue={(callback) => handleChange('gender', callback(formData.gender))}
                 setItems={setGenderItems}
                 placeholder=""
                 style={styles.dropdown}
                 dropDownContainerStyle={styles.dropdownContainer}
                 listMode="SCROLLVIEW"
-                zIndex={1010}
+                // zIndex and zIndexInverse are no longer the primary solution, 
+                // but can be kept for inner stacking if needed.
+                // The parent zIndex is what solves the overlap.
+                zIndex={4010}
                 zIndexInverse={1000}
                 tickIconStyle={{ tintColor: "#BE4145" }}
                 closeOnBackPressed={true}
               />
             </View>
-            {/* Add error text if needed */}
 
             {/* Designation Dropdown */}
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Designation</Text>
               <Text style={styles.requiredStar}>*</Text>
             </View>
-            <View >
+            {/* Add the dynamic style to this View as well */}
+            <View style={activeDropdown === 'designation' && { zIndex: 100 }}>
               <DropDownPicker
                 open={activeDropdown === 'designation'}
                 value={formData.designation}
                 items={designationItems}
-                setOpen={(isOpen) => { setOpenDesignation(isOpen); setActiveDropdown(isOpen ? 'designation' : null); }}
+                setOpen={(isOpen) => {
+                  setOpenDesignation(isOpen);
+                  setActiveDropdown(isOpen ? 'designation' : null);
+                }}
                 setValue={(callback) => handleChange('designation', callback(formData.designation))}
                 setItems={setDesignationItems}
                 placeholder="Select designation"
                 style={styles.dropdown}
                 dropDownContainerStyle={styles.dropdownContainer}
                 listMode="SCROLLVIEW"
-                zIndex={1000}
-                zIndexInverse={1010}
+                // zIndex={4000}
+                // zIndexInverse={1010}
                 tickIconStyle={{ tintColor: "#BE4145" }}
               />
             </View>
@@ -1114,18 +1148,64 @@ const EditEmployerProfile = ({ route }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
+    // </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
+  outerBox: {
+    flex: 1,
+    flexDirection: 'row', // This is the most important style
+    backgroundColor: '#f4f2ee',
+  },
+  containerWeb: {
+    flex: 1,
+    position: 'relative',
+    backgroundColor: '#f4f2ee',
+    // paddingLeft: 150, // This should match the width of your LeftNav.js
+    marginHorizontal: 25,
+    borderColor: "#e0e0e0",
+    borderWidth: 1,
+    // zIndex: undefined,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f4f2ee',
     padding: 16,
+    zIndex: undefined,
+  },
+
+  manualHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // This centers the title container
+    backgroundColor: '#ffffff', // White background
+    height: 56, // A standard header height
+    paddingHorizontal: 16,
+    borderBottomWidth: 1, // Creates the subtle separator line
+    borderBottomColor: '#e0e0e0', // Light gray color for the line
+  },
+  backButton: {
+    position: 'absolute', // Position it independently of the title
+    left: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center', // Center the icon vertically
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center', // Center title horizontally
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    color: '#333333', // Dark text color
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
   },
   contentContainer: {
     paddingBottom: 16,
+    // zIndex: undefined,
   },
   sectionContainer: {
     backgroundColor: '#ffffff',
@@ -1134,6 +1214,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    zIndex: undefined,
   },
   sectionTitle: {
     fontFamily: 'Montserrat-Bold',
@@ -1165,6 +1246,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 8,
+    // zIndex: undefined,
   },
   requiredStar: {
     color: "#BE4145",
@@ -1203,7 +1285,7 @@ const styles = StyleSheet.create({
     // marginTop: -8,
     // marginTop: 4,.
     marginBottom: 14,
-    zIndex: 10000, // Ensure dropdown appears above other elements
+    // zIndex: 10000, // Ensure dropdown appears above other elements
   },
   button: {
     backgroundColor: '#ffffff',
