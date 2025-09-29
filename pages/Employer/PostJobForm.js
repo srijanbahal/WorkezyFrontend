@@ -79,6 +79,9 @@ const PostJobForm = ({ navigation }) => {
     const [minEducation, setMinEducation] = useState('');
     const [prefGender, setPrefGender] = useState('');
     const [questions, setQuestions] = useState([{ question: '', correctAnswer: 'Yes' }]);
+    // ... after your other state declarations
+    const [initialFormData, setInitialFormData] = useState(null);
+    const [hasChanged, setHasChanged] = useState(false);
 
     // compute if all required fields on page 1 are filled
     const getDropdownValue = (val) => {
@@ -88,18 +91,8 @@ const PostJobForm = ({ navigation }) => {
         return '';
     };
 
-    const isPageOneValid = () => {
-        return (
-            searchText.trim() &&
-            getDropdownValue(jobType) &&
-            getDropdownValue(shift) &&
-            getDropdownValue(locationType) &&
-            salary.trim() &&
-            jd.trim() &&
-            getDropdownValue(jobCategory) &&
-            numEmployees.trim()
-        );
-    };
+    // PostJobForm.js
+
 
 
     // Add dropdown states for new fields
@@ -331,7 +324,99 @@ const PostJobForm = ({ navigation }) => {
 
 
 
-    //    Edit Job Functionality
+    // //    Edit Job Functionality
+    // useEffect(() => {
+    //     const fetchJobDetails = async () => {
+    //         if (jobId) {
+    //             try {
+    //                 const response = await getJobDetails(jobId);
+    //                 const jobData = response.data.job;
+
+    //                 console.log("Response data", response.data.job);
+
+    //                 // Debug log field values
+    //                 console.log("Job Title:", jobData.title);
+    //                 console.log("Job Category:", jobData.category);
+    //                 console.log("Shift:", jobData.shift, "Job Shift:", jobData.job_shift);
+    //                 console.log("No of Employees:", jobData.numEmployees, "Employees Count:", jobData.no_of_employees, "Count:", jobData.employees_count);
+
+    //                 // Set all form fields with existing data
+    //                 setJobTitle(jobData.title || '');
+    //                 // Set the search text to display job title
+    //                 setSearchText(jobData.title || '');
+
+    //                 setCity(jobData.city || '');
+    //                 setCountry(jobData.country || 'India');
+    //                 setJobType(jobData.job_type || null);
+
+    //                 // Fix for shift field - use job_shift instead of shift
+    //                 setShift(jobData.job_shift || jobData.shift || null);
+
+    //                 setLocationType(jobData.location_type || null);
+    //                 setSalary(jobData.salary?.toString() || '');
+    //                 setJd(jobData.description || '');
+
+    //                 // Fix for numEmployees field - check all possible field names
+    //                 setNumEmployees(
+    //                     jobData.numEmployees?.toString() ||
+    //                     jobData.employees_required?.toString() ||
+    //                     jobData.no_of_employees?.toString() ||
+    //                     jobData.employees_count?.toString() ||
+    //                     ''
+    //                 );
+
+    //                 setExperience(jobData.experience || null);
+
+    //                 // Set industry field
+    //                 setIndustry(jobData.industry || jobData.category || '');
+
+    //                 // Fix for job category field
+    //                 setJobCategory(jobData.jobCategory || null);
+    //                 console.log("Job Category set to:", jobData.jobCategory || null);
+    //                 // Set the new fields
+    //                 setMinAge(jobData.min_age?.toString() || '');
+    //                 setMinEducation(jobData.min_education || '');
+    //                 setPrefGender(jobData.preferred_gender || '');
+
+    //                 // Handle screening questions which might have a different format
+    //                 if (jobData.screening_questions && jobData.screening_questions.length > 0) {
+    //                     // Check the format of the screening questions
+    //                     const formattedQuestions = jobData.screening_questions.map(q => {
+    //                         // Check if the question is in the format with id, question_text, and ideal_answer
+    //                         if (q.question_text && (q.ideal_answer || q.ideal_answer === false)) {
+    //                             return {
+    //                                 question: q.question_text,
+    //                                 correctAnswer: q.ideal_answer?.toString().toLowerCase() === 'yes' ? 'Yes' : 'No'
+    //                             };
+    //                         }
+    //                         // If it's already in the format with question and correctAnswer
+    //                         else if (q.question && (q.correctAnswer || q.correctAnswer === false)) {
+    //                             return q;
+    //                         }
+    //                         // Fallback format
+    //                         else {
+    //                             return {
+    //                                 question: q.question || q.question_text || '',
+    //                                 correctAnswer: q.correctAnswer || q.ideal_answer || 'Yes'
+    //                             };
+    //                         }
+    //                     });
+
+    //                     setQuestions(formattedQuestions);
+    //                 }
+
+    //                 // Open the modal automatically for editing
+    //                 setModalVisible(true);
+    //             } catch (error) {
+    //                 console.error('Error fetching job details:', error);
+    //                 showCustomAlert('Error', 'Failed to load job details', false);
+    //             }
+    //         }
+    //     };
+    //     fetchJobDetails();
+    // }, [jobId]);
+
+    // --- REVISED USE-EFFECT #1: Handles both fetching data AND setting initial state for updates ---
     useEffect(() => {
         const fetchJobDetails = async () => {
             if (jobId) {
@@ -339,89 +424,54 @@ const PostJobForm = ({ navigation }) => {
                     const response = await getJobDetails(jobId);
                     const jobData = response.data.job;
 
-                    console.log("Response data", response.data.job);
-
-                    // Debug log field values
-                    console.log("Job Title:", jobData.title);
-                    console.log("Job Category:", jobData.category);
-                    console.log("Shift:", jobData.shift, "Job Shift:", jobData.job_shift);
-                    console.log("No of Employees:", jobData.numEmployees, "Employees Count:", jobData.no_of_employees, "Count:", jobData.employees_count);
-
-                    // Set all form fields with existing data
-                    setJobTitle(jobData.title || '');
-                    // Set the search text to display job title
+                    // --- Set the form state with fetched data (your existing code) ---
                     setSearchText(jobData.title || '');
-
                     setCity(jobData.city || '');
-                    setCountry(jobData.country || 'India');
                     setJobType(jobData.job_type || null);
-
-                    // Fix for shift field - use job_shift instead of shift
                     setShift(jobData.job_shift || jobData.shift || null);
-
                     setLocationType(jobData.location_type || null);
                     setSalary(jobData.salary?.toString() || '');
                     setJd(jobData.description || '');
-
-                    // Fix for numEmployees field - check all possible field names
-                    setNumEmployees(
-                        jobData.numEmployees?.toString() ||
-                        jobData.employees_required?.toString() ||
-                        jobData.no_of_employees?.toString() ||
-                        jobData.employees_count?.toString() ||
-                        ''
-                    );
-
+                    setNumEmployees(jobData.no_of_employees?.toString() || '');
                     setExperience(jobData.experience || null);
-
-                    // Set industry field
-                    setIndustry(jobData.industry || jobData.category || '');
-
-                    // Fix for job category field
+                    // The buggy field remains for now
                     setJobCategory(jobData.jobCategory || null);
-                    console.log("Job Category set to:", jobData.jobCategory || null);
-                    // Set the new fields
-                    setMinAge(jobData.min_age?.toString() || '');
-                    setMinEducation(jobData.min_education || '');
-                    setPrefGender(jobData.preferred_gender || '');
 
-                    // Handle screening questions which might have a different format
-                    if (jobData.screening_questions && jobData.screening_questions.length > 0) {
-                        // Check the format of the screening questions
-                        const formattedQuestions = jobData.screening_questions.map(q => {
-                            // Check if the question is in the format with id, question_text, and ideal_answer
-                            if (q.question_text && (q.ideal_answer || q.ideal_answer === false)) {
-                                return {
-                                    question: q.question_text,
-                                    correctAnswer: q.ideal_answer?.toString().toLowerCase() === 'yes' ? 'Yes' : 'No'
-                                };
-                            }
-                            // If it's already in the format with question and correctAnswer
-                            else if (q.question && (q.correctAnswer || q.correctAnswer === false)) {
-                                return q;
-                            }
-                            // Fallback format
-                            else {
-                                return {
-                                    question: q.question || q.question_text || '',
-                                    correctAnswer: q.correctAnswer || q.ideal_answer || 'Yes'
-                                };
-                            }
-                        });
+                    // --- THIS IS THE CRUCIAL PART ---
+                    // Capture the initial state *after* the form is populated
+                    const initialState = {
+                        searchText: jobData.title || '',
+                        city: jobData.city || '',
+                        jobType: jobData.job_type || null,
+                        shift: jobData.job_shift || jobData.shift || null,
+                        locationType: jobData.location_type || null,
+                        salary: jobData.salary?.toString() || '',
+                        jd: jobData.description || '',
+                        numEmployees: jobData.no_of_employees?.toString() || '',
+                        experience: jobData.experience || null,
+                        jobCategory: jobData.jobCategory || null
+                    };
+                    setInitialFormData(initialState);
 
-                        setQuestions(formattedQuestions);
-                    }
+                    // ... rest of your fetch logic (setting questions, etc.)
 
-                    // Open the modal automatically for editing
-                    setModalVisible(true);
                 } catch (error) {
                     console.error('Error fetching job details:', error);
-                    showCustomAlert('Error', 'Failed to load job details', false);
                 }
+            } else {
+                // --- THIS IS FOR A NEW JOB ---
+                // If there's no jobId, it's a new post, so capture the empty state
+                const initialState = {
+                    searchText: '', city: '', jobType: null, shift: null, locationType: null,
+                    salary: '', jd: '', numEmployees: '', experience: null, jobCategory: null
+                };
+                setInitialFormData(initialState);
             }
         };
+
         fetchJobDetails();
-    }, [jobId]);
+    }, [jobId]); // This hook now correctly depends on jobId
+
 
     // Automatically show modal when jobId is present
     useEffect(() => {
@@ -544,6 +594,52 @@ const PostJobForm = ({ navigation }) => {
 
     const [searchText, setSearchText] = useState('');
     const [filteredIndustries, setFilteredIndustries] = useState([]);
+
+    // Capture the initial state of the form on first load
+    useEffect(() => {
+        const initialState = {
+            searchText, city, jobType, shift, locationType,
+            salary, jd, numEmployees, experience, jobCategory
+        };
+        setInitialFormData(initialState);
+    }, []); // Empty dependency array ensures this runs only once
+
+    // PostJobForm.js
+
+    const isPageOneValid = () => {
+        return (
+            searchText.trim() !== '' &&
+            city.trim() !== '' &&
+            salary.trim() !== '' &&
+            jd.trim() !== '' &&
+            numEmployees.trim() !== '' &&
+            !!getDropdownValue(jobType) &&
+            !!getDropdownValue(shift) &&
+            !!getDropdownValue(locationType) &&
+            !!getDropdownValue(experience)
+            // The check for jobCategory is bypassed
+        );
+    };
+
+    // --- REVISED USE-EFFECT #2: This hook to detect changes is now correct and needs no modification ---
+    useEffect(() => {
+        if (!initialFormData) return;
+
+        const currentState = {
+            searchText, city, jobType, shift, locationType,
+            salary, jd, numEmployees, experience, jobCategory
+        };
+
+        if (JSON.stringify(currentState) !== JSON.stringify(initialFormData)) {
+            setHasChanged(true);
+        } else {
+            setHasChanged(false);
+        }
+    }, [
+        searchText, city, jobType, shift, locationType,
+        salary, jd, numEmployees, experience, jobCategory, initialFormData
+    ]);
+
 
     const handleSearch = (text) => {
         setSearchText(text);
@@ -1223,9 +1319,9 @@ const PostJobForm = ({ navigation }) => {
                 <View style={styles.stickyButtonContainer}>
                     {currentPage === 1 ? (
                         <TouchableOpacity
-                            style={[styles.saveButton, !isPageOneValid() && styles.saveButtonDisabled]}
+                            style={[styles.saveButton, (!isPageOneValid() || !hasChanged) && styles.saveButtonDisabled]}
                             onPress={handleNext}
-                            disabled={!isPageOneValid()}
+                            disabled={!isPageOneValid() || !hasChanged}
                         >
                             <Text style={styles.saveButtonText}>Next</Text>
                         </TouchableOpacity>
@@ -1288,11 +1384,15 @@ const styles = StyleSheet.create({
         top: 0,
         bottom: 0,
         justifyContent: 'center', // Center the icon vertically
+        zIndex: 10,
+        flex: 1,
     },
     headerTitleContainer: {
         flex: 1,
         alignItems: 'center', // Center title horizontally
         justifyContent: 'center',
+        zIndex: 1,
+        // backgroundColor: "#333",
     },
     headerTitle: {
         color: '#333333', // Dark text color
