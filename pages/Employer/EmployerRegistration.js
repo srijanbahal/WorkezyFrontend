@@ -953,179 +953,118 @@ const EmployerRegistration = ({ route }) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <View style={{ flex: 1, position: 'relative' }}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Section 1: Personal Details */}
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle1}>{isEditing ? 'Edit Personal Details' : 'Personal Details'}</Text>
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Full Name</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'fullName' && styles.inputFocused,
-                errors.fullName ? styles.inputError : null
-              ]}
-              value={formData.fullName}
-              onChangeText={(text) => handleChange('fullName', text)}
-              placeholder=""
-              onFocus={() => setFocusedInput('fullName')}
-              onBlur={() => setFocusedInput(null)}
-            />
-            {errors.fullName ? <Text style={styles.errorText}>{errors.fullName}</Text> : null}
-
-            <Text style={styles.label}>Email ID</Text>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'email' && styles.inputFocused,
-                errors.email ? styles.inputError : null
-              ]}
-              value={formData.email}
-              onChangeText={(text) => handleChange('email', text)}
-              keyboardType="email-address"
-              onFocus={() => setFocusedInput('email')}
-              onBlur={() => setFocusedInput(null)}
-            />
-            {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
-
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Phone Number</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <TextInput
-              style={[
-                styles.input,
-                { backgroundColor: "#fff", color: "#b4b4b4" }
-              ]}
-              value={formData.phone}
-              editable={false}
-              keyboardType="phone-pad"
-            />
-
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Gender</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <View >
-              <DropDownPicker
-                open={activeDropdown === 'gender'}
-                value={formData.gender}
-                items={genderItems}
-                setOpen={(isOpen) => { setOpenGender(isOpen); setActiveDropdown(isOpen ? 'gender' : null); }}
-                setValue={(callback) => handleChange('gender', callback(formData.gender))}
-                setItems={setGenderItems}
-                placeholder="Select Gender"
-                placeholderStyle={{
-                  color: "#b4b4b4",       // placeholder text color
-                  fontSize: 14,        // adjust font size
-                  fontStyle: "italic", // optional styling
-                }}
-                style={[styles.dropdown, errors.gender ? styles.inputError : null]}
-                dropDownContainerStyle={styles.dropdownContainer}
-                listMode="SCROLLVIEW"
-                zIndex={1002}
-                zIndexInverse={3000}
-                tickIconStyle={{ tintColor: "#BE4145" }}
-                closeOnBackPressed={true}
-              />
-            </View>
-            {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
-
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Designation</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <View >
-              <DropDownPicker
-                open={activeDropdown === 'designation'}
-                value={formData.designation}
-                items={designationItems}
-                setOpen={(isOpen) => { setDesignationOpen(isOpen); setActiveDropdown(isOpen ? 'designation' : null); }}
-                setValue={(callback) => handleChange('designation', callback(formData.designation))}
-                setItems={setDesignationItems}
-                placeholder="Select designation"
-                placeholderStyle={{
-                  color: "#b4b4b4",       // placeholder text color
-                  fontSize: 14,        // adjust font size
-                  fontStyle: "italic", // optional styling
-                }}
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownContainer}
-                listMode="SCROLLVIEW"
-                zIndex={1000}
-                zIndexInverse={1003}
-                tickIconStyle={{ tintColor: "#BE4145" }}
-              />
-            </View>
-            {errors.designation ? <Text style={styles.errorText}>{errors.designation}</Text> : null}
+    // <TouchableWithoutFeedback onPress={handleOutsidePress}>
+    <View style={{ flex: 1, position: 'relative' }}>
+      {/* Manual Header */}
+      <View style={styles.manualHeader}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#333333" />
+        </TouchableOpacity>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>
+            {/* {jobId ? 'Update Job' : 'Post a Job'} */}
+            Employer Registration
+          </Text>
+        </View>
+      </View>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
+        keyboardShouldPersistTaps="handled"
+        showsHorizontalScrollIndicator = {false}
+      >
+        {/* Section 1: Personal Details */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle1}>{isEditing ? 'Edit Personal Details' : 'Personal Details'}</Text>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Full Name</Text>
+            <Text style={styles.requiredStar}>*</Text>
           </View>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === 'fullName' && styles.inputFocused,
+              errors.fullName ? styles.inputError : null
+            ]}
+            value={formData.fullName}
+            onChangeText={(text) => handleChange('fullName', text)}
+            placeholder=""
+            onFocus={() => setFocusedInput('fullName')}
+            onBlur={() => setFocusedInput(null)}
+          />
+          {errors.fullName ? <Text style={styles.errorText}>{errors.fullName}</Text> : null}
 
-          {/* Section 2: Company Details */}
-          <View style={[styles.sectionContainer, { marginTop: 2 }]}>
-            <Text style={styles.sectionTitle}>Company Details</Text>
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Company Name</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'company' && styles.inputFocused,
-                errors.company ? styles.inputError : null
-              ]}
-              value={formData.company}
-              onChangeText={(text) => handleChange('company', text)}
-              onFocus={() => setFocusedInput('company')}
-              onBlur={() => setFocusedInput(null)}
-            />
-            {errors.company ? <Text style={styles.errorText}>{errors.company}</Text> : null}
+          <Text style={styles.label}>Email ID</Text>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === 'email' && styles.inputFocused,
+              errors.email ? styles.inputError : null
+            ]}
+            value={formData.email}
+            onChangeText={(text) => handleChange('email', text)}
+            keyboardType="email-address"
+            onFocus={() => setFocusedInput('email')}
+            onBlur={() => setFocusedInput(null)}
+          />
+          {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Number of Employees </Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Phone Number</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <TextInput
+            style={[
+              styles.input,
+              { backgroundColor: "#fff", color: "#b4b4b4" }
+            ]}
+            value={formData.phone}
+            editable={false}
+            keyboardType="phone-pad"
+          />
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Gender</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <View >
             <DropDownPicker
-              open={activeDropdown === 'companySize'}
-              value={formData.companySize}
-              items={companySizeItems}
-              setOpen={(isOpen) => { setCompanySizeOpen(isOpen); setActiveDropdown(isOpen ? 'companySize' : null); }}
-              setValue={(callback) => handleChange('companySize', callback(formData.companySize))}
-              setItems={setCompanySizeItems}
-              placeholder="Select company size"
+              open={activeDropdown === 'gender'}
+              value={formData.gender}
+              items={genderItems}
+              setOpen={(isOpen) => { setOpenGender(isOpen); setActiveDropdown(isOpen ? 'gender' : null); }}
+              setValue={(callback) => handleChange('gender', callback(formData.gender))}
+              setItems={setGenderItems}
+              placeholder="Select Gender"
               placeholderStyle={{
                 color: "#b4b4b4",       // placeholder text color
                 fontSize: 14,        // adjust font size
                 fontStyle: "italic", // optional styling
               }}
-              style={styles.dropdown}
+              style={[styles.dropdown, errors.gender ? styles.inputError : null]}
               dropDownContainerStyle={styles.dropdownContainer}
               listMode="SCROLLVIEW"
-              zIndex={1005}
-              zIndexInverse={2000}
+              zIndex={1002}
+              zIndexInverse={3000}
               tickIconStyle={{ tintColor: "#BE4145" }}
+              closeOnBackPressed={true}
             />
-            {errors.companySize ? <Text style={styles.errorText}>{errors.companySize}</Text> : null}
+          </View>
+          {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
 
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Industry</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Designation</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <View >
             <DropDownPicker
-              open={activeDropdown === 'industry'}
-              value={formData.industry}
-              items={industryItems}
-              setOpen={(isOpen) => { setIndustryOpen(isOpen); setActiveDropdown(isOpen ? 'industry' : null); }}
-              setValue={(callback) => handleChange('industry', callback(formData.industry))}
-              setItems={setIndustryItems}
-              placeholder="Select industry"
+              open={activeDropdown === 'designation'}
+              value={formData.designation}
+              items={designationItems}
+              setOpen={(isOpen) => { setDesignationOpen(isOpen); setActiveDropdown(isOpen ? 'designation' : null); }}
+              setValue={(callback) => handleChange('designation', callback(formData.designation))}
+              setItems={setDesignationItems}
+              placeholder="Select designation"
               placeholderStyle={{
                 color: "#b4b4b4",       // placeholder text color
                 fontSize: 14,        // adjust font size
@@ -1135,285 +1074,386 @@ const EmployerRegistration = ({ route }) => {
               dropDownContainerStyle={styles.dropdownContainer}
               listMode="SCROLLVIEW"
               zIndex={1000}
-              zIndexInverse={3000}
+              zIndexInverse={1003}
               tickIconStyle={{ tintColor: "#BE4145" }}
             />
-            {errors.industry ? <Text style={styles.errorText}>{errors.industry}</Text> : null}
-
-            {/* Rest of company details */}
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Founded In (year)</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'foundedIn' && styles.inputFocused,
-                errors.foundedIn ? styles.inputError : null
-              ]}
-              value={formData.foundedIn}
-              onChangeText={(text) => handleChange('foundedIn', text)}
-              keyboardType="numeric"
-              maxLength={4}
-              placeholder="YYYY"
-              onFocus={() => setFocusedInput('foundedIn')}
-              onBlur={() => {
-                setFocusedInput(null);
-                if (formData.foundedIn) {
-                  const validation = validateFoundedIn(formData.foundedIn);
-                  if (!validation.valid) {
-                    setErrors(prev => ({ ...prev, foundedIn: validation.message }));
-                  }
-                }
-              }}
-            />
-            {errors.foundedIn ? <Text style={styles.errorText}>{errors.foundedIn}</Text> : null}
-
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>City</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'city' && styles.inputFocused,
-                errors.city ? styles.inputError : null
-              ]}
-              value={formData.city}
-              onChangeText={(text) => handleChange('city', text)}
-              placeholder="Enter city name"
-              placeholderTextColor="#b4b4b4"
-              onFocus={() => setFocusedInput('city')}
-              onBlur={() => setFocusedInput(null)}
-            />
-            {errors.city ? <Text style={styles.errorText}>{errors.city}</Text> : null}
-
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>State</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            {/* {console.log("Rendering State Dropdown with value:", stateItems)} */}
-            <DropDownPicker
-              open={activeDropdown === 'state'}
-              value={formData.state}
-              items={stateItems}
-              setOpen={(isOpen) => { setOpenState(isOpen); setActiveDropdown(isOpen ? 'state' : null); }}
-              setValue={(callback) => handleChange('state', callback(formData.state))}
-              setItems={setStateItems}
-              placeholder="Select State"
-              style={styles.dropdown}
-              dropDownContainerStyle={styles.dropdownContainer}
-              zIndex={2001}
-              listMode="SCROLLVIEW"
-              placeholderStyle={{
-                color: "#b4b4b4",       // placeholder text color
-                fontSize: 14,        // adjust font size
-                fontStyle: "italic", // optional styling
-              }}
-              // textStyle={{ fontSize: 16, color: "#222" }}
-              tickIconStyle={{ tintColor: "#BE4145" }}
-
-            />
-
-            {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null}
-
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Country</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <TextInput
-              value={formData.country}
-              style={[
-                styles.input,
-                { backgroundColor: "#fff", color: "#b4b4b4" }
-              ]}
-              onChangeText={(text) => handleChange('country', text)}
-              editable={false}
-            />
-
-            <View style={styles.labelContainer}>
-              <Text style={styles.label}>Pincode</Text>
-              <Text style={styles.requiredStar}>*</Text>
-            </View>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'zipcode' && styles.inputFocused,
-                errors.zipcode ? styles.inputError : null
-              ]}
-              value={formData.zipcode}
-              onChangeText={(text) => handleChange('zipcode', text)}
-              keyboardType="numeric"
-              maxLength={6}
-              placeholder="6-digit pincode"
-              placeholderTextColor={"#b4b4b4"}
-              onFocus={() => setFocusedInput('zipcode')}
-              onBlur={() => {
-                setFocusedInput(null);
-                if (formData.zipcode) {
-                  const validation = validatePincode(formData.zipcode);
-                  if (!validation.valid) {
-                    setErrors(prev => ({ ...prev, zipcode: validation.message }));
-                  }
-                }
-              }}
-            />
-            {errors.zipcode ? <Text style={styles.errorText}>{errors.zipcode}</Text> : null}
-
-            <Text style={styles.label}>Company Social Media Link</Text>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'socialLinks' && styles.inputFocused,
-                errors.socialLinks ? styles.inputError : null
-              ]}
-              value={formData.socialLinks}
-              onChangeText={(text) => handleChange('socialLinks', text)}
-            />
-            {errors.socialLinks ? <Text style={styles.errorText}>{errors.socialLinks}</Text> : null}
           </View>
-
-          <View style={[styles.sectionContainer, { marginTop: 2 }]}>
-            <Text style={styles.sectionTitle}>Upload Documents</Text>
-            {/* PAN Card Upload */}
-            <View style={styles.uploadRow}>
-              <View style={{ width: '100%' }}>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>PAN Card</Text>
-                  <Text style={styles.requiredStar}>*</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.uploadButton}
-                  onPress={handlePanUpload}
-                  disabled={isPanUploading}
-                  activeOpacity={0.7}
-                >
-                  {isPanUploading ? (
-                    <ActivityIndicator size="small" color="#BE4145" />
-                  ) : (
-                    <>
-                      <Ionicons name="cloud-upload-outline" size={20} color="#BE4145" />
-                      <Text style={styles.uploadButtonText}>Upload PAN Card</Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-                {panStatusType === 'success' && (
-                  <Text style={styles.successText}>Document uploaded successfully</Text>
-                )}
-                {panStatusType === 'success' && panFileName ? (
-                  <Text style={styles.fileName}>{panFileName}</Text>
-                ) : null}
-                {panStatusType === 'error' && panStatus && (
-                  <Text style={styles.errorTextInline}>{panStatus}</Text>
-                )}
-              </View>
-            </View>
-            {errors.legalDocs && <Text style={styles.errorText}>{errors.legalDocs}</Text>}
-
-            {/* GST Certificate Upload */}
-            <View style={styles.uploadRow}>
-              <View style={{ width: '100%' }}>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>GST Certificate</Text>
-                  <Text style={styles.requiredStar}>*</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.uploadButton}
-                  onPress={handleGstUpload}
-                  disabled={isGstUploading}
-                  activeOpacity={0.7}
-                >
-                  {isGstUploading ? (
-                    <ActivityIndicator size="small" color="#BE4145" />
-                  ) : (
-                    <>
-                      <Ionicons name="cloud-upload-outline" size={20} color="#BE4145" />
-                      <Text style={styles.uploadButtonText}>Upload GST Certificate</Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-                {gstStatusType === 'success' && (
-                  <Text style={styles.successText}>Document uploaded successfully</Text>
-                )}
-                {gstStatusType === 'success' && gstFileName ? (
-                  <Text style={styles.fileName}>{gstFileName}</Text>
-                ) : null}
-                {gstStatusType === 'error' && gstStatus && (
-                  <Text style={styles.errorTextInline}>{gstStatus}</Text>
-                )}
-              </View>
-            </View>
-            {errors.personalDoc && <Text style={styles.errorText}>{errors.personalDoc}</Text>}
-
-            {/* Company Logo Upload */}
-            <View style={styles.uploadRow}>
-              <View style={{ width: '100%' }}>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>Company Logo</Text>
-                  <Text style={styles.requiredStar}>*</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.uploadButton}
-                  onPress={handleCompanyLogoPick}
-                  disabled={isCompanyLogoUploading}
-                  activeOpacity={0.7}
-                >
-                  {isCompanyLogoUploading ? (
-                    <ActivityIndicator size="small" color="#BE4145" />
-                  ) : (
-                    <>
-                      <Ionicons name="image" size={20} color="#BE4145" />
-                      <Text style={styles.uploadButtonText}>Upload Logo</Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-                {companyLogoStatusType === 'success' && (
-                  <Text style={styles.successText}>Image uploaded successfully</Text>
-                )}
-                {companyLogoStatusType === 'success' && companyLogoFileName ? (
-                  <Text style={styles.fileName}>{companyLogoFileName}</Text>
-                ) : null}
-                {companyLogoStatusType === 'error' && companyLogoStatus && (
-                  <Text style={styles.errorTextInline}>{companyLogoStatus}</Text>
-                )}
-              </View>
-            </View>
-            {errors.profileImage && <Text style={styles.errorText}>{errors.profileImage}</Text>}
-          </View>
-        </ScrollView>
-        {/* Sticky Submit/Update Button */}
-        <View style={styles.stickyButtonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              !isFormValid && styles.saveButtonDisabled
-            ]}
-            onPress={handleSubmit}
-            disabled={!isFormValid}
-          >
-            <Text style={styles.saveButtonText}>{isEditing ? 'Update Details' : 'Submit Details'}</Text>
-          </TouchableOpacity>
+          {errors.designation ? <Text style={styles.errorText}>{errors.designation}</Text> : null}
         </View>
-        {/* CustomAlert sticky at the bottom */}
-        <CustomAlert
-          visible={alertVisible}
-          title={alertTitle}
-          message={alertMessage}
-          type={alertType}
-          onClose={() => setAlertVisible(false)}
-          onConfirm={() => {
-            setAlertVisible(false);
-            if (alertOnConfirm) {
-              alertOnConfirm();
-            }
-          }}
-        />
+
+        {/* Section 2: Company Details */}
+        <View style={[styles.sectionContainer, { marginTop: 2 }]}>
+          <Text style={styles.sectionTitle}>Company Details</Text>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Company Name</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === 'company' && styles.inputFocused,
+              errors.company ? styles.inputError : null
+            ]}
+            value={formData.company}
+            onChangeText={(text) => handleChange('company', text)}
+            onFocus={() => setFocusedInput('company')}
+            onBlur={() => setFocusedInput(null)}
+          />
+          {errors.company ? <Text style={styles.errorText}>{errors.company}</Text> : null}
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Number of Employees </Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <DropDownPicker
+            open={activeDropdown === 'companySize'}
+            value={formData.companySize}
+            items={companySizeItems}
+            setOpen={(isOpen) => { setCompanySizeOpen(isOpen); setActiveDropdown(isOpen ? 'companySize' : null); }}
+            setValue={(callback) => handleChange('companySize', callback(formData.companySize))}
+            setItems={setCompanySizeItems}
+            placeholder="Select company size"
+            placeholderStyle={{
+              color: "#b4b4b4",       // placeholder text color
+              fontSize: 14,        // adjust font size
+              fontStyle: "italic", // optional styling
+            }}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            listMode="SCROLLVIEW"
+            zIndex={1005}
+            zIndexInverse={2000}
+            tickIconStyle={{ tintColor: "#BE4145" }}
+          />
+          {errors.companySize ? <Text style={styles.errorText}>{errors.companySize}</Text> : null}
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Industry</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <DropDownPicker
+            open={activeDropdown === 'industry'}
+            value={formData.industry}
+            items={industryItems}
+            setOpen={(isOpen) => { setIndustryOpen(isOpen); setActiveDropdown(isOpen ? 'industry' : null); }}
+            setValue={(callback) => handleChange('industry', callback(formData.industry))}
+            setItems={setIndustryItems}
+            placeholder="Select industry"
+            placeholderStyle={{
+              color: "#b4b4b4",       // placeholder text color
+              fontSize: 14,        // adjust font size
+              fontStyle: "italic", // optional styling
+            }}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            listMode="SCROLLVIEW"
+            zIndex={1000}
+            zIndexInverse={3000}
+            tickIconStyle={{ tintColor: "#BE4145" }}
+          />
+          {errors.industry ? <Text style={styles.errorText}>{errors.industry}</Text> : null}
+
+          {/* Rest of company details */}
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Founded In (year)</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === 'foundedIn' && styles.inputFocused,
+              errors.foundedIn ? styles.inputError : null
+            ]}
+            value={formData.foundedIn}
+            onChangeText={(text) => handleChange('foundedIn', text)}
+            keyboardType="numeric"
+            maxLength={4}
+            placeholder="YYYY"
+            onFocus={() => setFocusedInput('foundedIn')}
+            onBlur={() => {
+              setFocusedInput(null);
+              if (formData.foundedIn) {
+                const validation = validateFoundedIn(formData.foundedIn);
+                if (!validation.valid) {
+                  setErrors(prev => ({ ...prev, foundedIn: validation.message }));
+                }
+              }
+            }}
+          />
+          {errors.foundedIn ? <Text style={styles.errorText}>{errors.foundedIn}</Text> : null}
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>City</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === 'city' && styles.inputFocused,
+              errors.city ? styles.inputError : null
+            ]}
+            value={formData.city}
+            onChangeText={(text) => handleChange('city', text)}
+            placeholder="Enter city name"
+            placeholderTextColor="#b4b4b4"
+            onFocus={() => setFocusedInput('city')}
+            onBlur={() => setFocusedInput(null)}
+          />
+          {errors.city ? <Text style={styles.errorText}>{errors.city}</Text> : null}
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>State</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          {/* {console.log("Rendering State Dropdown with value:", stateItems)} */}
+          <DropDownPicker
+            open={activeDropdown === 'state'}
+            value={formData.state}
+            items={stateItems}
+            setOpen={(isOpen) => { setOpenState(isOpen); setActiveDropdown(isOpen ? 'state' : null); }}
+            setValue={(callback) => handleChange('state', callback(formData.state))}
+            setItems={setStateItems}
+            placeholder="Select State"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            zIndex={2001}
+            listMode="SCROLLVIEW"
+            placeholderStyle={{
+              color: "#b4b4b4",       // placeholder text color
+              fontSize: 14,        // adjust font size
+              fontStyle: "italic", // optional styling
+            }}
+            // textStyle={{ fontSize: 16, color: "#222" }}
+            tickIconStyle={{ tintColor: "#BE4145" }}
+
+          />
+
+          {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null}
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Country</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <TextInput
+            value={formData.country}
+            style={[
+              styles.input,
+              { backgroundColor: "#fff", color: "#b4b4b4" }
+            ]}
+            onChangeText={(text) => handleChange('country', text)}
+            editable={false}
+          />
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Pincode</Text>
+            <Text style={styles.requiredStar}>*</Text>
+          </View>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === 'zipcode' && styles.inputFocused,
+              errors.zipcode ? styles.inputError : null
+            ]}
+            value={formData.zipcode}
+            onChangeText={(text) => handleChange('zipcode', text)}
+            keyboardType="numeric"
+            maxLength={6}
+            placeholder="6-digit pincode"
+            placeholderTextColor={"#b4b4b4"}
+            onFocus={() => setFocusedInput('zipcode')}
+            onBlur={() => {
+              setFocusedInput(null);
+              if (formData.zipcode) {
+                const validation = validatePincode(formData.zipcode);
+                if (!validation.valid) {
+                  setErrors(prev => ({ ...prev, zipcode: validation.message }));
+                }
+              }
+            }}
+          />
+          {errors.zipcode ? <Text style={styles.errorText}>{errors.zipcode}</Text> : null}
+
+          <Text style={styles.label}>Company Social Media Link</Text>
+          <TextInput
+            style={[
+              styles.input,
+              focusedInput === 'socialLinks' && styles.inputFocused,
+              errors.socialLinks ? styles.inputError : null
+            ]}
+            value={formData.socialLinks}
+            onChangeText={(text) => handleChange('socialLinks', text)}
+          />
+          {errors.socialLinks ? <Text style={styles.errorText}>{errors.socialLinks}</Text> : null}
+        </View>
+
+        <View style={[styles.sectionContainer, { marginTop: 2 }]}>
+          <Text style={styles.sectionTitle}>Upload Documents</Text>
+          {/* PAN Card Upload */}
+          <View style={styles.uploadRow}>
+            <View style={{ width: '100%' }}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>PAN Card</Text>
+                <Text style={styles.requiredStar}>*</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.uploadButton}
+                onPress={handlePanUpload}
+                disabled={isPanUploading}
+                activeOpacity={0.7}
+              >
+                {isPanUploading ? (
+                  <ActivityIndicator size="small" color="#BE4145" />
+                ) : (
+                  <>
+                    <Ionicons name="cloud-upload-outline" size={20} color="#BE4145" />
+                    <Text style={styles.uploadButtonText}>Upload PAN Card</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+              {panStatusType === 'success' && (
+                <Text style={styles.successText}>Document uploaded successfully</Text>
+              )}
+              {panStatusType === 'success' && panFileName ? (
+                <Text style={styles.fileName}>{panFileName}</Text>
+              ) : null}
+              {panStatusType === 'error' && panStatus && (
+                <Text style={styles.errorTextInline}>{panStatus}</Text>
+              )}
+            </View>
+          </View>
+          {errors.legalDocs && <Text style={styles.errorText}>{errors.legalDocs}</Text>}
+
+          {/* GST Certificate Upload */}
+          <View style={styles.uploadRow}>
+            <View style={{ width: '100%' }}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>GST Certificate</Text>
+                <Text style={styles.requiredStar}>*</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.uploadButton}
+                onPress={handleGstUpload}
+                disabled={isGstUploading}
+                activeOpacity={0.7}
+              >
+                {isGstUploading ? (
+                  <ActivityIndicator size="small" color="#BE4145" />
+                ) : (
+                  <>
+                    <Ionicons name="cloud-upload-outline" size={20} color="#BE4145" />
+                    <Text style={styles.uploadButtonText}>Upload GST Certificate</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+              {gstStatusType === 'success' && (
+                <Text style={styles.successText}>Document uploaded successfully</Text>
+              )}
+              {gstStatusType === 'success' && gstFileName ? (
+                <Text style={styles.fileName}>{gstFileName}</Text>
+              ) : null}
+              {gstStatusType === 'error' && gstStatus && (
+                <Text style={styles.errorTextInline}>{gstStatus}</Text>
+              )}
+            </View>
+          </View>
+          {errors.personalDoc && <Text style={styles.errorText}>{errors.personalDoc}</Text>}
+
+          {/* Company Logo Upload */}
+          <View style={styles.uploadRow}>
+            <View style={{ width: '100%' }}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Company Logo</Text>
+                <Text style={styles.requiredStar}>*</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.uploadButton}
+                onPress={handleCompanyLogoPick}
+                disabled={isCompanyLogoUploading}
+                activeOpacity={0.7}
+              >
+                {isCompanyLogoUploading ? (
+                  <ActivityIndicator size="small" color="#BE4145" />
+                ) : (
+                  <>
+                    <Ionicons name="image" size={20} color="#BE4145" />
+                    <Text style={styles.uploadButtonText}>Upload Logo</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+              {companyLogoStatusType === 'success' && (
+                <Text style={styles.successText}>Image uploaded successfully</Text>
+              )}
+              {companyLogoStatusType === 'success' && companyLogoFileName ? (
+                <Text style={styles.fileName}>{companyLogoFileName}</Text>
+              ) : null}
+              {companyLogoStatusType === 'error' && companyLogoStatus && (
+                <Text style={styles.errorTextInline}>{companyLogoStatus}</Text>
+              )}
+            </View>
+          </View>
+          {errors.profileImage && <Text style={styles.errorText}>{errors.profileImage}</Text>}
+        </View>
+      </ScrollView>
+      {/* Sticky Submit/Update Button */}
+      <View style={styles.stickyButtonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.saveButton,
+            !isFormValid && styles.saveButtonDisabled
+          ]}
+          onPress={handleSubmit}
+          disabled={!isFormValid}
+        >
+          <Text style={styles.saveButtonText}>{isEditing ? 'Update Details' : 'Submit Details'}</Text>
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
+      {/* CustomAlert sticky at the bottom */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        type={alertType}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={() => {
+          setAlertVisible(false);
+          if (alertOnConfirm) {
+            alertOnConfirm();
+          }
+        }}
+      />
+    </View>
+    // </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
+  manualHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // This centers the title container
+    backgroundColor: '#ffffff', // White background
+    height: 56, // A standard header height
+    paddingHorizontal: 16,
+    borderBottomWidth: 1, // Creates the subtle separator line
+    borderBottomColor: '#e0e0e0', // Light gray color for the line
+  },
+  backButton: {
+    position: 'absolute', // Position it independently of the title
+    left: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center', // Center the icon vertically
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center', // Center title horizontally
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    color: '#333333', // Dark text color
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f4f2ee',

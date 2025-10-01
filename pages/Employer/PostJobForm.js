@@ -760,6 +760,7 @@ const PostJobForm = ({ navigation }) => {
                                                 styles.input,
                                                 formErrors.jobTitle ? styles.inputError : null
                                             ]}
+                                            // placeholder='Enter the Job Title'
                                             mode="outlined"
                                             outlineColor={formErrors.jobTitle ? "#BE4145" : "#e0e0e0"}
                                             activeOutlineColor="#BE4145"
@@ -775,7 +776,8 @@ const PostJobForm = ({ navigation }) => {
                                                     }
                                                 }
                                             }}
-                                            placeholderTextColor="#b4b4b4"
+                                            placeholderStyle= {styles.dropdownPlaceholder}
+                                            // placeholderTextColor="#b4b4b4"
                                         />
                                         {formErrors.jobTitle ? <Text style={styles.errorText}>{formErrors.jobTitle}</Text> : null}
                                     </View>
@@ -826,6 +828,7 @@ const PostJobForm = ({ navigation }) => {
                                                 styles.input,
                                                 formErrors.city ? styles.inputError : null
                                             ]}
+                                            // placeholder='Enter City'
                                             mode="outlined"
                                             outlineColor={formErrors.city ? "#BE4145" : "#e0e0e0"}
                                             activeOutlineColor="#BE4145"
@@ -841,7 +844,9 @@ const PostJobForm = ({ navigation }) => {
                                                     }
                                                 }
                                             }}
-                                            placeholderTextColor="#666666"
+                                            // placeholderTextColor="#666666"
+                                            placeholderStyle= {styles.dropdownPlaceholder}
+
                                         />
                                         {formErrors.city ? <Text style={styles.errorText}>{formErrors.city}</Text> : null}
                                     </View>
@@ -868,6 +873,7 @@ const PostJobForm = ({ navigation }) => {
                                                     }
                                                 }
                                             }}
+                                            // placeholder=''
                                             placeholderTextColor="#666666"
                                             editable={false}
                                             disabled={true}
@@ -1094,7 +1100,10 @@ const PostJobForm = ({ navigation }) => {
                                                     }
                                                 }
                                             }}
-                                            placeholderTextColor="#666666"
+                                            // placeholder='Enter a Job Description'
+                                            placeholderStyle= {styles.dropdownPlaceholder}
+
+                                            // placeholderTextColor="#666666"
                                         />
                                     </View>
 
@@ -1126,7 +1135,9 @@ const PostJobForm = ({ navigation }) => {
                                                     }
                                                 }
                                             }}
-                                            placeholderTextColor="#666666"
+                                            // placeholder='Enter Number of Employees'
+                                            placeholderStyle= {styles.dropdownPlaceholder}
+                                            placeholderTextColor="#b4b4b4"
                                         />
                                         {formErrors.numEmployees ? (
                                             <Text style={styles.errorText}>{formErrors.numEmployees}</Text>
@@ -1173,7 +1184,7 @@ const PostJobForm = ({ navigation }) => {
                                     </View>
 
                                     <View style={[styles.fieldWrapper, activeDropdown === 'minEducation' && { zIndex: 100 }]}>
-                                        <Text style={{ ...styles.label, marginBottom: -4 }}>
+                                        <Text style={{ ...styles.label}}>
                                             Minimum Education (Optional)
                                         </Text>
                                         <DropDownPicker
@@ -1198,7 +1209,7 @@ const PostJobForm = ({ navigation }) => {
                                     </View>
 
                                     <View style={[styles.fieldWrapper, activeDropdown === 'prefGender' && { zIndex: 90 }]}>
-                                        <Text style={{ ...styles.label, marginBottom: -4 }}>
+                                        <Text style={{ ...styles.label}}>
                                             Preferred Gender (Optional)
                                         </Text>
                                         <DropDownPicker

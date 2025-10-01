@@ -4,6 +4,8 @@ import { verifyOTP, requestOTP } from '../utils/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomAlert from '../components/CustomAlert';
 import { useAuth } from '../utils/AuthContext';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+
 
 const ValidateLogin = ({ route, navigation }) => {
   const { mobile, otpToken, activeProfile, selectedCountry } = route.params;
@@ -50,10 +52,10 @@ const ValidateLogin = ({ route, navigation }) => {
     if (text.length === 4 && /^\d+$/.test(text)) {
       // Split the pasted text into individual digits
       const digits = text.split('');
-      
+
       // Update all OTP boxes with the pasted digits
       setOtp(digits);
-      
+
       // Focus on the last input box
       otpRefs[3].current.focus();
     } else {
@@ -95,19 +97,19 @@ const ValidateLogin = ({ route, navigation }) => {
 
     try {
       const response = await verifyOTP(payload);
-      
+
       if (response && response.data) {
         if (response.data.newUser) {
           // New user - redirect to registration
           if (activeProfile) {
-            navigation.replace("JobSeekerRegistration", { 
-              mobile: mobile, 
-              countryCode: selectedCountry.callingCode 
+            navigation.replace("JobSeekerRegistration", {
+              mobile: mobile,
+              countryCode: selectedCountry.callingCode
             });
           } else {
-            navigation.replace("EmployerRegistration", { 
-              mobile: mobile, 
-              countryCode: selectedCountry.callingCode 
+            navigation.replace("EmployerRegistration", {
+              mobile: mobile,
+              countryCode: selectedCountry.callingCode
             });
           }
         } else if (response.data.user) {
@@ -117,17 +119,17 @@ const ValidateLogin = ({ route, navigation }) => {
             console.log('Setting user type explicitly:', activeProfile ? 'job_seeker' : 'employer');
             response.data.user.userType = activeProfile ? 'job_seeker' : 'employer';
           }
-          
+
           // Make sure user type is normalized
           const normalizedType = activeProfile ? 'job_seeker' : 'employer';
           if (response.data.user.userType !== normalizedType) {
             console.log(`Normalizing user type from ${response.data.user.userType} to ${normalizedType}`);
             response.data.user.userType = normalizedType;
           }
-          
+
           try {
             const loginSuccess = await login(response.data.user);
-            
+
             if (loginSuccess) {
               if (activeProfile) {
                 navigation.reset({
@@ -136,12 +138,12 @@ const ValidateLogin = ({ route, navigation }) => {
                 });
               } else {
                 // For employer: check status with multiple property possibilities
-                const userStatus = response.data.user.status || 
-                                  response.data.user.Status || 
-                                  response.data.user.accountStatus ||
-                                  response.data.user.account_status || 
-                                  'unknown';
-                
+                const userStatus = response.data.user.status ||
+                  response.data.user.Status ||
+                  response.data.user.accountStatus ||
+                  response.data.user.account_status ||
+                  'unknown';
+
                 if (userStatus && userStatus.toLowerCase() === 'active') {
                   // If status is active, navigate to MyJobs
                   navigation.reset({
@@ -176,7 +178,7 @@ const ValidateLogin = ({ route, navigation }) => {
     } catch (error) {
       console.error('OTP verification error:', error);
       showAlert(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'OTP verification failed. Please check your connection and try again.',
         'error'
       );
@@ -203,13 +205,13 @@ const ValidateLogin = ({ route, navigation }) => {
   // Resend OTP function (reset timer)
   const handleResendOtp = async () => {
     setIsResending(true);
-    
+
     try {
-      const payload = { 
+      const payload = {
         mobile: mobile,
-        userType: userType 
+        userType: userType
       };
-      
+
       const response = await requestOTP(payload);
 
       if (response?.data?.otpToken) {
@@ -227,7 +229,7 @@ const ValidateLogin = ({ route, navigation }) => {
     } catch (error) {
       console.error('Resend OTP error:', error);
       showAlert(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'Failed to send OTP. Please check your connection.',
         'error'
       );
@@ -236,9 +238,25 @@ const ValidateLogin = ({ route, navigation }) => {
     }
   };
 
+  const handleBack = () => {
+    navigation.goBack();
+  }
+
   return (
     <View style={styles.container}>
       {/* OTP Instruction and Input Boxes */}
+      {/* Manual Header */}
+      <View style={styles.manualHeader}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#333333" />
+        </TouchableOpacity>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>
+            Verify OTP
+          </Text>
+        </View>
+      </View>
+
       <View style={styles.topContainer}>
         <Text style={styles.infoText}>
           We sent an OTP to your mobile number +91{mobile}
@@ -287,11 +305,11 @@ const ValidateLogin = ({ route, navigation }) => {
       </View>
 
       {/* Validate OTP Button */}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[
-          styles.button, 
+          styles.button,
           (otp.join('').length !== 4 || isLoading) ? styles.buttonDisabled : null
-        ]} 
+        ]}
         onPress={handleValidation}
         disabled={otp.join('').length !== 4 || isLoading}
       >
@@ -316,11 +334,41 @@ const ValidateLogin = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
+    // paddingHorizontal: 24,
     backgroundColor: '#f4f2ee', // base color change from f9f9f9 to FDF7F2 for consistency
     borderColor: "#e0e0e0",
     borderWidth: 1,
   },
+
+  manualHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // This centers the title container
+    backgroundColor: '#ffffff', // White background
+    height: 56, // A standard header height
+    paddingHorizontal: 16,
+    borderBottomWidth: 1, // Creates the subtle separator line
+    borderBottomColor: '#e0e0e0', // Light gray color for the line
+    // width: 750,
+  },
+  backButton: {
+    position: 'absolute', // Position it independently of the title
+    left: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center', // Center the icon vertically
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center', // Center title horizontally
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    color: '#333333', // Dark text color
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
+  },
+
   topContainer: {
     marginTop: 120,
     alignItems: 'center',

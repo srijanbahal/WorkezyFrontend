@@ -157,14 +157,14 @@ const AppRouter = () => {
         component={ValidateLogin}
         options={{
           title: 'Verify OTP',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#be4145',
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-            // mm
-          },
+          headerShown: false,
+          // headerStyle: {
+          //   backgroundColor: '#be4145',
+          //   elevation: 0,
+          //   shadowOpacity: 0,
+          //   borderBottomWidth: 0,
+          //   // mm
+          // },
         }}
       />
       <Stack.Screen
@@ -186,13 +186,13 @@ const AppRouter = () => {
         component={EmployerRegistration}
         options={{
           title: 'Employer Registration',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#be4145',
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerShown: false,
+          // headerStyle: {
+          //   backgroundColor: '#be4145',
+          //   elevation: 0,
+          //   shadowOpacity: 0,
+          //   borderBottomWidth: 0,
+          // },
         }}
       />
 

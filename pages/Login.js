@@ -226,6 +226,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f4f2ee',
     padding: 24,
+    // width: 520,
+    borderColor: "#e0e0e0",
+    borderWidth: 1,
   },
   toggleButtonContent: {
     flexDirection: 'column',
