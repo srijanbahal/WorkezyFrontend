@@ -105,136 +105,217 @@ const EmployerProfile = () => {
     checkAsyncStorage();
   }, []);
 
+  // useEffect(() => {
+  //   const fetchUserDetails = async () => {
+  //     setLoading(true);
+  //     setError(null);
+
+  //     try {
+  //       // Always use employer as userType to ensure correct API call
+  //       const userType = 'employer';
+  //       let userId;
+
+  //       // Try to get user data from context first
+  //       if (user && user.id) {
+  //         userId = user.id;
+  //         console.log('Using user ID from context:', userId);
+
+  //         // Ensure user type is set correctly in context
+  //         if (user.userType !== 'employer') {
+  //           console.log('Correcting user type in context');
+  //           updateUser({ ...user, userType: 'employer' });
+  //         }
+  //       } else {
+  //         // If no user in context, check AsyncStorage
+  //         console.log('No user data in context, checking AsyncStorage');
+  //         const userDataString = await AsyncStorage.getItem('userDetails');
+
+  //         if (!userDataString) {
+  //           // User is logged out, just return without showing error
+  //           console.log('No user data in AsyncStorage, user is logged out');
+  //           setLoading(false);
+  //           return;
+  //         }
+
+  //         const userData = JSON.parse(userDataString);
+  //         userId = userData.id;
+  //         console.log('Using user ID from AsyncStorage:', userId);
+
+  //         // Ensure user type is set correctly in AsyncStorage
+  //         if (userData.userType !== 'employer') {
+  //           console.log('Correcting user type in AsyncStorage');
+  //           await AsyncStorage.setItem('userDetails', JSON.stringify({
+  //             ...userData,
+  //             userType: 'employer'
+  //           }));
+  //         }
+  //       }
+
+  //       if (!userId) {
+  //         // No user ID found, user is likely logged out
+  //         console.log('Could not determine user ID, user may be logged out');
+  //         setLoading(false);
+  //         return;
+  //       }
+
+  //       console.log(`Fetching employer profile for user ID: ${userId}`);
+
+  //       try {
+  //         // Attempt to fetch the profile
+  //         const response = await getProfileDetails(userId, userType);
+  //         console.log("response after fetching: ", response);
+  //         processProfileResponse(response, user || JSON.parse(await AsyncStorage.getItem('userDetails')));
+  //       } catch (apiError) {
+  //         console.error('API Error:', apiError.message);
+
+  //         // Only set error if we have a user (not logged out)
+  //         if (user) {
+  //           setError(`Could not load profile: ${apiError.message}`);
+
+  //           // Set minimal profile data so the UI can still render
+  //           const fallbackData = user || (await AsyncStorage.getItem('userDetails') ? JSON.parse(await AsyncStorage.getItem('userDetails')) : null);
+  //           console.log(
+  //             "fallback Data : ", fallbackData,
+  //           )
+  //           if (fallbackData) {
+  //             const fullName = fallbackData.full_name || fallbackData.name || 'Employer';
+
+  //             // truncate if longer than 20 chars
+  //             const truncatedName = fullName.length > 20 ? fullName.slice(0, 20) + "…" : fullName;
+
+  //             setUserDetails({
+  //               id: fallbackData.id,
+  //               full_name: truncatedName,
+  //               profile_image: fallbackData.profile_image || 'https://via.placeholder.com/150',
+  //               role: fallbackData.role || 'Employer'
+  //             });
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error setting up profile fetch:', error);
+  //       // Only show error if not related to logout
+  //       if (user) {
+  //         setError('Could not access user data. Please log in again.');
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   const processProfileResponse = (response, fallbackUserData) => {
+  //     if (!response || !response.data) {
+  //       console.error('Invalid response received');
+  //       setError('Received invalid data from server');
+  //       return;
+  //     }
+
+  //     // console.log('API Response:', response.data);
+
+  //     // Handle different response formats
+  //     if (response.data && response.data.user) {
+  //       setUserDetails(response.data.user);
+  //     } else if (response.data && response.data.profile) {
+  //       setUserDetails(response.data.profile);
+  //     } else if (response.data && response.data.employer) {
+  //       setUserDetails(response.data.employer);
+  //     } else if (response.data && response.data.success) {
+  //       // Sometimes the API returns the user data directly
+  //       setUserDetails(response.data);
+  //     } else if (response.data) {
+  //       // Fallback to any data in the response
+  //       setUserDetails(response.data);
+  //     } else {
+  //       // Fallback to user context/AsyncStorage data
+  //       setUserDetails({
+  //         id: fallbackUserData.id,
+  //         full_name: fallbackUserData.full_name || fallbackUserData.name || 'Employer',
+  //         profile_image: fallbackUserData.profile_image || 'https://via.placeholder.com/150',
+  //         role: fallbackUserData.role || 'Employer'
+  //       });
+  //     }
+  //   };
+
+  //   fetchUserDetails();
+  // }, [user]);
+
+
+  // In pages/Employer/EmployerProfile.js
   useEffect(() => {
     const fetchUserDetails = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Always use employer as userType to ensure correct API call
         const userType = 'employer';
         let userId;
 
-        // Try to get user data from context first
         if (user && user.id) {
           userId = user.id;
           console.log('Using user ID from context:', userId);
-
-          // Ensure user type is set correctly in context
-          if (user.userType !== 'employer') {
-            console.log('Correcting user type in context');
-            updateUser({ ...user, userType: 'employer' });
-          }
         } else {
-          // If no user in context, check AsyncStorage
           console.log('No user data in context, checking AsyncStorage');
           const userDataString = await AsyncStorage.getItem('userDetails');
-
           if (!userDataString) {
-            // User is logged out, just return without showing error
             console.log('No user data in AsyncStorage, user is logged out');
             setLoading(false);
             return;
           }
-
           const userData = JSON.parse(userDataString);
           userId = userData.id;
           console.log('Using user ID from AsyncStorage:', userId);
-
-          // Ensure user type is set correctly in AsyncStorage
-          if (userData.userType !== 'employer') {
-            console.log('Correcting user type in AsyncStorage');
-            await AsyncStorage.setItem('userDetails', JSON.stringify({
-              ...userData,
-              userType: 'employer'
-            }));
-          }
         }
 
         if (!userId) {
-          // No user ID found, user is likely logged out
           console.log('Could not determine user ID, user may be logged out');
           setLoading(false);
           return;
         }
 
         console.log(`Fetching employer profile for user ID: ${userId}`);
+        const response = await getProfileDetails(userId, userType);
+        console.log("response after fetching: ", response);
+        processProfileResponse(response);
 
-        try {
-          // Attempt to fetch the profile
-          const response = await getProfileDetails(userId, userType);
-          processProfileResponse(response, user || JSON.parse(await AsyncStorage.getItem('userDetails')));
-        } catch (apiError) {
-          console.error('API Error:', apiError.message);
-
-          // Only set error if we have a user (not logged out)
-          if (user) {
-            setError(`Could not load profile: ${apiError.message}`);
-
-            // Set minimal profile data so the UI can still render
-            const fallbackData = user || (await AsyncStorage.getItem('userDetails') ? JSON.parse(await AsyncStorage.getItem('userDetails')) : null);
-
-            if (fallbackData) {
-              const fullName = fallbackData.full_name || fallbackData.name || 'Employer';
-
-              // truncate if longer than 20 chars
-              const truncatedName = fullName.length > 20 ? fullName.slice(0, 20) + "…" : fullName;
-
-              setUserDetails({
-                id: fallbackData.id,
-                full_name: truncatedName,
-                profile_image: fallbackData.profile_image || 'https://via.placeholder.com/150',
-                role: fallbackData.role || 'Employer'
-              });
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error setting up profile fetch:', error);
-        // Only show error if not related to logout
+      } catch (apiError) {
+        console.error('API Error:', apiError.message);
         if (user) {
-          setError('Could not access user data. Please log in again.');
+          setError(`Could not load profile: ${apiError.message}`);
+          // Use data from context as a fallback on API failure
+          setUserDetails(user);
         }
       } finally {
         setLoading(false);
       }
     };
 
-    const processProfileResponse = (response, fallbackUserData) => {
-      if (!response || !response.data) {
-        console.error('Invalid response received');
-        setError('Received invalid data from server');
+    // --- THIS FUNCTION IS FIXED ---
+    const processProfileResponse = (response) => {
+      if (!response?.data) {
+        console.error('Invalid response received: No data object');
+        setError('Received invalid data from the server');
         return;
       }
 
-      // console.log('API Response:', response.data);
-
-      // Handle different response formats
-      if (response.data && response.data.user) {
-        setUserDetails(response.data.user);
-      } else if (response.data && response.data.profile) {
-        setUserDetails(response.data.profile);
-      } else if (response.data && response.data.employer) {
-        setUserDetails(response.data.employer);
-      } else if (response.data && response.data.success) {
-        // Sometimes the API returns the user data directly
-        setUserDetails(response.data);
-      } else if (response.data) {
-        // Fallback to any data in the response
-        setUserDetails(response.data);
+      // Directly look for the nested employer, user, or profile object
+      const employerData = response.data.employer || response.data.user || response.data.profile;
+      // console.log("EmployerData  being set in userDetails :", employerData);
+      if (employerData && typeof employerData === 'object') {
+        console.log('Successfully extracted employer data from response:', employerData);
+        setUserDetails(employerData);
+        console.log("employerData.profileImage : ", employerData.profile_image)
       } else {
-        // Fallback to user context/AsyncStorage data
-        setUserDetails({
-          id: fallbackUserData.id,
-          full_name: fallbackUserData.full_name || fallbackUserData.name || 'Employer',
-          profile_image: fallbackUserData.profile_image || 'https://via.placeholder.com/150',
-          role: fallbackUserData.role || 'Employer'
-        });
+        // This is a fallback if the data isn't nested as expected
+        console.warn('Could not find a nested data object, using response.data directly.', response.data);
+        setError('Profile data has an unexpected format.');
+        // Still attempt to set the data, it might work
+        setUserDetails(response.data);
       }
     };
+    // --- END OF FIX ---
 
     fetchUserDetails();
-  }, [user]);
+  }, [user, userDetails?.profile_image]); // The dependency on `user` is correct
 
   const handleSignOut = async () => {
     await logout();
@@ -262,24 +343,41 @@ const EmployerProfile = () => {
       {/* <View style={styles.container}> */}
       <View style={[styles.container, isWeb && styles.containerWeb]}>
         <View style={styles.topWhiteBackground}>
-           <Image
-              source={{
-                uri: userDetails?.profile_image || 'https://via.placeholder.com/150',
-              }}
+          {/* <Image
+            source={{
+              uri: userDetails.profile_image,
+            }}
+            style={styles.profileImage}
+          /> */}
+          {userDetails?.profile_image ? (
+            <Image
+              source={{ uri: userDetails.profile_image }}
               style={styles.profileImage}
             />
-            <View style={styles.profileTextContainer}>
-              <Text
-                style={styles.profileName}
-                numberOfLines={2}
-                ellipsizeMode="tail"
-              >
-                {userDetails?.full_name?.split(' ')[0]}
-              </Text>
-              <Text style={styles.roleText}>
-                {formatRoleText(userDetails?.company_industry) || 'Employer'}
+          ) : (
+            <View style={styles.placeholderLogo}>
+              <Text style={styles.logoText}>
+                {(userDetails?.company_name || 'E')
+                  .split(' ')
+                  .map(n => n[0])
+                  .join('')
+                  .substring(0, 2)
+                  .toUpperCase()}
               </Text>
             </View>
+          )}
+          <View style={styles.profileTextContainer}>
+            <Text
+              style={styles.profileName}
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {userDetails?.full_name?.split(' ')[0]}
+            </Text>
+            <Text style={styles.roleText}>
+              {formatRoleText(userDetails?.company_industry) || 'Employer'}
+            </Text>
+          </View>
         </View>
 
 
@@ -454,6 +552,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  placeholderLogo: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: '#fff5f3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 50,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  logoText: {
+    fontSize: 28,
+    fontFamily: 'Montserrat-Bold',
+    color: '#be4145',
   },
   profileImage: {
     width: 96, // Slightly larger image

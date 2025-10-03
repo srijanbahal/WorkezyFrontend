@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { Feather, Ionicons, FontAwesome5, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { getCandidateDetails, getUserDetails, sendInterestToCandicate, checkInterestStatus, getJobQuestionResponses, getJobQuestions } from "../../utils/api"; // Updated to include getJobQuestionResponses
+import LeftNav from "../../component/LeftNav";
+
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.8;
@@ -380,207 +382,263 @@ const UserDetails = ({ route }) => {
     </View>
   );
 
+  const handleBack = () => {
+    // navigation.goBack();
+    // if (navigation.canGoBack()) {
+      navigation.goBack();
+    // }
+
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      {/* User Profile Card (key-value pairs) */}
-      <View style={styles.profileCardRedesigned}>
-        {/* Name, Role, and Initials/Image */}
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.profileName}>{user.full_name}</Text>
-            <Text style={styles.profileRole}>{formatRoleText(user.role || user.industry || '—')}</Text>
+
+    <View style={styles.outerBox}>
+      <LeftNav activeuser={"employer"} />
+      <View style={styles.innerBox}>
+        {/* Manual Header */}
+        <View style={styles.manualHeader}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#333333" />
+          </TouchableOpacity>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}>
+              Applications Recieved
+            </Text>
           </View>
-          {user.profile_image ? (
-            <Image
-              source={{ uri: user.profile_image }}
-              style={styles.profileInitialsCircle}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.profileInitialsCircle}>
-              <Text style={styles.profileInitialsText}>{user.full_name ? user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : ''}</Text>
-            </View>
-          )}
-        </View>
-        {/* Key-Value Pairs */}
-        <View style={styles.profileKVContainer}>
-          <View style={styles.profileKVItem}><Text style={styles.profileKVLabel}>Location</Text><Text style={styles.profileKVValue}>{user.city || 'N/A'}, {user.country || ''}</Text></View>
-          <View style={styles.profileKVItem}><Text style={styles.profileKVLabel}>Experience</Text><Text style={styles.profileKVValue}>{user.experience_years || 'Not specified'}</Text></View>
-          <View style={styles.profileKVItem}><Text style={styles.profileKVLabel}>Education</Text><Text style={styles.profileKVValue}>{user.highest_education || 'Not specified'}</Text></View>
-        </View>
-      </View>
-
-      {/* Contact Details Card */}
-      <View style={styles.sectionCardRedesigned}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-          <View>
-            <Text style={styles.sectionTitleRedesigned}>Contact Details</Text>
-            <Text style={styles.sectionSubText}>{(interested || showContactInfo) ? 'Marked as Interested' : 'Mark as Interested'}</Text>
-          </View>
-          {(interested || showContactInfo) && (
-            <View style={styles.interestedPill}>
-              <Text style={styles.interestedPillText}>Interested</Text>
-            </View>
-          )}
         </View>
 
-
-
-        {(interested || showContactInfo) ? (
-          <View style={contactDetailsLayoutStyles.contactDetailsRow}>
-            {/* Left: Phone and City */}
-            <View style={contactDetailsLayoutStyles.contactDetailsLeft}>
-              <View style={contactDetailsRedesignedStyles.kvItemContactDetails}>
-                <Text style={contactDetailsRedesignedStyles.kvKeyContactDetails}>Phone Number</Text>
-                <Text style={contactDetailsRedesignedStyles.kvValueContactDetails}>{user.phone || '+91 98765 43210'}</Text>
+        <ScrollView style={styles.container}>
+          {/* User Profile Card (key-value pairs) */}
+          <View style={styles.profileCardRedesigned}>
+            {/* Name, Role, and Initials/Image */}
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.profileName}>{user.full_name}</Text>
+                <Text style={styles.profileRole}>{formatRoleText(user.role || user.industry || '—')}</Text>
               </View>
-              {/* <View style={styles.kvItemContactDetails}>
+              {user.profile_image ? (
+                <Image
+                  source={{ uri: user.profile_image }}
+                  style={styles.profileInitialsCircle}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.profileInitialsCircle}>
+                  <Text style={styles.profileInitialsText}>{user.full_name ? user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : ''}</Text>
+                </View>
+              )}
+            </View>
+            {/* Key-Value Pairs */}
+            <View style={styles.profileKVContainer}>
+              <View style={styles.profileKVItem}><Text style={styles.profileKVLabel}>Location</Text><Text style={styles.profileKVValue}>{user.city || 'N/A'}, {user.country || ''}</Text></View>
+              <View style={styles.profileKVItem}><Text style={styles.profileKVLabel}>Experience</Text><Text style={styles.profileKVValue}>{user.experience_years || 'Not specified'}</Text></View>
+              <View style={styles.profileKVItem}><Text style={styles.profileKVLabel}>Education</Text><Text style={styles.profileKVValue}>{user.highest_education || 'Not specified'}</Text></View>
+            </View>
+          </View>
+
+          {/* Contact Details Card */}
+          <View style={styles.sectionCardRedesigned}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+              <View>
+                <Text style={styles.sectionTitleRedesigned}>Contact Details</Text>
+                <Text style={styles.sectionSubText}>{(interested || showContactInfo) ? 'Marked as Interested' : 'Mark as Interested'}</Text>
+              </View>
+              {(interested || showContactInfo) && (
+                <View style={styles.interestedPill}>
+                  <Text style={styles.interestedPillText}>Interested</Text>
+                </View>
+              )}
+            </View>
+
+
+
+            {(interested || showContactInfo) ? (
+              <View style={contactDetailsLayoutStyles.contactDetailsRow}>
+                {/* Left: Phone and City */}
+                <View style={contactDetailsLayoutStyles.contactDetailsLeft}>
+                  <View style={contactDetailsRedesignedStyles.kvItemContactDetails}>
+                    <Text style={contactDetailsRedesignedStyles.kvKeyContactDetails}>Phone Number</Text>
+                    <Text style={contactDetailsRedesignedStyles.kvValueContactDetails}>{user.phone || '+91 98765 43210'}</Text>
+                  </View>
+                  {/* <View style={styles.kvItemContactDetails}>
                 <Text style={styles.kvKeyContactDetails}>City</Text>
                 <Text style={styles.kvValueContactDetails}>{user.city || 'N/A'}</Text>
               </View> */}
-            </View>
-            {/* Right: Call and WhatsApp buttons */}
-            <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}>
-              <TouchableOpacity style={contactDetailsRedesignedStyles.callButtonRedesigned} onPress={makePhoneCall}>
-                <Ionicons name="call" size={18} color="#fff" style={{ marginRight: 8 }} />
-                {/* <Text style={styles.callButtonTextRedesigned}></Text> */}
+                </View>
+                {/* Right: Call and WhatsApp buttons */}
+                <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}>
+                  <TouchableOpacity style={contactDetailsRedesignedStyles.callButtonRedesigned} onPress={makePhoneCall}>
+                    <Ionicons name="call" size={18} color="#fff" style={{ marginRight: 8 }} />
+                    {/* <Text style={styles.callButtonTextRedesigned}></Text> */}
+                  </TouchableOpacity>
+                  {/* </View> */}
+                  {/* <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}> */}
+                  <TouchableOpacity style={contactDetailsRedesignedStyles.whatsappButtonRedesigned} onPress={openWhatsApp}>
+                    <FontAwesome5 name="whatsapp" size={18} color="#fff" style={{ marginRight: 8 }} />
+                    {/* <Text style={styles.whatsappButtonTextRedesigned}></Text> */}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.outlineButton}
+                onPress={toggleContactVisibility}
+              >
+                <Text style={styles.outlineButtonText}>Show Details</Text>
               </TouchableOpacity>
-              {/* </View> */}
-              {/* <View style={contactDetailsLayoutStyles.contactButtonsColumnRight}> */}
-              <TouchableOpacity style={contactDetailsRedesignedStyles.whatsappButtonRedesigned} onPress={openWhatsApp}>
-                <FontAwesome5 name="whatsapp" size={18} color="#fff" style={{ marginRight: 8 }} />
-                {/* <Text style={styles.whatsappButtonTextRedesigned}></Text> */}
-              </TouchableOpacity>
-            </View>
+            )}
           </View>
-        ) : (
-          <TouchableOpacity
-            style={styles.outlineButton}
-            onPress={toggleContactVisibility}
-          >
-            <Text style={styles.outlineButtonText}>Show Details</Text>
-          </TouchableOpacity>
-        )}
-      </View>
 
-      {/* Education Section */}
-      <View style={styles.sectionCardRedesigned}>
-        <Text style={styles.sectionTitleRedesigned}>Education</Text>
-        {educationItems.map((item, idx) => (
-          <View key={idx} style={redesignedStyles.eduCardRedesigned}>
-            <View style={redesignedStyles.eduCardHeader}>
-              <Text style={redesignedStyles.eduCardTitle}>{item.type} Education</Text>
-              <Text style={redesignedStyles.eduCardDate}>
-                {item.startDate && item.endDate ? `${item.startDate} - ${item.endDate}`
-                  : item.year ? `Jan ${item.year}` : ''}
-              </Text>
-            </View>
-            <Text style={styles.eduCardMeta}>
-              {item.board ? `${item.board}` : ''}
-              {item.percentage ? `, ${item.percentage}%` : ''}
-            </Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Work Experience Section */}
-      {experienceItems?.length > 0 && (
-        <View style={redesignedStyles.sectionCardRedesigned}>
-          <Text style={redesignedStyles.sectionTitleRedesigned}>Work Experience</Text>
-          {experienceItems.map((item, idx) => (
-            <View key={idx} style={redesignedStyles.expCardRedesigned}>
-              <View style={redesignedStyles.expCardHeader}>
-                <Text style={redesignedStyles.expCardTitle}>{item.jobTitle}</Text>
-                <Text style={redesignedStyles.expCardDate}>
-                  {formatDate(item.startDate)} -{" "}
-                  {item.endDate === "Present" ? "Present" : formatDate(item.endDate)}
-                  {item.duration ? ` · ${item.duration}` : ""}
+          {/* Education Section */}
+          <View style={styles.sectionCardRedesigned}>
+            <Text style={styles.sectionTitleRedesigned}>Education</Text>
+            {educationItems.map((item, idx) => (
+              <View key={idx} style={redesignedStyles.eduCardRedesigned}>
+                <View style={redesignedStyles.eduCardHeader}>
+                  <Text style={redesignedStyles.eduCardTitle}>{item.type} Education</Text>
+                  <Text style={redesignedStyles.eduCardDate}>
+                    {item.startDate && item.endDate ? `${item.startDate} - ${item.endDate}`
+                      : item.year ? `Jan ${item.year}` : ''}
+                  </Text>
+                </View>
+                <Text style={styles.eduCardMeta}>
+                  {item.board ? `${item.board}` : ''}
+                  {item.percentage ? `, ${item.percentage}%` : ''}
                 </Text>
               </View>
-              <Text style={redesignedStyles.expCardMeta}>{item.company}</Text>
-              <Text style={redesignedStyles.expCardMeta}>{item.location}</Text>
+            ))}
+          </View>
+
+          {/* Work Experience Section */}
+          {experienceItems?.length > 0 && (
+            <View style={redesignedStyles.sectionCardRedesigned}>
+              <Text style={redesignedStyles.sectionTitleRedesigned}>Work Experience</Text>
+              {experienceItems.map((item, idx) => (
+                <View key={idx} style={redesignedStyles.expCardRedesigned}>
+                  <View style={redesignedStyles.expCardHeader}>
+                    <Text style={redesignedStyles.expCardTitle}>{item.jobTitle}</Text>
+                    <Text style={redesignedStyles.expCardDate}>
+                      {formatDate(item.startDate)} -{" "}
+                      {item.endDate === "Present" ? "Present" : formatDate(item.endDate)}
+                      {item.duration ? ` · ${item.duration}` : ""}
+                    </Text>
+                  </View>
+                  <Text style={redesignedStyles.expCardMeta}>{item.company}</Text>
+                  <Text style={redesignedStyles.expCardMeta}>{item.location}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-      )}
+          )}
 
 
 
-      {/* {renderExperienceSection()} */}
 
 
-      {/* {/* Q&A Section */}
-      {/* <View style={styles.sectionCardRedesigned}>
-        <Text style={styles.sectionTitleRedesigned}>Question & Answers</Text>
-        {questionResponsesLoading ? (
-          <ActivityIndicator size="small" color="#BE4145" />
-        ) : questionResponses.length === 0 ? (
-          <Text style={styles.sectionSubText}>No responses found.</Text>
-        ) : (
-          questionResponses.map((qr, idx) => (
-            <View key={idx} style={styles.qaCardRedesigned}>
-              <Text style={styles.qaQuestion}>Q{idx + 1}. {qr.question_text}</Text>
-              <Text style={styles.qaAnswer}>A{idx + 1}. {qr.user_answer}</Text>
-            </View>
-          ))
-        )}
-      </View> */}
+          <View style={styles.sectionCardRedesigned}>
+            <Text style={styles.sectionTitleRedesigned}>Question & Answers</Text>
 
-      <View style={styles.sectionCardRedesigned}>
-        <Text style={styles.sectionTitleRedesigned}>Question & Answers</Text>
+            {questionResponsesLoading ? (
+              <ActivityIndicator size="small" color="#BE4145" />
+            ) : !questionResponses?.questions?.length ? (
+              <Text style={styles.sectionSubText}>No responses found.</Text>
+            ) : (
+              questionResponses.questions.map((q, idx) => (
+                <View key={idx} style={styles.qaCardRedesigned}>
+                  {/* Question */}
+                  <Text style={styles.qaQuestion}>Q{idx + 1}. {q}</Text>
 
-        {questionResponsesLoading ? (
-          <ActivityIndicator size="small" color="#BE4145" />
-        ) : !questionResponses?.questions?.length ? (
-          <Text style={styles.sectionSubText}>No responses found.</Text>
-        ) : (
-          questionResponses.questions.map((q, idx) => (
-            <View key={idx} style={styles.qaCardRedesigned}>
-              {/* Question */}
-              <Text style={styles.qaQuestion}>Q{idx + 1}. {q}</Text>
+                  {/* Candidate Answer */}
+                  <Text style={styles.qaAnswer}>
+                    Candidate Answer: {questionResponses.candidateAnswers?.[idx] ?? 'N/A'}
+                  </Text>
 
-              {/* Candidate Answer */}
-              <Text style={styles.qaAnswer}>
-                Candidate Answer: {questionResponses.candidateAnswers?.[idx] ?? 'N/A'}
-              </Text>
-
-              {/* Ideal Answer */}
-              {/* <Text style={[styles.qaAnswer, { color: '#333', fontWeight: '500' }]}>
+                  {/* Ideal Answer */}
+                  {/* <Text style={[styles.qaAnswer, { color: '#333', fontWeight: '500' }]}>
                 Ideal Answer: {questionResponses.idealAnswers?.[idx] ?? 'N/A'}
               </Text> */}
+                </View>
+              ))
+            )}
+          </View>
+
+
+
+          {/* Show Preferred Slot only if it exists */}
+          {Array.isArray(preferredSlot) && preferredSlot.length > 0 && (
+            <View style={styles.sectionCardRedesigned}>
+              <Text style={styles.sectionTitleRedesigned}>Preferred Time Slot</Text>
+
+              {preferredSlot.map((slot, index) => (
+                <View key={index} style={styles.qaCardRedesigned}>
+                  <Text style={styles.qaQuestion}>Slot {index + 1}</Text>
+                  <Text style={styles.qaAnswer}>{slot}</Text>
+                </View>
+              ))}
             </View>
-          ))
-        )}
+          )}
+
+
+        </ScrollView>
       </View>
 
-
-
-      {/* Show Preferred Slot only if it exists */}
-      {Array.isArray(preferredSlot) && preferredSlot.length > 0 && (
-        <View style={styles.sectionCardRedesigned}>
-          <Text style={styles.sectionTitleRedesigned}>Preferred Time Slot</Text>
-
-          {preferredSlot.map((slot, index) => (
-            <View key={index} style={styles.qaCardRedesigned}>
-              <Text style={styles.qaQuestion}>Slot {index + 1}</Text>
-              <Text style={styles.qaAnswer}>{slot}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-
-
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  outerBox: {
+    flex: 1,
+    flexDirection: 'row', // This is the most important style
+    backgroundColor: '#f4f2ee',
+  },
+
+  innerBox: {
+    flex: 1,
+    marginHorizontal: 25,
+    // marginTop: 8,
+    borderColor: "#e0e0e0",
+    borderWidth: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: "#f4f2ee",
     padding: 16,
-    marginBottom: 20
+    marginBottom: 20,
+    // paddingLeft: 150, // This should match the width of your LeftNav.js
+    // marginHorizontal: 25,
   },
+  manualHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // This centers the title container
+    backgroundColor: '#ffffff', // White background
+    height: 56, // A standard header height
+    paddingHorizontal: 16,
+    borderBottomWidth: 1, // Creates the subtle separator line
+    borderBottomColor: '#e0e0e0', // Light gray color for the line
+  },
+  backButton: {
+    position: 'absolute', // Position it independently of the title
+    left: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center', // Center the icon vertically
+    zIndex: 10,
+    flex: 1,
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center', // Center title horizontally
+    justifyContent: 'center',
+    zIndex: 1,
+    // backgroundColor: "#333",
+  },
+  headerTitle: {
+    color: '#333333', // Dark text color
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
+  },
+
   loader: {
     flex: 1,
     justifyContent: "center",

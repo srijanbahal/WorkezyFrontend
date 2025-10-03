@@ -46,497 +46,510 @@ const createResponsiveStyles = (responsiveSize, width) => StyleSheet.create({
     },
     phoneNumberBold: {
         // Style for the phone number itself
-        fontWeight: 'bold', 
+        fontWeight: 'bold',
         color: '#BE4145',
-        textDecorationLine: 'none', 
+        textDecorationLine: 'none',
     },
 
     scrollContainer: {
-    flex: 1,
-    backgroundColor: '#f4f2ee',
-    paddingHorizontal: 14,
-    padding: 16,
-    paddingTop: 0,
-},
+        flex: 1,
+        backgroundColor: '#f4f2ee',
+        paddingHorizontal: 14,
+        padding: 16,
+        paddingTop: 0,
+    },
     scrollContentContainer: {
-    paddingBottom: 36,
-},
+        paddingBottom: 36,
+    },
     loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fdf7f2',
-},
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fdf7f2',
+    },
     loadingText: {
-    textAlign: 'center',
-    marginTop: 16,
-    fontSize: 16,
-    color: '#444444',
-    fontFamily: 'Inter-Regular',
-},
+        textAlign: 'center',
+        marginTop: 16,
+        fontSize: 16,
+        color: '#444444',
+        fontFamily: 'Inter-Regular',
+    },
     header: {
-    fontSize: 24, // H1 heading 
-    fontFamily: 'Montserrat-Bold',
-    marginBottom: 16,
-    textAlign: "center",
-    color: "#222222",
-},
+        fontSize: 24, // H1 heading 
+        fontFamily: 'Montserrat-Bold',
+        marginBottom: 16,
+        textAlign: "center",
+        color: "#222222",
+    },
     loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-},
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
     error: {
-    textAlign: "center",
-    color: "#BE4145",
-    fontSize: 14, // font size 16 -> 14 
-    marginTop: 24,
-    fontFamily: 'Inter-Regular',
-},
+        textAlign: "center",
+        color: "#BE4145",
+        fontSize: 14, // font size 16 -> 14 
+        marginTop: 24,
+        fontFamily: 'Inter-Regular',
+    },
     noJobs: {
-    textAlign: "center",
-    fontSize: 14,  // font size 16 -> 14
-    color: "#444444",
-    marginTop: 24,
-    fontFamily: 'Inter-Regular',
-},
+        textAlign: "center",
+        fontSize: 14,  // font size 16 -> 14
+        color: "#444444",
+        marginTop: 24,
+        fontFamily: 'Inter-Regular',
+    },
     jobCard: {
-    backgroundColor: '#fff',
-    flexDirection: 'column',
-    padding: 16,
-    paddingBottom: 0, // 16 -> 24
-    borderRadius: 12, // 12 -> 8
-    borderWidth: 1,
-    marginVertical: 8,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowColor: '#000',
-    borderColor: '#e0e0e0',
-    elevation: 1,
-    position: 'relative',
-    width: '100%',
-    alignSelf: 'center',
-    zIndex: 0,
-},
+        backgroundColor: '#fff',
+        flexDirection: 'column',
+        padding: 16,
+        paddingBottom: 0, // 16 -> 24
+        borderRadius: 12, // 12 -> 8
+        borderWidth: 1,
+        marginVertical: 8,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        shadowColor: '#000',
+        borderColor: '#e0e0e0',
+        elevation: 1,
+        position: 'relative',
+        width: '100%',
+        alignSelf: 'center',
+        zIndex: 0,
+    },
+
+    TitlePart: {
+        flex: 1,
+        flexDirection: 'row',
+    },
 
     jobTitle: {
-    fontSize: 24,
-    fontFamily: 'Montserrat-SemiBold',
-    color: '#333', // primary color for clickables
-    marginBottom: 2,
-    textDecorationLine: 'underline', // signals clickability
-},
+        fontSize: 24,
+        fontFamily: 'Montserrat-SemiBold',
+        color: '#333', // primary color for clickables
+        marginBottom: 2,
+        // textDecorationLine: 'underline', // signals clickability
+    },
+
+    iconStyle: {
+        marginTop: 6,
+        marginLeft: 8,
+    },
 
     companyName: {
-    fontSize: 13,
-    fontFamily: 'Inter-Regular',
-    color: '#666',
-    marginBottom: 8, // space before attributes
-},
+        fontSize: 13,
+        fontFamily: 'Inter-Regular',
+        color: '#666',
+        // marginBottom: 8, // space before attributes
+        marginTop: 8,
+    },
 
     shareButton: {
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    flexShrink: 0,
-},
+        flexDirection: 'column',
+        flexWrap: 'nowrap',
+        flexShrink: 0,
+    },
 
     shareView: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 14 },
 
     shareText: {
-    fontSize: 14,
-    color: '#45a6be',
-    fontFamily: 'Montserrat-SemiBold',
-    marginLeft: 8,
-    textDecorationLine: 'underline',
-},
+        fontSize: 14,
+        color: '#45a6be',
+        fontFamily: 'Montserrat-SemiBold',
+        marginLeft: 8,
+        textDecorationLine: 'underline',
+    },
 
     shareIcon: {
-    marginTop: 2,
-},
+        marginTop: 2,
+        // width:16,
+        // marginLeft: 26,
+    },
 
     statusButton: {
-    // position: 'absolute',
-    // top: 8,
-    // right: 8,
-    minHeight: 28,
-    paddingHorizontal: 8,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
-    marginLeft: 8,
-    // margintop: 50,
-    // paddingTop: 4,
-},
+        // position: 'absolute',
+        // top: 8,
+        // right: 8,
+        minHeight: 28,
+        paddingHorizontal: 8,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f5f5f5',
+        marginLeft: 8,
+        // margintop: 50,
+        // paddingTop: 4,
+    },
 
     statusText: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    textTransform: 'capitalize',
-},
+        fontSize: 12,
+        fontFamily: 'Inter-Regular',
+        textTransform: 'capitalize',
+    },
 
     attributesContainer: {
-    flexDirection: 'row',
-    // flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: 8,
-    marginTop: 8,
-    width: '100%',
-    marginLeft: -8,
-    paddingRight: 8,
-},
+        flexDirection: 'row',
+        // flexWrap: 'wrap',
+        gap: 6,
+        marginBottom: 8,
+        marginTop: 8,
+        width: '100%',
+        marginLeft: -8,
+        paddingRight: 8,
+    },
 
     attributeTag: {
-    backgroundColor: '#f9f9f9',
-    paddingVertical: 6,
-    paddingHorizontal: 6,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    // marginRight: 8,
-    marginBottom: 8,
-    marginTop: 4,
-    minWidth: 80,
-    minHeight: 24,
-    flexDirection: "row",
-    alignItems: "center",
-},
+        backgroundColor: '#f9f9f9',
+        paddingVertical: 6,
+        paddingHorizontal: 6,
+        borderRadius: 100,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        // marginRight: 8,
+        marginBottom: 8,
+        marginTop: 4,
+        minWidth: 80,
+        minHeight: 24,
+        flexDirection: "row",
+        alignItems: "center",
+    },
 
     attributeText: {
-    fontSize: 12,
-    color: '#666',
-    fontFamily: 'Inter-Regular',
-    marginLeft: 4,
-    textTransform: 'capitalize',
-},
+        fontSize: 12,
+        color: '#666',
+        fontFamily: 'Inter-Regular',
+        marginLeft: 4,
+        textTransform: 'capitalize',
+    },
 
     salaryContentContainer: {
-    flex: 1,
-    marginLeft: 2,
-    flexDirection: 'row', // <-- VERY important for left/right layout
-    alignItems: 'center', // or 'flex-start' if you want top alignment
-    justifyContent: 'space-between', // <-- puts one item on left, other on right
-    marginBottom: 16,
-},
+        flex: 1,
+        marginLeft: 2,
+        flexDirection: 'row', // <-- VERY important for left/right layout
+        alignItems: 'center', // or 'flex-start' if you want top alignment
+        justifyContent: 'space-between', // <-- puts one item on left, other on right
+        marginBottom: 16,
+    },
     salaryContainer: {
-    flex: 1,
-    marginLeft: 2,
-},
+        flex: 1,
+        marginLeft: 2,
+    },
 
     salaryText: {
-    fontSize: 20,
-    fontFamily: 'Montserrat-SemiBold',
-    color: '#b44145',   // primary red
-    fontWeight: 'bold',
-},
+        fontSize: 20,
+        fontFamily: 'Montserrat-SemiBold',
+        color: '#b44145',   // primary red
+        fontWeight: 'bold',
+    },
 
     salaryUnit: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#666',
-},
+        fontSize: 14,
+        fontFamily: 'Inter-Regular',
+        color: '#666',
+    },
     viewDetailsButton: {
-    // Remove absolute positioning
-    backgroundColor: 'transparent',
-    marginRight: 8,
-    // minHeight: 44, // added 
-},
+        // Remove absolute positioning
+        backgroundColor: 'transparent',
+        marginRight: 8,
+        // minHeight: 44, // added 
+    },
     buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    // justifyContent: 'center',
-},
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent: 'center',
+    },
     viewDetailsText: {
-    color: '#45a6be',
-    fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
-    // marginRight: 6,
-    textDecorationLine: 'underline',
-    // marginTop: 2,
-},
+        color: '#45a6be',
+        fontSize: 14,
+        fontFamily: 'Montserrat-SemiBold',
+        // marginRight: 6,
+        textDecorationLine: 'underline',
+        // marginTop: 2,
+    },
 
     arrowIcon: {
-    marginLeft: 4,
-    marginTop: 2,
-},
+        marginLeft: 4,
+        marginTop: 2,
+    },
     actionButtonsRow: {
-    flexDirection: 'row',
-    position: 'relative',
-    // bottom: 16,
-    left: 6,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-},
+        flexDirection: 'row',
+        position: 'relative',
+        // bottom: 16,
+        left: 6,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
     emptyStateContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    minHeight: '100%',
-    paddingVertical: 40,
-},
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 24,
+        minHeight: '100%',
+        paddingVertical: 40,
+    },
     emptyStateGraphic: {
-    width: width * 0.6,
-    height: width * 0.6,
-    marginBottom: 32,
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+        width: width * 0.6,
+        height: width * 0.6,
+        marginBottom: 32,
+        position: 'relative',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     iconCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(190, 65, 69, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: 'rgba(190, 65, 69, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     iconSmallCircle1: {
-    position: 'absolute',
-    top: 20,
-    right: 40,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(190, 65, 69, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+        position: 'absolute',
+        top: 20,
+        right: 40,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'rgba(190, 65, 69, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     iconSmallCircle2: {
-    position: 'absolute',
-    bottom: 30,
-    left: 30,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(190, 65, 69, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+        position: 'absolute',
+        bottom: 30,
+        left: 30,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'rgba(190, 65, 69, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     iconSmallCircle3: {
-    position: 'absolute',
-    bottom: 10,
-    right: 30,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(190, 65, 69, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+        position: 'absolute',
+        bottom: 10,
+        right: 30,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'rgba(190, 65, 69, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     emptyStateTitle: {
-    fontSize: 24,
-    fontFamily: 'Montserrat-Bold',
-    color: '#222222',
-    marginBottom: 12,
-    textAlign: 'center',
-},
+        fontSize: 24,
+        fontFamily: 'Montserrat-Bold',
+        color: '#222222',
+        marginBottom: 12,
+        textAlign: 'center',
+    },
     emptyStateMessage: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#666666',
-    textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 24,
-},
+        fontSize: 14,
+        fontFamily: 'Inter-Regular',
+        color: '#666666',
+        textAlign: 'center',
+        marginBottom: 32,
+        lineHeight: 24,
+    },
     actionButton: {
-    backgroundColor: '#BE4145',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    maxWidth: 300,
-},
+        backgroundColor: '#BE4145',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        maxWidth: 300,
+    },
     actionButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
-},
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontFamily: 'Montserrat-SemiBold',
+    },
     topWhiteBackground: {
-    backgroundColor: '#fff',
-    paddingTop: 16,
-    paddingBottom: 0,
-    paddingHorizontal: 16,
-    zIndex: 1000,
-    width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    paddingBottom: 16,
-    // // Add platform-specific styles using Platform.select
-    // ...Platform.select({
-    //     web: {
-    //         paddingBottom: 28, // This effectively makes paddingVertical 16 for web
-    //     },
-    //     // You can add other platforms like 'android' or 'ios' here if needed
-    //     default: {
-    //         paddingBottom: 0, // Explicitly keep it 0 for other platforms
-    //     }
-    // }),
-},
+        backgroundColor: '#fff',
+        paddingTop: 16,
+        paddingBottom: 0,
+        paddingHorizontal: 16,
+        zIndex: 1000,
+        width: "100%",
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        paddingBottom: 16,
+        // // Add platform-specific styles using Platform.select
+        // ...Platform.select({
+        //     web: {
+        //         paddingBottom: 28, // This effectively makes paddingVertical 16 for web
+        //     },
+        //     // You can add other platforms like 'android' or 'ios' here if needed
+        //     default: {
+        //         paddingBottom: 0, // Explicitly keep it 0 for other platforms
+        //     }
+        // }),
+    },
     headerRow: {
-    flexDirection: 'column', // changed from 'row' to 'column'
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-},
+        flexDirection: 'column', // changed from 'row' to 'column'
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
     headerTitle: {
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: 18, // 20 -> 18
-    color: '#ffffff',
-    marginBottom: 12,
-},
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 18, // 20 -> 18
+        color: '#ffffff',
+        marginBottom: 12,
+    },
     filterDropdownWrapper: {
-    position: "relative",
-    minWidth: '100%',
-    // minHeight: 14,
-    alignItems: 'flex-start',
-    // marginBottom: 6,
-    marginTop: 16,
-    zIndex: 1001,
-    paddingBottom: 16,
-    backgroundColor: '#f4f2ee',
-    // paddingHorizontal: "92
-    // marginHorizontal: 20,
-    minWidth: '92%',
-    paddingHorizontal: 20,
+        position: "relative",
+        minWidth: '100%',
+        // minHeight: 14,
+        alignItems: 'flex-start',
+        // marginBottom: 6,
+        marginTop: 16,
+        zIndex: 1001,
+        paddingBottom: 16,
+        backgroundColor: '#f4f2ee',
+        // paddingHorizontal: "92
+        // marginHorizontal: 20,
+        minWidth: '92%',
+        paddingHorizontal: 20,
 
-},
+    },
     filterDropdown: {
-    flexDirection: 'row',
-    minWidth: '100%',
-    alignItems: 'center',
-    // paddingLeft: 44,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 12,
-    height: 40,
-    paddingHorizontal: 12,
-    justifyContent: 'space-between',
-},
+        flexDirection: 'row',
+        minWidth: '100%',
+        alignItems: 'center',
+        // paddingLeft: 44,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        borderRadius: 12,
+        height: 40,
+        paddingHorizontal: 12,
+        justifyContent: 'space-between',
+    },
 
     filterDropdownContainer: {
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    zIndex: 1001,
-    // marginLeft: 14,
-},
+        borderColor: '#e0e0e0',
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        zIndex: 1001,
+        // marginLeft: 14,
+    },
 
     filterDropdownText: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 14,
-    color: '#333',
-    marginLeft: 4,
-    marginRight: 4,
-},
+        fontFamily: 'Inter-Regular',
+        fontSize: 14,
+        color: '#333',
+        marginLeft: 4,
+        marginRight: 4,
+    },
 
     filterDropdownPlaceholder: {
-    color: '#999',
-    fontFamily: 'Inter-Regular',
-    fontSize: 14,
-    marginLeft: 4,
-},
+        color: '#999',
+        fontFamily: 'Inter-Regular',
+        fontSize: 14,
+        marginLeft: 4,
+    },
 
     jobInfoCard: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-},
+        backgroundColor: '#f9f9f9',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16,
+    },
     jobInfoLabel: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 12,
-    color: '#333',
-    marginBottom: 4,
-},
+        fontFamily: 'Inter-SemiBold',
+        fontSize: 12,
+        color: '#333',
+        marginBottom: 4,
+    },
     filterIconInside: {
-    position: "absolute",
-    left: 12,        // distance from left edge of dropdown
-    top: "50%",      // center vertically
-    transform: [{ translateY: -10 }], // adjust for icon size
-    zIndex: 10,      // keep above dropdown box
-},
+        position: "absolute",
+        left: 12,        // distance from left edge of dropdown
+        top: "50%",      // center vertically
+        transform: [{ translateY: -10 }], // adjust for icon size
+        zIndex: 10,      // keep above dropdown box
+    },
 
     jobInfoValue: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
-},
+        fontFamily: 'Inter-Regular',
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 8,
+    },
     jobInfoSectionTitle: {
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 8,
-},
+        fontFamily: 'Montserrat-SemiBold',
+        fontSize: 18,
+        color: '#333',
+        marginBottom: 8,
+    },
     salaryCandidatesRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    // marginTop: 2,
-},
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        // marginTop: 2,
+    },
 
 
     candidatesText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#333',
-},
+        fontSize: 14,
+        fontFamily: 'Inter-Regular',
+        color: '#333',
+    },
 
     actionButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    // marginTop: 8,
-    // paddingHorizontal: 4,
-    marginBottom: 16,
-    // paddingBottom: 8,
-},
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        // marginTop: 8,
+        // paddingHorizontal: 4,
+        marginBottom: 16,
+        // paddingBottom: 8,
+    },
     postedDateText: {
-    fontSize: 12,
-    color: '#666666',
-    fontFamily: 'Inter-Regular',
-    marginTop: 4,
-    marginLeft: 4,
-},
+        fontSize: 12,
+        color: '#666666',
+        fontFamily: 'Inter-Regular',
+        marginTop: 4,
+        marginLeft: 4,
+    },
 
     webModalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 9999,
-},
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999,
+    },
     webModalContent: {
-    backgroundColor: '#fff',
-    borderRadius: (16),
-    padding: (16),
-    width: '90%',
-    maxHeight: '80%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-},
+        backgroundColor: '#fff',
+        borderRadius: (16),
+        padding: (16),
+        width: '90%',
+        maxHeight: '80%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
     webModalCloseButton: {
-    position: 'absolute',
-    top: (16),
-    right: (16),
-    height: (32),
-    width: (32),
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10
-}
+        position: 'absolute',
+        top: (16),
+        right: (16),
+        height: (32),
+        width: (32),
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10
+    }
 
 });
 
@@ -738,6 +751,7 @@ const MyJobs = ({ navigation }) => {
                 console.log("Job details: ", response.data);
                 if (response?.data?.job) {
                     setJobDetails(response.data.job);
+                    // console.log("jobDetails ")
                 }
             } catch (error) {
                 console.error("Error Fetching Job Details: ", error)
@@ -818,16 +832,73 @@ const MyJobs = ({ navigation }) => {
         }
     };
 
+
+    const canViewCandidates = (job) => {
+        const { review_status, posted_at } = job;
+        const status = review_status?.toLowerCase();
+
+        // Condition 1: Always show for 'active' jobs
+        if (status === 'active') {
+            return true;
+        }
+
+        // Condition 2: Show for 'expired' jobs posted more than 30 days ago
+        if (status === 'expired' && posted_at) {
+            const postDate = new Date(posted_at);
+            const currentDate = new Date();
+            const timeDifference = currentDate.getTime() - postDate.getTime();
+            const daysSincePosting = timeDifference / (1000 * 3600 * 24);
+
+            // Show if job was posted more than 30 days ago
+
+            //No but we have to show if the this if the Job has been posted less than 30 days ago if more than no
+            return daysSincePosting < 30;
+        }
+
+        // In all other cases, hide the button
+        return false;
+    };
+
+    // In pages/Employer/MyJobs.js
+
+    const canShareJob = (job) => {
+        const { review_status, posted_at } = job;
+        const status = review_status?.toLowerCase();
+
+        // Condition 1: Always show for 'active' jobs.
+        if (status === 'active') {
+            return true;
+        }
+
+        // Condition 2: Show for 'expired' jobs, but only for 15 days after they expire.
+        // Since a job expires after 15 days, we allow sharing up to the 30-day mark from its posting date.
+        if (status === 'expired' && posted_at) {
+            const postDate = new Date(posted_at);
+            const currentDate = new Date();
+            const timeDifference = currentDate.getTime() - postDate.getTime();
+            const daysSincePosting = timeDifference / (1000 * 3600 * 24);
+
+            // Allow sharing for up to 30 days from the original posting date.
+            return daysSincePosting <= 30;
+        }
+
+        // In all other cases, hide the share button.
+        return false;
+    };
+
     const renderJobItem = ({ item }) => (
         <View style={styles.jobCard}>
             {/* Top Row: Job Title + Status */}
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <View style={{ flexShrink: 1 }}>
-                    <TouchableOpacity onPress={() => { setSelectedJob(item); setModalVisible(true); }}>
-                        <Text style={[styles.jobTitle, item.review_status?.toLowerCase() === 'closed' && { color: 'rgba(190,65,69,0.4)' }]}>
+                    <View style={styles.TitlePart}>
+                        <Text style={[styles.jobTitle]}>
                             {item.title}
                         </Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={() => { setSelectedJob(item); setModalVisible(true); }}>
+                            <Ionicons name="eye-outline" size={20} color="#BE4145" style={styles.iconStyle} />
+                        </TouchableOpacity>
+                    </View>
                     <Text style={styles.companyName}>{item.company}</Text>
                 </View>
 
@@ -847,35 +918,32 @@ const MyJobs = ({ navigation }) => {
                             {item.review_status || "Pending"}
                         </Text>
                     </View>
-                    <TouchableOpacity
-                        style={styles.shareView}
-                        onPress={() => {
-                            const jobUrl = `https://webapp-webezy.netlify.app/user_details/${item.id}`;
+                    {/* Conditionally render the Share Job button */}
 
-                            // Copy to clipboard
-                            Clipboard.setStringAsync(jobUrl);
-                            // Alert.alert("Link copied!", "You can now share it anywhere.");
-                            showAlert("Link copied to clipboard!", null, 'success', true);
-                        }}
-                    >
-                        <Text style={styles.shareText}>Share Job</Text>
-                        <Ionicons
-                            name="share-social"
-                            size={14}
-                            color="#45a6be"
-                            style={styles.shareIcon}
-                        />
-                    </TouchableOpacity>
+                    {canShareJob(item) && (
+                        <TouchableOpacity
+                            style={styles.shareView}
+                            onPress={() => {
+                                const jobUrl = `https://webapp-webezy.netlify.app/user_details/${item.id}`;
+                                Clipboard.setStringAsync(jobUrl);
+                                showAlert("Link copied to clipboard!", null, 'success', true);
+                            }}
+                        >
+                            <Text style={styles.shareText}>Share Job</Text>
+                            <Ionicons
+                                name="share-social"
+                                size={14}
+                                color="#45a6be"
+                                style={styles.shareIcon}
+                            />
+                        </TouchableOpacity>
+                    )}
 
                 </View>
             </View>
 
             {/* Attributes Row */}
             <View style={styles.attributesContainer}>
-                {/* <View style={{ ...styles.attributeTag, backgroundColor: '#f0fdf4' }}>
-                    <Ionicons name="cash-outline" size={14} color="#555" />
-                    <Text style={{ ...styles.attributeText, color: '#4CAF50' }}>₹{item.salary}/month</Text>
-                </View> */}
                 <View style={styles.attributeTag}>
                     <Ionicons name="location-outline" size={14} color="#555" />
                     <Text style={styles.attributeText}>{item.city}, {item.country}</Text>
@@ -907,29 +975,13 @@ const MyJobs = ({ navigation }) => {
             {/* Action Buttons Row */}
             {(item.review_status !== "rejected" && item.review_status !== "expired") && (
                 <View style={styles.actionButtonsContainer}>
-                    {/* <TouchableOpacity
-                        style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
-                        onPress={() => {
-                            const jobUrl = "https://workezy.org/user_details/45";
-
-                            // Copy to clipboard
-                            Clipboard.setStringAsync(jobUrl);
-                            // Alert.alert("Link copied!", "You can now share it anywhere.");
-                            showAlert("Link copied to clipboard!", null, 'success', true);
-                        }}
-                    >
-                        <Text style={styles.shareText}>Share Job</Text>
-                        <Ionicons
-                            name="share-social"
-                            size={14}
-                            color="#45a6be"
-                            style={styles.shareIcon}
-                        />
-                    </TouchableOpacity> */}
                     {/* Left side : Date Posted */}
                     <Text style={styles.postedDateText}>
-                        Posted {getPostedTime(item.posted_at)}
+                        {item.review_status === 'expired'
+                            ? `Expired ${getPostedTime(item.expired_at)}`
+                            : `Posted ${getPostedTime(item.posted_at)}`}
                     </Text>
+
 
                     {/* Right Side: Action Button */}
                     <TouchableOpacity
@@ -942,18 +994,16 @@ const MyJobs = ({ navigation }) => {
                             }
                         }}
                     >
-                        {item.review_status?.toLowerCase() === 'active' ? (
+                        {/* Render "View Candidates" if conditions are met */}
+                        {canViewCandidates(item) ? (
                             <View style={styles.buttonContent}>
                                 <Text style={styles.viewDetailsText}>View Candidates</Text>
-                                {/* <MaterialIcons
-                                    name="arrow-forward-ios"
+                                <Ionicons
+                                    name="arrow-forward-outline"
                                     size={16}
                                     color="#45a6be"
                                     style={styles.arrowIcon}
-                                /> */}
-                                <Ionicons name="arrow-forward-outline" size={16}
-                                    color="#45a6be"
-                                    style={styles.arrowIcon} />
+                                />
                             </View>
                         ) : item.review_status?.toLowerCase() === 'pending' ? (
                             <View style={styles.buttonContent}>
@@ -989,15 +1039,15 @@ const MyJobs = ({ navigation }) => {
                 </View>
             </View>
             <Text style={styles.emptyStateTitle}>No Jobs Posted Yet</Text>
-            {/* <Text style={styles.emptyStateMessage}>
+            <Text style={styles.emptyStateMessage}>
                 You haven't posted any jobs yet. Start by creating your first job posting to find candidates.
-            </Text> */}
-            {/* <TouchableOpacity 
+            </Text>
+            <TouchableOpacity 
                 style={styles.actionButton}
                 onPress={() => navigation.navigate('PostJobForm')}
             >
                 <Text style={styles.actionButtonText}>Post a New Job</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
         </View>
     );
     if (loading) {
@@ -1164,10 +1214,6 @@ const MyJobs = ({ navigation }) => {
             <View style={[styles.container, isWeb && styles.containerWeb]}>
                 {/* Sticky header container */}
                 <View style={styles.topWhiteBackground}>
-                    {/* <View style={styles.headerRow}>
-                        <Text style={styles.headerTitle}></Text>
-                    </View> */}
-                    {/* <View style={styles.filterDropdownWrapper}> */}
                     <DropDownPicker
                         open={statusOpen}
                         value={statusValue}
@@ -1221,7 +1267,7 @@ const MyJobs = ({ navigation }) => {
                         />
                     )}
                     <Text style={styles.supportFooter}>
-                        For Support and Feedback, Call us at: <Text style = {styles.phoneNumberBold}> +91 9461299504 </Text>
+                        For Support and Feedback, Call us at: <Text style={styles.phoneNumberBold}> +91 9461299504 </Text>
                     </Text>
                 </ScrollView>
             </View >
@@ -1308,14 +1354,6 @@ const MyJobs = ({ navigation }) => {
             )}
 
 
-            {/* Conditionally render LeftNav for web and BottomNav for others
-            {Platform.OS === 'web' ? (
-                <LeftNav activeuser={"employer"} />
-            ) : (
-                <BottomNav activeuser={"employer"} />
-            )} */}
-
-            {/* CustomAlert sticky at the bottom */}
             <CustomAlert
                 visible={alertVisible}
                 title={alertTitle}

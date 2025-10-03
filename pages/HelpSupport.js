@@ -5,6 +5,8 @@ import CustomAlert from '../components/CustomAlert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deactivateProfile } from '../utils/api';
 import { useAuth } from '../utils/AuthContext';
+import LeftNav from "../component/LeftNav";
+
 
 const HelpSupport = ({ navigation }) => {
   const [alertVisible, setAlertVisible] = useState(false);
@@ -50,72 +52,134 @@ const HelpSupport = ({ navigation }) => {
     }
   };
 
+  const handleBack = () => {
+    navigation.goBack();
+  };
   return (
-    <>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }}>
-        {/* About Us Section */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>About Us</Text>
-          <Text style={styles.sectionText}>
-            We are a leading platform dedicated to connecting talented professionals with exceptional opportunities. Our mission is to revolutionize the way people find meaningful work by providing innovative tools and personalized experiences that benefit both job seekers and employers. With years of industry expertise and a commitment to excellence, we strive to create lasting partnerships that drive success for everyone involved.
-          </Text>
-        </View>
+    <View style={styles.outerBox}>
+      <LeftNav activeuser={"employer"} />
 
-        {/* Contact Us Section */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Contact Us</Text>
-          <Text style={styles.helpText}>
-            Have questions or need assistance? We're here to help!
-          </Text>
-          <View style={styles.contactItem}>
-            <Ionicons name="mail-outline" size={20} style={styles.contactIcon} />
-            <Text style={styles.contactText}>support@example.com</Text>
-          </View>
-          <View style={styles.contactItem}>
-            <Ionicons name="call-outline" size={20} style={styles.contactIcon} />
-            <Text style={styles.contactText}>+1 (555) 123-4567</Text>
+      <View style={styles.innerBox}>
+        <View style={styles.manualHeader}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#333333" />
+          </TouchableOpacity>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}>
+              More Info
+            </Text>
           </View>
         </View>
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }}>
+          {/* About Us Section */}
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>About Us</Text>
+            <Text style={styles.sectionText}>
+              We are a leading platform dedicated to connecting talented professionals with exceptional opportunities. Our mission is to revolutionize the way people find meaningful work by providing innovative tools and personalized experiences that benefit both job seekers and employers. With years of industry expertise and a commitment to excellence, we strive to create lasting partnerships that drive success for everyone involved.
+            </Text>
+          </View>
 
-        {/* Custom Alert for delete confirmation */}
-        <CustomAlert
-          visible={alertVisible}
-          message="Are you sure you want to delete your account?"
-          type="warning"
-          onClose={() => setAlertVisible(false)}
-          onConfirm={confirmDeleteProfile}
-          showCancel={true}
-        />
-        {/* Custom Alert for success after deletion (auto-close, no button) */}
-        <CustomAlert
-          visible={successAlertVisible}
-          title="Profile Deleted"
-          message="Your profile has been deleted successfully."
-          type="success"
-          onClose={() => { }}
-          showCancel={false}
-          showButton={false}
-        />
-      </ScrollView>
-      {/* Sticky Danger Zone Card at the bottom */}
-      <View style={styles.stickyDangerCard}>
-        <Text style={styles.dangerTitle}>Danger Account</Text>
-        <Text style={styles.dangerText}>
-          Once you delete your account, it cannot be restored.
-        </Text>
-        <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteProfile}>
-          <Text style={styles.deleteButtonText}>Delete Account</Text>
-        </TouchableOpacity>
+          {/* Contact Us Section */}
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Contact Us</Text>
+            <Text style={styles.helpText}>
+              Have questions or need assistance? We're here to help!
+            </Text>
+            <View style={styles.contactItem}>
+              <Ionicons name="mail-outline" size={20} style={styles.contactIcon} />
+              <Text style={styles.contactText}>support@example.com</Text>
+            </View>
+            <View style={styles.contactItem}>
+              <Ionicons name="call-outline" size={20} style={styles.contactIcon} />
+              <Text style={styles.contactText}>+1 (555) 123-4567</Text>
+            </View>
+          </View>
+
+          {/* Custom Alert for delete confirmation */}
+          <CustomAlert
+            visible={alertVisible}
+            message="Are you sure you want to delete your account?"
+            type="warning"
+            onClose={() => setAlertVisible(false)}
+            onConfirm={confirmDeleteProfile}
+            showCancel={true}
+          />
+          {/* Custom Alert for success after deletion (auto-close, no button) */}
+          <CustomAlert
+            visible={successAlertVisible}
+            title="Profile Deleted"
+            message="Your profile has been deleted successfully."
+            type="success"
+            onClose={() => { }}
+            showCancel={false}
+            showButton={false}
+          />
+        </ScrollView>
+        {/* Sticky Danger Zone Card at the bottom */}
+        <View style={styles.stickyDangerCard}>
+          <Text style={styles.dangerTitle}>Danger Account</Text>
+          <Text style={styles.dangerText}>
+            Once you delete your account, it cannot be restored.
+          </Text>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteProfile}>
+            <Text style={styles.deleteButtonText}>Delete Account</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </>
+
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  outerBox: {
+    flex: 1,
+    flexDirection: 'row', // This is the most important style
+    backgroundColor: '#f4f2ee',
+  },
+  innerBox: {
+    flex: 1,
+    marginHorizontal: 25,
+    // marginTop: 8,
+    borderColor: "#e0e0e0",
+    borderWidth: 1,
+  },
+  manualHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // This centers the title container
+    backgroundColor: '#ffffff', // White background
+    height: 56, // A standard header height
+    paddingHorizontal: 16,
+    borderBottomWidth: 1, // Creates the subtle separator line
+    borderBottomColor: '#e0e0e0', // Light gray color for the line
+  },
+  backButton: {
+    position: 'absolute', // Position it independently of the title
+    left: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center', // Center the icon vertically
+    zIndex: 10,
+    flex: 1,
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center', // Center title horizontally
+    justifyContent: 'center',
+    zIndex: 1,
+    // backgroundColor: "#333",
+  },
+  headerTitle: {
+    color: '#333333', // Dark text color
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f4f2ee',
     padding: 16,
+
   },
   card: {
     backgroundColor: '#fff',

@@ -1,13 +1,15 @@
 import axios from "axios";
+import { Platform } from "react-native";
 
 // Use the AWS server endpoint
 // const API_BASE_URL = "https://api.workezy.org/api"; 
 // Local development server - comment out when using the AWS endpoint
 // const API_BASE_URL = "http://192.168.0.105:5000/api";
-// const API_BASE_URL = "http://172.16.48.26:5000/api"; 
+// const API_BASE_URL = "http://172.23.127.157:5000/api"; 
 // const API_BASE_URL = "http://127.0.0.1:5000/api"; 
 // const API_BASE_URL = "http://10.31.128.157:5000/api";
-const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
+const API_BASE_URL = "http://10.205.45.157:5000/api";
+// const API_BASE_URL = "https://goldfish-app-fj43o.ondigitalocean.app/api";
 
 
 
@@ -66,11 +68,11 @@ export const updateJob = (jobId, data) => api.put(`/employers/update-job/${jobId
 
 export const ResumeData = (data) => api.put("users/update-resume", data);
 
-export const getJobQuestions = (jobId,jobSeekerId ) => api.get(`users/job-questions/${jobId}/${jobSeekerId}`);
-export const getJobQuestionsJobId = (jobId ) => api.get(`users/job-questions/${jobId}`);
+export const getJobQuestions = (jobId, jobSeekerId) => api.get(`users/job-questions/${jobId}/${jobSeekerId}`);
+export const getJobQuestionsJobId = (jobId) => api.get(`users/job-questions/${jobId}`);
 // export const getJobExtradetails = (jobId) => api.get(`users/`)
 
-export const createScreening = (jobId, title) => api.post("/employers/create-screening", { jobId, title});
+export const createScreening = (jobId, title) => api.post("/employers/create-screening", { jobId, title });
 
 // Save screening questions for a job
 export const addScreeningQuestions = (jobId, questions) =>
@@ -182,39 +184,39 @@ export const uploadImage = async (imageUri, userType, userId) => {
     if (!userType) throw new Error("User type is required");
     if (!userId) throw new Error("User ID is required");
 
-    // Extract file info
-    const filename = imageUri.split('/').pop();
-    const match = /\.(\w+)$/.exec(filename || '');
-    const fileExtension = match ? match[1] : 'jpg';
-    const fileType = `image/${fileExtension}`;
-
-    // Create proper file object for React Native
-    const file = {
-      uri: imageUri,
-      type: fileType,
-      name: filename || `upload-${Date.now()}.${fileExtension}`,
-    };
-
-    // Append fields to FormData
+    // Append standard data
     formData.append('userType', userType);
     formData.append('userId', userId);
-    formData.append('file', file);
 
-    console.log('Uploading image with data:', {
-      userType,
-      userId,
-      filename: file.name,
-      type: file.type,
-      uri: imageUri
-    });
+    const filename = imageUri.split('/').pop() || `upload-${Date.now()}.jpg`;
 
-    // Add timeout to axios
+    // ✨ --- PLATFORM-SPECIFIC FIX START --- ✨
+    if (Platform.OS === 'web') {
+      // For web, fetch the image URI to get a Blob
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+      formData.append('file', blob, filename);
+    } else {
+      // For mobile, use the React Native-specific object format
+      const match = /\.(\w+)$/.exec(filename || '');
+      const type = match ? `image/${match[1]}` : 'image';
+      formData.append('file', {
+        uri: imageUri,
+        name: filename,
+        type,
+      });
+    }
+    // ✨ --- PLATFORM-SPECIFIC FIX END --- ✨
+
+    console.log('Uploading image with data for platform:', Platform.OS);
+
     const response = await api.post('/upload', formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      timeout: 30000, // 30 second timeout
+      timeout: 30000,
     });
+
 
     console.log('Upload response:', response.data);
 
@@ -223,6 +225,7 @@ export const uploadImage = async (imageUri, userType, userId) => {
     }
 
     return response.data.imageUrl;
+
   } catch (error) {
     let errorMessage = 'Upload failed';
     if (error.response) {
@@ -241,6 +244,11 @@ export const uploadImage = async (imageUri, userType, userId) => {
     throw new Error(errorMessage);
   }
 };
+
+
+
+
+
 
 // Upload Document API call
 export const uploadDocument = async (fileUri, employerId) => {

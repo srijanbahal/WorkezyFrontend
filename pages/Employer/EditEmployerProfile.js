@@ -395,7 +395,8 @@ const EditEmployerProfile = ({ route }) => {
       allowsEditing: true,
       quality: 1,
     });
-
+    console.log("reached after image picker");
+    console.log("result : ", result);
     if (!result.canceled) {
       const imageUri = result.assets[0].uri;
       setProfileImage(imageUri);
@@ -405,12 +406,15 @@ const EditEmployerProfile = ({ route }) => {
 
   const uploadToS3 = async (imageUri) => {
     try {
-      const uploadedImageUrl = await uploadImage(imageUri, userType, formData.phone);
-      showAlert("Image uploaded successfully!", "success");
+      console.log("reachec in uploadtoS3")
+      const uploadedImageUrl = await uploadImage(imageUri, userType, userId);
+      showAlert("","Image uploaded successfully!", "success");
       console.log("Uploaded Image URL:", uploadedImageUrl);
       setProfileImage(uploadedImageUrl);
     } catch (error) {
-      showAlert("Failed to upload image. Please try again.", "error");
+      // console.log()
+      console.log("Error message : ",error);
+      showAlert("","Failed to upload image. Please try again.", "error");
     }
   };
 
@@ -567,6 +571,7 @@ const EditEmployerProfile = ({ route }) => {
     // Validate pincode
     if (formData.zipcode) {
       const pincodeValidation = validatePincode(formData.zipcode);
+      console.log("Pincode validation: ", pincodeValidation);
       if (!pincodeValidation.valid) {
         setPincodeError(pincodeValidation.message);
         showAlert("Error", pincodeValidation.message, 'warning');
@@ -592,6 +597,7 @@ const EditEmployerProfile = ({ route }) => {
       userType: 'employer',
       profileImage: profileImage
     };
+    console.log("updated Data : ", updatedData)
 
     try {
       const response = await updateProfile(updatedData);
@@ -605,7 +611,7 @@ const EditEmployerProfile = ({ route }) => {
         showAlert('Error', response?.message || "Update failed", 'error');
       }
     } catch (error) {
-      showAlert('Something went wrong', 'error');
+      showAlert("",'Something went wrong', 'error');
       console.log(error);
     }
   };

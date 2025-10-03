@@ -285,7 +285,7 @@ const AppRouter = () => {
         component={ApplicationReceived}
         options={{
           title: 'Candidates',
-          headerShown: true,
+          headerShown: false,
           headerStyle: {
             backgroundColor: '#be4145',
             elevation: 0,
@@ -299,7 +299,7 @@ const AppRouter = () => {
         component={ShortlistedCandidates}
         options={{
           title: 'Shortlisted Candidates',
-          headerShown: true,
+          headerShown: false,
           headerStyle: {
             backgroundColor: '#be4145',
             elevation: 0,
@@ -318,7 +318,7 @@ const AppRouter = () => {
         component={CandidateDetails}
         options={{
           title: 'Applicant Details',
-          headerShown: true,
+          headerShown: false,
           headerStyle: {
             backgroundColor: '#be4145',
             elevation: 0,
@@ -357,7 +357,7 @@ const AppRouter = () => {
         component={HelpSupport}
         options={{
           title: 'More Info',
-          headerShown: true,
+          headerShown: false,
           headerStyle: {
             backgroundColor: '#be4145',
             elevation: 0,

@@ -416,15 +416,16 @@ const PostJobForm = ({ navigation }) => {
     //     fetchJobDetails();
     // }, [jobId]);
 
-    // --- REVISED USE-EFFECT #1: Handles both fetching data AND setting initial state for updates ---
+    // This hook now correctly handles fetching data and setting all form fields.
     useEffect(() => {
         const fetchJobDetails = async () => {
             if (jobId) {
                 try {
                     const response = await getJobDetails(jobId);
                     const jobData = response.data.job;
+                    console.log("Job Details Fetched", jobData);
 
-                    // --- Set the form state with fetched data (your existing code) ---
+                    // --- Set the form state with fetched data ---
                     setSearchText(jobData.title || '');
                     setCity(jobData.city || '');
                     setJobType(jobData.job_type || null);
@@ -432,13 +433,31 @@ const PostJobForm = ({ navigation }) => {
                     setLocationType(jobData.location_type || null);
                     setSalary(jobData.salary?.toString() || '');
                     setJd(jobData.description || '');
-                    setNumEmployees(jobData.no_of_employees?.toString() || '');
                     setExperience(jobData.experience || null);
-                    // The buggy field remains for now
-                    setJobCategory(jobData.jobCategory || null);
 
-                    // --- THIS IS THE CRUCIAL PART ---
-                    // Capture the initial state *after* the form is populated
+                    // FIXED: Use the correct keys from your API response
+                    setJobCategory(jobData.category || null);
+                    setNumEmployees(jobData.employees_required?.toString() || '');
+
+                    // ADDED: Set state for the additional fields
+                    setMinAge(jobData.min_age?.toString() || '');
+                    setMinEducation(jobData.min_education || '');
+                    setPrefGender(jobData.preferred_gender || '');
+
+                    // ADDED: Handle and format screening questions
+                    if (jobData.screening_questions && jobData.screening_questions.length > 0) {
+                        const formattedQuestions = jobData.screening_questions.map(q => ({
+                            question: q.question_text,
+                            // Capitalize the first letter of the answer for consistency
+                            correctAnswer: q.ideal_answer.charAt(0).toUpperCase() + q.ideal_answer.slice(1)
+                        }));
+                        setQuestions(formattedQuestions);
+                    } else {
+                        // Reset to default if no questions are returned
+                        setQuestions([{ question: '', correctAnswer: 'Yes' }]);
+                    }
+
+                    // --- Capture the initial state *after* the form is populated ---
                     const initialState = {
                         searchText: jobData.title || '',
                         city: jobData.city || '',
@@ -447,32 +466,37 @@ const PostJobForm = ({ navigation }) => {
                         locationType: jobData.location_type || null,
                         salary: jobData.salary?.toString() || '',
                         jd: jobData.description || '',
-                        numEmployees: jobData.no_of_employees?.toString() || '',
+                        numEmployees: jobData.employees_required?.toString() || '',
                         experience: jobData.experience || null,
-                        jobCategory: jobData.jobCategory || null
+                        jobCategory: jobData.category || null, // FIXED key
+                        // ADDED: Include new fields in initial state for change tracking
+                        minAge: jobData.min_age?.toString() || '',
+                        minEducation: jobData.min_education || '',
+                        prefGender: jobData.preferred_gender || '',
                     };
                     setInitialFormData(initialState);
 
-                    // ... rest of your fetch logic (setting questions, etc.)
-
                 } catch (error) {
                     console.error('Error fetching job details:', error);
+                    showCustomAlert('Error', 'Failed to load job details', false);
                 }
             } else {
                 // --- THIS IS FOR A NEW JOB ---
                 // If there's no jobId, it's a new post, so capture the empty state
                 const initialState = {
                     searchText: '', city: '', jobType: null, shift: null, locationType: null,
-                    salary: '', jd: '', numEmployees: '', experience: null, jobCategory: null
+                    salary: '', jd: '', numEmployees: '', experience: null, jobCategory: null,
+                    minAge: '', minEducation: '', prefGender: ''
                 };
                 setInitialFormData(initialState);
             }
         };
 
         fetchJobDetails();
-    }, [jobId]); // This hook now correctly depends on jobId
+    }, [jobId]); // This hook correctly runs only when jobId changes.
 
 
+    
     // Automatically show modal when jobId is present
     useEffect(() => {
         if (jobId) {
@@ -480,17 +504,35 @@ const PostJobForm = ({ navigation }) => {
         }
     }, [jobId]);
 
+    // // Helper to show alert
+    // const showCustomAlert = (title, message, showCancel = false, onConfirm = null) => {
+    //     setAlertTitle(title);
+    //     setAlertMessage(message);
+    //     setAlertShowCancel(showCancel);
+    //     setAlertOnConfirm(() => onConfirm);
+
+    //     // Delay showing the alert by 1 second (1000ms)
+    //     setTimeout(() => {
+    //         setAlertVisible(true);
+    //     }, 1000);
+    // };
+
     // Helper to show alert
     const showCustomAlert = (title, message, showCancel = false, onConfirm = null) => {
         setAlertTitle(title);
         setAlertMessage(message);
         setAlertShowCancel(showCancel);
-        setAlertOnConfirm(() => onConfirm);
+        setAlertOnConfirm(onConfirm ? () => onConfirm : null); // Correctly assign the onConfirm function
 
-        // Delay showing the alert by 1 second (1000ms)
-        setTimeout(() => {
-            setAlertVisible(true);
-        }, 1000);
+        // 1. Show the alert immediately
+        setAlertVisible(true);
+
+        // 2. If it's a simple notification (no buttons), set a timer to hide it
+        if (!showCancel && !onConfirm) {
+            setTimeout(() => {
+                setAlertVisible(false);
+            }, 1000); // Disappears after 1 second
+        }
     };
 
     const handlepostJob = async () => {
@@ -533,7 +575,7 @@ const PostJobForm = ({ navigation }) => {
             numEmployees,
             no_of_employees: numEmployees,
             employees_required: numEmployees, // Adding alternative format for API compatibility
-            JobCategory: jobCategory,
+            jobCategory: jobCategory,
             industry: industry,
             // Add the new fields
             min_age: minAge,
@@ -542,7 +584,7 @@ const PostJobForm = ({ navigation }) => {
             // Add the formatted questions
             screening_questions: formattedQuestions,
         };
-        console.log("Submitting Job Data:", jobData.JobCategory); // Debugging output
+        console.log("All the Job Data", jobData);
 
         try {
             let response;
@@ -576,24 +618,22 @@ const PostJobForm = ({ navigation }) => {
         } catch (error) {
             console.error('Error submitting job:', error);
             console.log('Error details:', error.response?.data || error.message);
-            showCustomAlert('Error', 'An error occurred. Please try again.', false);
+            setAlertMessage(jobId ? 'Job Not Updated' : "Job Not Posted");
+            setAlertType('error');
+            setAlertShowCancel(false);
+            setAlertOnConfirm(null);
+            setAlertVisible(true);
+            setTimeout(() => {
+                setAlertVisible(false);
+                setModalVisible(false);
+                // navigation.navigate("MyJobs");
+            }, 1000);
+            // showCustomAlert('Error', 'An error occurred. Please try again.', true);
         }
     };
 
-    const resetForm = () => {
-        setJobTitle('');
-        setLocation('');
-        setJobType(null);
-        setShift(null);
-        setLocationType('');
-        setSalary(null);
-        setJd('');
-        setNumEmployees('');
-        setJobCategory(''); // Reset the new field
-    };
 
     const [searchText, setSearchText] = useState('');
-    const [filteredIndustries, setFilteredIndustries] = useState([]);
 
     // Capture the initial state of the form on first load
     useEffect(() => {
@@ -776,8 +816,8 @@ const PostJobForm = ({ navigation }) => {
                                                     }
                                                 }
                                             }}
-                                            placeholderStyle= {styles.dropdownPlaceholder}
-                                            // placeholderTextColor="#b4b4b4"
+                                            placeholderStyle={styles.dropdownPlaceholder}
+                                        // placeholderTextColor="#b4b4b4"
                                         />
                                         {formErrors.jobTitle ? <Text style={styles.errorText}>{formErrors.jobTitle}</Text> : null}
                                     </View>
@@ -845,7 +885,7 @@ const PostJobForm = ({ navigation }) => {
                                                 }
                                             }}
                                             // placeholderTextColor="#666666"
-                                            placeholderStyle= {styles.dropdownPlaceholder}
+                                            placeholderStyle={styles.dropdownPlaceholder}
 
                                         />
                                         {formErrors.city ? <Text style={styles.errorText}>{formErrors.city}</Text> : null}
@@ -1101,9 +1141,9 @@ const PostJobForm = ({ navigation }) => {
                                                 }
                                             }}
                                             // placeholder='Enter a Job Description'
-                                            placeholderStyle= {styles.dropdownPlaceholder}
+                                            placeholderStyle={styles.dropdownPlaceholder}
 
-                                            // placeholderTextColor="#666666"
+                                        // placeholderTextColor="#666666"
                                         />
                                     </View>
 
@@ -1136,7 +1176,7 @@ const PostJobForm = ({ navigation }) => {
                                                 }
                                             }}
                                             // placeholder='Enter Number of Employees'
-                                            placeholderStyle= {styles.dropdownPlaceholder}
+                                            placeholderStyle={styles.dropdownPlaceholder}
                                             placeholderTextColor="#b4b4b4"
                                         />
                                         {formErrors.numEmployees ? (
@@ -1184,7 +1224,7 @@ const PostJobForm = ({ navigation }) => {
                                     </View>
 
                                     <View style={[styles.fieldWrapper, activeDropdown === 'minEducation' && { zIndex: 100 }]}>
-                                        <Text style={{ ...styles.label}}>
+                                        <Text style={{ ...styles.label }}>
                                             Minimum Education (Optional)
                                         </Text>
                                         <DropDownPicker
@@ -1209,7 +1249,7 @@ const PostJobForm = ({ navigation }) => {
                                     </View>
 
                                     <View style={[styles.fieldWrapper, activeDropdown === 'prefGender' && { zIndex: 90 }]}>
-                                        <Text style={{ ...styles.label}}>
+                                        <Text style={{ ...styles.label }}>
                                             Preferred Gender (Optional)
                                         </Text>
                                         <DropDownPicker
